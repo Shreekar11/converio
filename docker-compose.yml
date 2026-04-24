@@ -1,0 +1,173 @@
+version: '3.8'
+
+services:
+  converio_db:
+    image: pgvector/pgvector:pg17
+    container_name: converio_db
+    environment:
+      POSTGRES_USER: converio
+      POSTGRES_PASSWORD: converio
+      POSTGRES_DB: converio_match
+    ports:
+      - "5432:5432"
+    volumes:
+      - converio_db_data:/var/lib/postgresql/data
+      - ./infra/postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - converio-network
+
+  neo4j:
+    image: neo4j:5
+    container_name: neo4j
+    environment:
+      NEO4J_AUTH: neo4j/neo4j_converio
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+    networks:
+      - converio-network
+
+  temporal-elasticsearch:
+    image: elasticsearch:${ELASTICSEARCH_VERSION}
+    container_name: temporal-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+      - xpack.security.enabled=false
+    networks:
+      - converio-network
+    expose:
+      - 9200
+    volumes:
+      - temporal_es_data:/usr/share/elasticsearch/data
+
+  temporal-postgresql:
+    image: postgres:${POSTGRESQL_VERSION}
+    container_name: temporal-postgresql
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+    networks:
+      - converio-network
+    expose:
+      - 5432
+    volumes:
+      - temporal_db_data:/var/lib/postgresql/data
+
+  temporal:
+    image: temporalio/auto-setup:${TEMPORAL_VERSION}
+    container_name: temporal
+    depends_on:
+      - temporal-postgresql
+      - temporal-elasticsearch
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=temporal-postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=/etc/temporal/config/dynamicconfig/development-sql.yaml
+      - ENABLE_ES=true
+      - ES_SEEDS=temporal-elasticsearch
+      - ES_VERSION=v7
+    ports:
+      - "7233:7233"
+    networks:
+      - converio-network
+    volumes:
+      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+
+  temporal-ui:
+    image: temporalio/ui:${TEMPORAL_UI_VERSION}
+    container_name: temporal-ui
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    ports:
+      - "8080:8080"
+    networks:
+      - converio-network
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+      args:
+        BUILD_MODE: development
+    container_name: converio_backend
+    depends_on:
+      - converio_db
+      - neo4j
+      - temporal
+    env_file:
+      - ./apps/backend/.env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://converio:converio@converio_db:5432/converio_match
+      - NEO4J_HOST=neo4j
+      - NEO4J_PORT=7687
+      - NEO4J_USERNAME=neo4j
+      - NEO4J_PASSWORD=neo4j_converio
+      - TEMPORAL_HOST=temporal
+      - TEMPORAL_PORT=7233
+      - LLM_PROVIDER=openrouter
+    ports:
+      - "8000:8000"
+    networks:
+      - converio-network
+
+  worker:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.worker
+      args:
+        BUILD_MODE: development
+    container_name: converio_worker
+    depends_on:
+      - converio_db
+      - neo4j
+      - temporal
+    env_file:
+      - ./apps/backend/.env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://converio:converio@converio_db:5432/converio_match
+      - NEO4J_HOST=neo4j
+      - NEO4J_PORT=7687
+      - NEO4J_USERNAME=neo4j
+      - NEO4J_PASSWORD=neo4j_converio
+      - TEMPORAL_HOST=temporal
+      - TEMPORAL_PORT=7233
+      - LLM_PROVIDER=openrouter
+      - PORT=8001
+    ports:
+      - "8001:8001"
+    networks:
+      - converio-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000
+        - NEXT_PUBLIC_API_PREFIX=/api/v1
+    container_name: converio_frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - converio-network
+
+networks:
+  converio-network:
+    driver: bridge
+
+volumes:
+  converio_db_data:
+  neo4j_data:
+  temporal_es_data:
+  temporal_db_data:
