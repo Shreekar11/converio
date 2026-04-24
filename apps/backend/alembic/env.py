@@ -1,4 +1,5 @@
 from logging.config import fileConfig
+from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -14,8 +15,26 @@ from app.database import models  # noqa: F401 - Import to register all models
 # access to the values within the .ini file in use.
 config = context.config
 
+
+def _build_sync_url(async_url: str) -> str:
+    """Convert asyncpg URL to psycopg2-compatible sync URL for Alembic.
+
+    Strips asyncpg-only params (statement_cache_size, ssl/sslmode) that psycopg2 rejects.
+    """
+    url = async_url.replace("postgresql+asyncpg://", "postgresql://")
+    parsed = urlparse(url)
+    if parsed.query:
+        params = parse_qs(parsed.query, keep_blank_values=True)
+        # Remove asyncpg-only query params
+        for key in ("statement_cache_size", "ssl", "sslmode", "supa"):
+            params.pop(key, None)
+        clean_query = urlencode(params, doseq=True)
+        parsed = parsed._replace(query=clean_query)
+    return urlunparse(parsed)
+
+
 # Set database URL from app settings (convert asyncpg to psycopg2 for Alembic)
-database_url = settings.database_url.replace("postgresql+asyncpg://", "postgresql://")
+database_url = _build_sync_url(settings.database_url)
 config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
