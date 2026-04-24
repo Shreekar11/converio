@@ -1,13 +1,15 @@
 import asyncio
+
 from temporalio.client import Client
 from temporalio.worker import Worker
 from temporalio.worker.workflow_sandbox import (
     SandboxedWorkflowRunner,
     SandboxRestrictions,
 )
+
 from app.core.config import settings
-from app.temporal.core.discovery import discover_all
 from app.temporal.core.activity_registry import ActivityRegistry
+from app.temporal.core.discovery import discover_all
 from app.temporal.core.workflow_registry import WorkflowRegistry
 from app.utils.logging import get_logger
 

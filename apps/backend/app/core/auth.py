@@ -1,8 +1,9 @@
-from typing import Optional
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel
+
 import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel
+
 from app.core.jwt import jwt_verifier
 from app.utils.logging import get_logger
 
@@ -12,14 +13,14 @@ security = HTTPBearer(auto_error=False)
 
 class CurrentUser(BaseModel):
     id: str
-    email: Optional[str] = None
+    email: str | None = None
     role: str = "user"
     app_metadata: dict = {}
     user_metadata: dict = {}
 
 
 async def get_current_user(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
 ) -> CurrentUser:
     if not credentials:
         raise HTTPException(

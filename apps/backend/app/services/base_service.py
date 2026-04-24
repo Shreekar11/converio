@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
+
 from app.core.exceptions import AppError
 from app.utils.logging import get_logger
 

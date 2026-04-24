@@ -1,13 +1,14 @@
-from typing import Any, Optional
-from pydantic import BaseModel
+from typing import Any
+
 from fastapi import Request
+from pydantic import BaseModel
 
 
 class ApiResponse(BaseModel):
     status: bool
     message: str
-    data: Optional[Any] = None
-    correlation_id: Optional[str] = None
+    data: Any | None = None
+    correlation_id: str | None = None
 
 
 def create_api_response(data: Any, message: str, request: Request) -> ApiResponse:

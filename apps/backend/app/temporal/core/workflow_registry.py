@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Type
 
 
 class WorkflowType(str, Enum):
@@ -10,14 +9,14 @@ class WorkflowType(str, Enum):
 
 @dataclass
 class WorkflowMetadata:
-    workflow_class: Type
+    workflow_class: type
     name: str
     category: WorkflowType
     task_queue: str
 
 
 class WorkflowRegistry:
-    _workflows: Dict[str, WorkflowMetadata] = {}
+    _workflows: dict[str, WorkflowMetadata] = {}
 
     @classmethod
     def register(cls, category: WorkflowType, task_queue: str = "converio-queue"):
@@ -32,7 +31,7 @@ class WorkflowRegistry:
         return decorator
 
     @classmethod
-    def get_workflows_by_queue(cls) -> Dict[str, List[Type]]:
+    def get_workflows_by_queue(cls) -> dict[str, list[type]]:
         result = {}
         for meta in cls._workflows.values():
             result.setdefault(meta.task_queue, []).append(meta.workflow_class)

@@ -1,7 +1,6 @@
 """Application configuration."""
 
 from pathlib import Path
-from typing import Optional
 from urllib.parse import parse_qs, urlencode
 
 from pydantic import Field
@@ -12,7 +11,7 @@ from app.utils.logging import get_logger
 LOGGER = get_logger(__name__)
 
 
-def find_env_file() -> Optional[Path]:
+def find_env_file() -> Path | None:
     """Find .env file in multiple possible locations."""
     import os
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -43,8 +42,8 @@ class DatabaseSettings(BaseSettings):
         default="postgresql+asyncpg://converio:converio@localhost:5432/converio_match",
         validation_alias="DATABASE_URL",
     )
-    postgres_url: Optional[str] = Field(default=None, validation_alias="POSTGRES_URL")
-    postgres_url_non_pooling: Optional[str] = Field(
+    postgres_url: str | None = Field(default=None, validation_alias="POSTGRES_URL")
+    postgres_url_non_pooling: str | None = Field(
         default=None, validation_alias="POSTGRES_URL_NON_POOLING"
     )
 

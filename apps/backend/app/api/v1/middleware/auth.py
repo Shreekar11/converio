@@ -4,13 +4,13 @@ This middleware verifies the JWT access token in the Authorization header
 using Supabase JWT keys and attaches the user information to the request state.
 """
 
+import jwt
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-import jwt
 
-from app.core.jwt import jwt_verifier
 from app.core.auth import CurrentUser
+from app.core.jwt import jwt_verifier
 from app.utils.logging import get_logger
 
 LOGGER = get_logger(__name__)

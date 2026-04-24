@@ -2,16 +2,16 @@
 
 import asyncio
 import os
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from app.api.v1.router import api_router
 from app.api.v1.middleware.auth import JWTAuthenticationMiddleware
+from app.api.v1.router import api_router
 from app.core.config import settings
 from app.utils.logging import get_logger
 
@@ -29,8 +29,9 @@ async def init_database(auto_migrate: bool = False, drop_existing: bool = False)
 
 
 def _run_migrations():
-    from alembic import command
     from alembic.config import Config
+
+    from alembic import command
 
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
@@ -81,7 +82,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                 timeout=settings.db_init_timeout,
             )
             LOGGER.info("Database initialized successfully")
-        except asyncio.TimeoutError:
+        except TimeoutError:
             LOGGER.error(f"Database initialization timed out after {settings.db_init_timeout}s")
         except Exception as e:
             LOGGER.error(f"Database initialization failed: {e}", exc_info=True)
@@ -92,7 +93,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                 timeout=20.0,
             )
             LOGGER.info("Neo4j initialized successfully")
-        except asyncio.TimeoutError:
+        except TimeoutError:
             LOGGER.error("Neo4j initialization timed out after 20s")
         except Exception as e:
             LOGGER.error(f"Neo4j initialization failed: {e}", exc_info=True)
