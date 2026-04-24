@@ -1,0 +1,388 @@
+---
+alwaysApply: true
+---
+# Python Guidelines for Converio
+
+This document outlines the Python coding standards, best practices, and guidelines for the converio repository.
+
+## 1. Code Style and Structure
+
+### 1.1 General Principles
+- Follow PEP 8 style guide
+- Use meaningful variable and function names
+- Keep functions small and focused
+- Use proper indentation and spacing
+- Follow consistent naming conventions
+- Write clear and concise code
+
+### 1.2 Naming Conventions
+```python
+# Constants
+MAX_RETRY_COUNT = 3
+DEFAULT_TIMEOUT = 30.0
+
+# Variables
+user_count = 0
+processed_items = []
+
+# Functions
+def process_data():
+    pass
+
+# Classes
+class DataProcessor:
+    pass
+
+# Private members
+_private_var = None
+```
+
+### 1.3 File Organization
+```python
+"""Module docstring explaining purpose and usage."""
+
+# Standard library imports
+import os
+import sys
+from typing import List, Dict, Optional
+
+# Third-party imports
+import requests
+import pandas as pd
+
+# Local imports
+from .utils import helpers
+from .config import settings
+
+# Constants
+DEFAULT_CONFIG = {...}
+
+# Classes
+class MainClass:
+    pass
+
+# Functions
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()
+```
+
+## 2. Type Safety and Validation
+
+### 2.1 Type Hints
+```python
+from typing import List, Dict, Optional, Union, Any, TypeVar, Generic
+
+T = TypeVar('T')
+
+def process_items(items: List[T], config: Optional[Dict[str, Any]] = None) -> List[T]:
+    """Process a list of items with optional configuration.
+    
+    Args:
+        items: List of items to process
+        config: Optional configuration dictionary
+    
+    Returns:
+        Processed list of items
+    """
+    pass
+```
+
+### 2.2 Data Validation
+```python
+from dataclasses import dataclass
+from pydantic import BaseModel, Field, validator
+
+@dataclass
+class Config:
+    """Configuration with validation."""
+    batch_size: int = field(default=100, metadata={"description": "Must be positive"})
+    timeout: float = field(default=30.0, metadata={"description": "Must be non-negative"})
+    
+    def __post_init__(self):
+        """Validate configuration after initialization."""
+        if self.batch_size <= 0:
+            raise ValueError("batch_size must be positive")
+        if self.timeout < 0:
+            raise ValueError("timeout must be non-negative")
+
+class DataModel(BaseModel):
+    """Data model with validation."""
+    id: str
+    name: str
+    value: float = Field(ge=0, description="Must be non-negative")
+    
+    @validator('id')
+    def validate_id(cls, v: str) -> str:
+        """Validate ID format."""
+        if not v.strip():
+            raise ValueError("ID cannot be empty")
+        return v.strip()
+```
+
+## 3. Safe Data Structure Access
+
+### 3.1 Dictionary Access
+```python
+# ❌ Bad: Direct access without safety checks
+value = data['key']  # Raises KeyError if key doesn't exist
+nested_value = data['nested']['key']  # Raises KeyError if any level missing
+
+# ✅ Good: Safe access with default values
+value = data.get('key', default_value)  # Returns default if key missing
+nested_value = data.get('nested', {}).get('key', default_value)  # Safe nested access
+
+# ✅ Better: Using dot notation with safe access
+def get_nested_value(data: Dict[str, Any], path: str, default: Any = None) -> Any:
+    """Safely get nested dictionary value using dot notation."""
+    try:
+        return reduce(lambda d, k: d.get(k, default), path.split('.'), data)
+    except (AttributeError, TypeError):
+        return default
+```
+
+### 3.2 List Access
+```python
+# ❌ Bad: Direct index access without bounds checking
+value = items[0]  # Raises IndexError if list empty
+
+# ✅ Good: Safe index access with bounds checking
+def get_list_item(items: List[Any], index: int, default: Any = None) -> Any:
+    """Safely get list item with bounds checking."""
+    try:
+        return items[index]
+    except (IndexError, TypeError):
+        return default
+
+# ✅ Better: Safe list operations
+def safe_list_operations(items: List[T]) -> None:
+    """Example of safe list operations."""
+    # Safe iteration
+    for item in items:
+        process_item(item)
+    
+    # Safe slicing
+    subset = items[:5] if len(items) > 5 else items
+    
+    # Safe list methods
+    if items:  # Check if list not empty
+        items.pop()  # Safe pop
+        items.append(new_item)  # Safe append
+```
+
+## 4. Error Handling and Logging
+
+### 4.1 Exception Handling
+```python
+def process_with_retry(func: Callable, max_retries: int = 3) -> Any:
+    """Execute function with retry logic.
+    
+    Args:
+        func: Function to execute
+        max_retries: Maximum number of retry attempts
+    
+    Returns:
+        Function result if successful
+    
+    Raises:
+        RuntimeError: If all retries fail
+    """
+    for attempt in range(max_retries):
+        try:
+            return func()
+        except (ValueError, TypeError) as e:
+            if attempt == max_retries - 1:
+                raise RuntimeError(f"Failed after {max_retries} attempts") from e
+            logger.warning(f"Attempt {attempt + 1} failed: {e}")
+            time.sleep(2 ** attempt)  # Exponential backoff
+```
+
+### 4.2 Logging
+```python
+from marketplace_scripts.utils.logging import get_logger
+
+# Initialize logger at module level
+LOGGER = get_logger(__name__)
+
+def process_data(data: Dict[str, Any]) -> None:
+    """Process data with logging."""
+    LOGGER.info("Starting data processing", extra={"data_size": len(data)})
+    try:
+        # Process data
+        LOGGER.debug("Processing item", extra={"item_id": data.get("id")})
+        # ... processing logic ...
+        LOGGER.info("Data processing completed")
+    except Exception as e:
+        LOGGER.error("Data processing failed", exc_info=True, extra={"error": str(e)})
+        raise
+
+# Example of logging in a class
+class DataProcessor:
+    """Process data with logging."""
+    
+    def __init__(self):
+        self.LOGGER = get_logger(__name__)
+    
+    def process(self, data: Dict[str, Any]) -> None:
+        """Process data."""
+        self.LOGGER.info("Processing started", extra={"processor": self.__class__.__name__})
+        try:
+            # Process data
+            self.LOGGER.debug("Processing item", extra={"item_id": data.get("id")})
+            # ... processing logic ...
+            self.LOGGER.info("Processing completed")
+        except Exception as e:
+            self.LOGGER.error("Processing failed", exc_info=True, extra={"error": str(e)})
+            raise
+```
+
+Key features of the logging system:
+1. **Centralized Configuration**: Uses `get_logger` from `marketplace_scripts.utils.logging`
+2. **Structured Logging**: Supports extra context in log messages
+3. **Consistent Format**: Uses standard format with timestamp, level, module, and function name
+4. **Console Output**: Configures console handler for logging
+
+Best Practices:
+1. Always use `get_logger` from utils instead of direct logging configuration
+2. Initialize `LOGGER` at module level as a constant
+3. Include relevant context in log messages using `extra` parameter
+4. Use proper exception logging with `exc_info=True`
+5. Keep log messages clear and informative
+6. Use appropriate log levels:
+   - `LOGGER.debug()`: Detailed information for debugging
+   - `LOGGER.info()`: General operational information
+   - `LOGGER.warning()`: Warning messages for potential issues
+   - `LOGGER.error()`: Error messages for actual problems
+   - `LOGGER.critical()`: Critical errors that need immediate attention
+
+## 5. Documentation
+
+### 5.1 Docstring Format
+```python
+def process_data(
+    data: List[Dict[str, Any]],
+    config: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """Process a list of data items with optional configuration.
+    
+    This function processes a list of data items according to the provided
+    configuration. It handles various data types and formats, performing
+    validation and transformation as needed.
+    
+    Args:
+        data: List of dictionaries containing data to process.
+            - Each dictionary must contain 'id' and 'name' fields
+            - Optional 'metadata' field for additional data
+        config: Optional configuration dictionary with processing parameters.
+            - batch_size: Number of items to process in each batch (default: 100)
+            - timeout: Maximum time to wait for operation (default: 30.0)
+    
+    Returns:
+        Dictionary containing processing results:
+            - success: Boolean indicating overall success
+            - processed_count: Number of items processed
+            - errors: List of error messages if any
+    
+    Raises:
+        ValueError: If data is empty or invalid
+        TypeError: If data types are incorrect
+    
+    Example:
+        >>> data = [{"id": 1, "name": "test"}]
+        >>> config = {"batch_size": 10}
+        >>> result = process_data(data, config)
+        >>> print(result["processed_count"])
+        1
+    """
+    pass
+```
+
+## 6. Security
+
+### 6.1 Input Validation
+```python
+def validate_input(data: Dict[str, Any]) -> bool:
+    """Validate input data for security."""
+    # Check for required fields
+    if not all(k in data for k in ["id", "name"]):
+        return False
+    
+    # Validate field types
+    if not isinstance(data["id"], (int, str)):
+        return False
+    
+    # Validate field values
+    if not data["name"].strip():
+        return False
+    
+    return True
+```
+
+### 6.2 Secure Configuration
+```python
+def load_config() -> Dict[str, Any]:
+    """Load configuration securely."""
+    config = {}
+    
+    # Load from environment variables
+    config["api_key"] = os.getenv("API_KEY")
+    if not config["api_key"]:
+        raise ValueError("API_KEY environment variable not set")
+    
+    # Load from secure storage
+    config["database_url"] = get_secret("database_url")
+    
+    return config
+```
+
+## 7. Best Practices Summary
+
+1. **Code Organization**
+   - Follow consistent structure
+   - Use proper imports
+   - Organize code logically
+   - Use meaningful names
+
+2. **Type Safety**
+   - Use type hints
+   - Validate data
+   - Handle edge cases
+   - Use proper types
+
+3. **Error Handling**
+   - Use proper exceptions
+   - Implement retry logic
+   - Log errors properly
+   - Handle edge cases
+
+4. **Documentation**
+   - Write clear docstrings
+   - Include examples
+   - Document exceptions
+   - Keep docs updated
+
+5. **Testing**
+   - Write unit tests
+   - Use fixtures
+   - Test edge cases
+   - Mock dependencies
+
+6. **Performance**
+   - Manage memory
+   - Use caching
+   - Optimize loops
+   - Profile code
+
+7. **Security**
+   - Validate input
+   - Secure configuration
+   - Handle secrets
+   - Follow best practices
+
+8. **Maintenance**
+   - Keep code clean
+   - Update dependencies
+   - Monitor performance
+   - Review regularly

@@ -1,0 +1,322 @@
+---
+alwaysApply: false
+---
+# Python Testing Rules - Expert TDD Strategy
+
+## ROLE & PHILOSOPHY
+You are an expert Test Driven Developer who follows the red-green-refactor pattern religiously. Always:
+1. Write tests FIRST (red phase)
+2. Ask for review on tests before writing implementation 
+3. Write minimal code to pass tests (green phase)
+4. Refactor for clean, maintainable code
+5. Focus on testing VALUE and BEHAVIOR, not coverage metrics
+
+## CORE TESTING PRINCIPLES
+- **Test behavior, not implementation details**
+- **Test through public interfaces only** - private functions are tested via the public functions that call them
+- **Mock all side effects** (API calls, file I/O, DB operations, external services)
+- **Abstract side effects into small, focused classes** (FileHandler, APIClient, DBClient)
+- **Every test must add real value** - no tests just for coverage numbers
+
+---
+
+## 🔍 FUNCTION VISIBILITY ANALYSIS (Critical First Step)
+
+### Before Writing ANY Test - Check Function Usage
+**ALWAYS analyze if a function is truly public before testing it:**
+
+```python
+# ❌ LOOKS PUBLIC but isn't marked private
+class OrderProcessor:
+    def process_order(self, order_data):  # ✅ Actually public - called from other modules
+        validated_data = self.validate_order_data(order_data)  # ❌ Should be private!
+        return self.calculate_totals(validated_data)  # ❌ Should be private!
+    
+    def validate_order_data(self, data):  # ❌ Missing underscore prefix
+        # Only called within this class - SHOULD BE PRIVATE
+        pass
+    
+    def calculate_totals(self, data):  # ❌ Missing underscore prefix  
+        # Only called within this class - SHOULD BE PRIVATE
+        pass
+```
+
+### Cursor Action Required:
+1. **Check references**: Is this function called from other modules/files?
+2. **If only used internally**: Suggest making it private with underscore prefix
+3. **Don't write tests** for functions that should be private
+
+```python
+# ✅ CORRECTED VERSION
+class OrderProcessor:
+    def process_order(self, order_data):  # ✅ Public - test this
+        validated_data = self._validate_order_data(order_data)  # ✅ Now properly private
+        return self._calculate_totals(validated_data)  # ✅ Now properly private
+    
+    def _validate_order_data(self, data):  # ✅ Private - don't test directly
+        pass
+    
+    def _calculate_totals(self, data):  # ✅ Private - don't test directly
+        pass
+```
+
+**Key Rule**: If a function is only referenced within the same module, **suggest making it private first**, then **don't write tests for it**.
+
+---
+
+## ❌ NEVER TEST (Anti-Patterns to Avoid)
+
+### 1. Simple Property Getters/Setters
+```python
+# ❌ DON'T TEST THIS
+class User:
+    def __init__(self, name):
+        self._name = name
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter 
+    def name(self, value):
+        self._name = value
+
+# ❌ NO TEST NEEDED - This is just data storage
+```
+
+### 2. Thin Wrappers Around External Libraries
+```python
+# ❌ DON'T TEST THIS
+import requests
+
+class APIClient:
+    def get(self, url):
+        return requests.get(url)  # Just delegates to requests
+    
+    def post(self, url, data):
+        return requests.post(url, json=data)  # Just delegates to requests
+
+# ❌ NO TEST NEEDED - Test the business logic that USES this client
+```
+
+### 3. Functions That Should Be Private
+```python
+# ❌ DON'T TEST - THESE SHOULD BE MARKED PRIVATE FIRST
+class OrderProcessor:
+    def process_order(self, order_data):  # ✅ Test this - called from other modules
+        validated_data = self.validate_order(order_data)  # ❌ Only used here - make private!
+        return self.calculate_total(validated_data)  # ❌ Only used here - make private!
+    
+    # ❌ BEFORE TESTING: Check if these are called from other modules
+    def validate_order(self, data):  # If only used internally -> rename to _validate_order
+        pass
+    
+    def calculate_total(self, data):  # If only used internally -> rename to _calculate_total  
+        pass
+
+# ✅ AFTER MAKING PROPERLY PRIVATE
+class OrderProcessor:
+    def process_order(self, order_data):  # ✅ Test this public method
+        validated_data = self._validate_order(order_data)  # ✅ Private - don't test directly
+        return self._calculate_total(validated_data)  # ✅ Private - don't test directly
+    
+    def _validate_order(self, data):  # ✅ Properly private - test via process_order
+        pass
+```
+
+### 4. Simple File/DB Operations
+```python
+# ❌ DON'T TEST THESE UTILITIES
+class FileHandler:
+    def read_file(self, path):
+        with open(path, 'r') as f:
+            return f.read()
+    
+    def write_file(self, path, content):
+        with open(path, 'w') as f:
+            f.write(content)
+
+# ❌ NO TESTS NEEDED - Mock these in business logic tests
+```
+
+---
+
+## ✅ ALWAYS TEST (High-Value Scenarios)
+
+### 1. Pure Functions with Business Logic
+```python
+# ✅ ALWAYS TEST PURE FUNCTIONS
+def calculate_discount(price, customer_tier, purchase_history):
+    """Pure function - deterministic output for given inputs"""
+    if customer_tier == 'premium' and purchase_history > 10:
+        return price * 0.2
+    elif customer_tier == 'premium':
+        return price * 0.1
+    return 0
+
+# ✅ MUST TEST - Multiple conditional paths, business rules
+```
+
+### 2. Public Functions with Business Logic
+```python
+# ✅ TEST THIS - Public interface with business logic
+class OrderProcessor:
+    def __init__(self, payment_gateway, inventory_service):
+        self.payment_gateway = payment_gateway  # Mock this
+        self.inventory_service = inventory_service  # Mock this
+    
+    def process_order(self, order_data):
+        # Complex business logic with multiple steps
+        if not self._validate_inventory(order_data):
+            raise InsufficientInventoryError()
+        
+        payment_result = self.payment_gateway.charge(order_data.total)
+        if payment_result.success:
+            self.inventory_service.reserve_items(order_data.items)
+            return OrderConfirmation(order_data, payment_result)
+        else:
+            raise PaymentFailedError()
+```
+
+### 3. Data Transformation Functions
+```python
+# ✅ ALWAYS TEST DATA TRANSFORMATIONS
+def normalize_customer_data(raw_customer_data):
+    """Transforms external API data to internal format"""
+    return {
+        'id': raw_customer_data['customer_id'],
+        'name': raw_customer_data['full_name'].strip().title(),
+        'email': raw_customer_data['email_address'].lower(),
+        'phone': re.sub(r'[^\d]', '', raw_customer_data.get('phone', ''))
+    }
+
+# ✅ MUST TEST - Data transformations are error-prone
+```
+
+---
+
+## 🏗️ TEST STRUCTURE & ORGANIZATION
+
+### Pytest Patterns
+```python
+import pytest
+from unittest.mock import Mock, patch
+
+class TestOrderProcessor:
+    
+    @pytest.fixture
+    def mock_payment_gateway(self):
+        """✅ Good fixture - creates business object"""
+        return Mock()
+    
+    @pytest.fixture  
+    def mock_inventory_service(self):
+        """✅ Good fixture - creates business object"""
+        return Mock()
+    
+    @pytest.fixture
+    def order_processor(self, mock_payment_gateway, mock_inventory_service):
+        """✅ Good fixture - assembles system under test"""
+        return OrderProcessor(mock_payment_gateway, mock_inventory_service)
+    
+    # ❌ BAD FIXTURE EXAMPLE - Don't do this:
+    # @pytest.fixture
+    # def temp_directory(self, tmp_path):
+    #     """❌ Avoid filesystem fixtures - mock file operations instead"""
+    #     test_dir = tmp_path / "test_data"
+    #     test_dir.mkdir()
+    #     return test_dir
+
+    @pytest.mark.parametrize("customer_tier,purchase_history,expected_discount", [
+        ("premium", 15, 0.2),
+        ("premium", 5, 0.1), 
+        ("standard", 20, 0.0),
+    ])
+    def test_calculate_discount(self, customer_tier, purchase_history, expected_discount):
+        """✅ Data-driven tests for business logic"""
+        result = calculate_discount(100, customer_tier, purchase_history)
+        assert result == expected_discount * 100
+```
+
+---
+
+## 🎭 MOCKING STRATEGY
+
+### Abstract Side Effects into Focused Classes
+```python
+# ✅ Good architecture for testing
+class UserService:
+    def __init__(self, db_client, email_service, file_handler):
+        self.db_client = db_client          # Mock this
+        self.email_service = email_service  # Mock this  
+        self.file_handler = file_handler    # Mock this
+    
+    def create_user(self, user_data):
+        # ✅ Test this business logic by mocking dependencies
+        if self.db_client.user_exists(user_data.email):
+            raise UserAlreadyExistsError()
+        
+        user = self.db_client.create_user(user_data)
+        self.email_service.send_welcome_email(user.email)
+        self.file_handler.create_user_directory(user.id)
+        return user
+
+# ✅ Test example with proper mocking
+def test_create_user_success(self, user_service, mock_db_client, mock_email_service):
+    # Arrange
+    user_data = UserData(email="test@example.com", name="Test User")
+    mock_db_client.user_exists.return_value = False
+    mock_db_client.create_user.return_value = User(id=123, email="test@example.com")
+    
+    # Act
+    result = user_service.create_user(user_data)
+    
+    # Assert
+    assert result.email == "test@example.com"
+    mock_db_client.create_user.assert_called_once_with(user_data)
+    mock_email_service.send_welcome_email.assert_called_once_with("test@example.com")
+```
+
+---
+
+## 🔄 TDD WORKFLOW
+
+### Red-Green-Refactor Process
+1. **RED**: Write failing test first
+2. **ASK FOR REVIEW**: "Here's my test for [feature]. Does this cover the right behavior?"
+3. **GREEN**: Write minimal code to pass the test
+4. **REFACTOR**: Clean up code while keeping tests green
+5. **REPEAT**: For next piece of functionality
+
+### Test Review Questions to Ask
+- "Does this test focus on behavior rather than implementation?"
+- "Am I testing through the public interface?"
+- "**Is this function actually public or should it be marked private first?**"
+- "Are all side effects properly mocked?"
+- "Does this test add real value or just increase coverage?"
+- "Would this test break if I refactor the internal implementation?"
+
+### When You Encounter Unmarked Private Functions:
+1. **Stop** - Don't write the test yet
+2. **Analyze** - Check if function is called from other modules  
+3. **Suggest** - "This function appears to only be used within this module. Should we make it private by adding underscore prefix?"
+4. **Then** - Only write tests for truly public functions
+
+---
+
+## 📋 CODE REVIEW CHECKLIST
+
+Before suggesting any test, verify **IN THIS ORDER**:
+- [ ] **FIRST**: Is this function actually called from other modules? If not, suggest making it private
+- [ ] Is this function publicly accessible AND should remain public?
+- [ ] Does this function contain business logic or just delegate to external services?
+- [ ] Am I testing behavior, not implementation details?
+- [ ] Are all side effects (API, DB, file I/O) mocked?
+- [ ] Will this test provide value beyond just increasing coverage numbers?
+
+### Visibility Analysis Questions:
+- "Is this function imported and used in other files/modules?"
+- "If it's only used within this module, should it be marked private with underscore prefix?"
+- "Would making this function private better reflect its intended usage?"
+
+**Remember**: A single well-crafted test that validates important business behavior is worth more than 10 tests that just exercise getters and setters.

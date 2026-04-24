@@ -1,0 +1,372 @@
+---
+alwaysApply: true
+---
+# FastAPI Development Rules
+
+## Core Principles
+
+### 1. FastAPI App Structure
+- Use `FastAPI()` class to create the main app instance
+- Import FastAPI at the top: `from fastapi import FastAPI`
+- Create app instance: `app = FastAPI()`
+- Use the app instance as the main point of interaction for all API endpoints
+
+### 2. Path Operations (Route Handlers)
+- Use HTTP method decorators on the app instance: `@app.get()`, `@app.post()`, `@app.put()`, `@app.delete()`
+- Always use async functions for path operations: `async def endpoint_name():`
+- Return JSON-serializable data directly (dicts, lists, Pydantic models)
+- Use descriptive function names that indicate the operation being performed
+
+```python
+@app.get("/items/{item_id}")
+async def read_item(item_id: int):
+    return {"item_id": item_id}
+```
+
+### 3. Type Annotations
+- Always use type hints for function parameters and return types
+- Use `Annotated` for dependency injection and validation when available (Python 3.9+)
+- For older Python versions, use `typing_extensions.Annotated`
+- Prefer typed parameters over untyped ones
+
+```python
+from typing import Annotated
+from fastapi import Query
+
+@app.get("/items/")
+async def read_items(q: Annotated[str | None, Query()] = None):
+    return {"q": q}
+```
+
+### 4. Pydantic Models
+- Use Pydantic models for request/response schemas
+- Define models with proper field types and descriptions
+- Use `Field()` for additional validation and documentation
+- Keep models close to where they're used or in a dedicated models module
+
+```python
+from pydantic import BaseModel, Field
+
+class Item(BaseModel):
+    name: str = Field(..., description="The name of the item")
+    price: float = Field(..., gt=0, description="The price must be greater than zero")
+```
+
+### 5. Dependency Injection
+- Use `Depends()` for dependency injection
+- Create reusable dependencies for common functionality (auth, database connections, etc.)
+- Use `Annotated` with `Depends()` for cleaner syntax
+
+```python
+from fastapi import Depends
+from typing import Annotated
+
+def get_current_user():
+    return {"user": "current_user"}
+
+@app.get("/users/whoami")
+async def read_users_whoami(current_user: Annotated[dict, Depends(get_current_user)]):
+    return current_user
+```
+
+### 6. Security
+- Use FastAPI's built-in security utilities from `fastapi.security`
+- Implement OAuth2 with `OAuth2PasswordBearer` for token-based auth
+- Always validate and authenticate requests that require authorization
+- Use dependency injection for security schemes
+
+```python
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+@app.get("/protected/")
+async def protected_route(token: Annotated[str, Depends(oauth2_scheme)]):
+    return {"token": token}
+```
+
+### 7. Error Handling
+- Use `HTTPException` for raising HTTP errors
+- Import from `fastapi import HTTPException`
+- Provide meaningful error messages and appropriate status codes
+- Use standard HTTP status codes from `fastapi import status`
+
+```python
+from fastapi import HTTPException, status
+
+@app.get("/items/{item_id}")
+async def read_item(item_id: int):
+    if item_id < 1:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item not found"
+        )
+    return {"item_id": item_id}
+```
+
+### 8. Response Models
+- Always define response models using Pydantic
+- Use `response_model` parameter in path operation decorators
+- This enables automatic documentation and validation
+
+```python
+@app.get("/items/{item_id}", response_model=Item)
+async def read_item(item_id: int):
+    return Item(name="Example", price=10.5)
+```
+
+### 9. Tags and Documentation
+- Use `tags` parameter to group related endpoints
+- Add meaningful descriptions to path operations
+- Leverage FastAPI's automatic OpenAPI documentation
+- **Always use unique `operation_id` parameters to avoid OpenAPI conflicts**
+- Use descriptive operation IDs that clearly identify the endpoint purpose
+
+```python
+@app.get("/items/", tags=["items"], operation_id="get_all_items")
+async def read_items():
+    """Get all items from the database."""
+    return [{"item_id": 1}]
+```
+
+### 10. Development and Production
+- Use `fastapi dev main.py` for development with auto-reload
+- Use `fastapi run` for production deployment
+- Install FastAPI with: `pip install "fastapi[standard]"`
+- For minimal installation: `pip install fastapi`
+
+### 11. File Organization
+- Keep the main FastAPI app in `main.py` or similar entry point
+- Use routers (`APIRouter`) for organizing related endpoints
+- Separate models, dependencies, and utilities into their own modules
+- Import the app instance consistently across the codebase
+
+### 12. Async Best Practices
+- Use `async def` for all path operations
+- Use `await` for async operations (database calls, external APIs, etc.)
+- Don't mix sync and async code unnecessarily
+- Use async libraries for I/O operations
+
+### 13. Request/Response Handling
+- Accept request bodies as Pydantic models, not raw dictionaries
+- Return structured responses using Pydantic models
+- Use proper HTTP methods (GET for reading, POST for creating, etc.)
+- Validate all input data through type hints and Pydantic models
+
+### 14. Testing
+- Write tests using FastAPI's `TestClient`
+- Test both successful and error cases
+- Use the automatic OpenAPI docs at `/docs` for interactive testing during development
+
+## Common Patterns to Follow
+
+1. **Simple endpoint pattern:**
+```python
+@app.get("/endpoint")
+async def endpoint_handler() -> ResponseModel:
+    return ResponseModel(data="value")
+```
+
+2. **Endpoint with dependencies:**
+```python
+@app.post("/endpoint", response_model=ResponseModel)
+async def endpoint_handler(
+    request: RequestModel,
+    user: Annotated[User, Depends(get_current_user)]
+) -> ResponseModel:
+    return ResponseModel(data="processed")
+```
+
+3. **Error handling pattern:**
+```python
+@app.get("/endpoint/{id}")
+async def get_item(id: int) -> ItemModel:
+    item = await get_item_from_db(id)
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Item with id {id} not found"
+        )
+    return item
+```
+
+## APIRouter Rules
+
+### 15. APIRouter Structure and Organization
+- Use `APIRouter` to organize related endpoints into separate modules
+- Import APIRouter: `from fastapi import APIRouter`
+- Create router instance: `router = APIRouter()`
+- Think of `APIRouter` as a "mini FastAPI" class with the same capabilities
+- Use routers to separate concerns and keep code organized
+
+```python
+from fastapi import APIRouter
+
+router = APIRouter()
+
+@router.get("/users/")
+async def read_users():
+    return [{"username": "Rick"}, {"username": "Morty"}]
+```
+
+### 16. Router Configuration
+- Configure routers with common parameters to avoid repetition
+- Use `prefix` to add a common path prefix to all routes in the router
+- Use `tags` to group related endpoints in documentation
+- Use `dependencies` to apply common dependencies to all routes
+- Use `responses` to define common response schemas
+
+```python
+router = APIRouter(
+    prefix="/items",
+    tags=["items"],
+    dependencies=[Depends(get_token_header)],
+    responses={404: {"description": "Not found"}},
+)
+```
+
+### 17. Router Path Operations
+- Use the same decorators as FastAPI app: `@router.get()`, `@router.post()`, etc.
+- All FastAPI features work with routers: parameters, responses, dependencies, tags
+- You can still add specific tags and responses to individual routes
+- Individual route configurations are combined with router-level configurations
+- **Always specify unique `operation_id` for each route to prevent OpenAPI conflicts**
+- Use descriptive operation IDs that include the router/module context
+
+```python
+@router.get("/", operation_id="get_items_list")
+async def read_items():
+    return fake_items_db
+
+@router.put(
+    "/{item_id}",
+    tags=["custom"],  # Combined with router tags
+    responses={403: {"description": "Operation forbidden"}},
+    operation_id="update_item_by_id"
+)
+async def update_item(item_id: str):
+    return {"item_id": item_id}
+```
+
+### 18. Including Routers in Main App
+- Use `app.include_router()` to register routers with the main FastAPI app
+- Include routers in the main application file (typically `main.py`)
+- You can add additional configuration when including routers
+- Router inclusion order doesn't affect functionality but may affect documentation order
+
+```python
+from fastapi import FastAPI
+from .routers import users, items
+
+app = FastAPI()
+
+app.include_router(users.router)
+app.include_router(items.router)
+```
+
+### 19. Router Inclusion with Additional Configuration
+- You can override or add to router configuration when including
+- Use `prefix` to add additional path prefixes
+- Use `tags` to add more tags for documentation grouping
+- Use `dependencies` to add app-level dependencies
+- Use `responses` to add additional response schemas
+
+```python
+app.include_router(
+    admin.router,
+    prefix="/admin",
+    tags=["admin"],
+    dependencies=[Depends(get_token_header)],
+    responses={418: {"description": "I'm a teapot"}},
+)
+```
+
+### 20. File Organization with Routers
+- Create a `routers/` directory for organizing router modules
+- Each router should handle a specific domain or resource type
+- Keep related functionality together in the same router
+- Use descriptive names for router files (e.g., `users.py`, `items.py`, `auth.py`)
+
+```
+app/
+├── main.py
+├── dependencies.py
+└── routers/
+    ├── __init__.py
+    ├── users.py
+    ├── items.py
+    └── auth.py
+```
+
+### 21. Router Dependencies and Shared Logic
+- Define shared dependencies in a separate `dependencies.py` module
+- Import and use dependencies across multiple routers
+- Use router-level dependencies for logic common to all routes in that router
+- Combine router dependencies with app-level dependencies
+
+```python
+# dependencies.py
+async def get_token_header():
+    return "token-header"
+
+# routers/items.py
+from fastapi import APIRouter, Depends
+from ..dependencies import get_token_header
+
+router = APIRouter(dependencies=[Depends(get_token_header)])
+```
+
+### 22. Router Best Practices
+- Keep routers focused on a single responsibility
+- Use consistent naming conventions across routers
+- Group related endpoints logically within routers
+- Avoid circular imports between routers
+- Document router purpose and scope clearly
+
+### 23. Main App with Routers Pattern
+- Keep the main FastAPI app file simple and focused on configuration
+- Import all routers in the main app file
+- Define global dependencies and middleware in the main app
+- Use the main app for high-level configuration only
+
+```python
+# main.py
+from fastapi import Depends, FastAPI
+from .dependencies import get_query_token
+from .routers import items, users, admin
+
+app = FastAPI(dependencies=[Depends(get_query_token)])
+
+app.include_router(users.router)
+app.include_router(items.router)
+app.include_router(admin.router, prefix="/admin")
+
+@app.get("/")
+async def root():
+    return {"message": "Hello Bigger Applications!"}
+```
+
+### 24. Avoiding OpenAPI Conflicts
+- **Always use unique `operation_id` parameters** for all endpoints to prevent OpenAPI schema conflicts
+- This is critical when extending base applications or using multiple routers
+- Use descriptive operation IDs that include module/router context
+- Format: `{action}_{resource}_{context}` (e.g., `get_workflow_definitions_automation_engine`)
+- Avoid generic function names that might conflict with base SDK or other modules
+
+```python
+# Good - Unique operation IDs
+@router.get("/workflow-definitions", operation_id="get_automation_engine_workflow_definitions")
+async def get_workflow_definitions():
+    return definitions
+
+@router.post("/workflows", operation_id="create_automation_engine_workflow")
+async def create_workflow(workflow_data: WorkflowCreate):
+    return created_workflow
+
+# Bad - Generic names that can cause conflicts
+@router.get("/workflow-definitions")  # No operation_id
+async def get_workflow_definitions():
+    return definitions
+```
+
+These rules are based on FastAPI's official documentation and best practices. They should be used as guidelines for implementing clean, maintainable, and well-documented FastAPI applications.

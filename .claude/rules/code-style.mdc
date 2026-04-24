@@ -1,0 +1,235 @@
+---
+alwaysApply: true
+---
+# Code Style Guidelines
+
+This rule defines the code style standards for the marketplace-scripts repository.
+
+## General Principles
+
+1. **Consistency**
+   - Follow consistent naming conventions
+   - Maintain uniform formatting
+   - Use standard patterns
+   - Document style decisions
+
+2. **Readability**
+   - Write self-documenting code
+   - Use meaningful names
+   - Keep functions focused
+   - Add clear comments
+
+3. **Maintainability**
+   - Follow DRY principles
+   - Keep code modular
+   - Minimize complexity
+   - Document changes
+
+## Naming Conventions
+
+### 1. Files and Directories
+- Use snake_case for file names
+- Use descriptive names
+- Group related files
+- Follow component structure
+
+### 2. Classes
+- Use PascalCase
+- Be descriptive
+- Include component type
+- Follow naming patterns
+
+### 3. Functions and Variables
+- Use snake_case
+- Be descriptive
+- Use verb-noun format
+- Follow conventions
+
+### 4. Constants
+- Use UPPER_SNAKE_CASE
+- Group related constants
+- Document values
+- Use meaningful names
+
+## Code Organization
+
+### 1. File Structure
+```python
+# Standard library imports
+import os
+import sys
+
+# Third-party imports
+import requests
+import pandas as pd
+
+# Local imports
+from .utils import helpers
+from .config import settings
+
+# Constants
+DEFAULT_TIMEOUT = 30
+MAX_RETRIES = 3
+
+# Classes
+class Component:
+    pass
+
+# Functions
+def helper_function():
+    pass
+
+# Main execution
+if __name__ == "__main__":
+    pass
+```
+
+### 2. Class Structure
+```python
+class Component:
+    """Component description."""
+    
+    # Class constants
+    DEFAULT_CONFIG = {}
+    
+    def __init__(self, config=None):
+        """Initialize component."""
+        self.config = config or self.DEFAULT_CONFIG
+    
+    def public_method(self):
+        """Public method description."""
+        pass
+    
+    def _private_method(self):
+        """Private method description."""
+        pass
+```
+
+### 3. Function Structure
+```python
+def process_data(data, config=None):
+    """Process data with configuration.
+    
+    Args:
+        data (dict): Input data
+        config (dict, optional): Configuration
+        
+    Returns:
+        dict: Processed data
+        
+    Raises:
+        ValueError: If data is invalid
+    """
+    pass
+```
+
+## Documentation
+
+### 1. Class Documentation
+```python
+class Component:
+    """Component description.
+    
+    This class handles specific functionality.
+    It provides methods for processing data.
+    
+    Attributes:
+        config (dict): Configuration
+        state (dict): Current state
+        
+    Example:
+        >>> component = Component()
+        >>> result = component.process()
+    """
+```
+
+### 2. Function Documentation
+```python
+def process_data(data, config=None):
+    """Process data with configuration.
+    
+    This function processes input data according to configuration.
+    It handles various data types and formats.
+    
+    Args:
+        data (dict): Input data to process
+        config (dict, optional): Processing configuration
+        
+    Returns:
+        dict: Processed data
+        
+    Raises:
+        ValueError: If data is invalid
+        TypeError: If data type is incorrect
+        
+    Example:
+        >>> data = {"key": "value"}
+        >>> result = process_data(data)
+    """
+```
+
+## Best Practices
+
+1. **Code Formatting**
+   - Use black for formatting
+   - Follow PEP 8
+   - Use consistent indentation
+   - Limit line length
+
+2. **Imports**
+   - Use absolute imports
+   - Avoid wildcard imports
+
+3. **Comments**
+   - Document complex logic
+   - Explain decisions
+   - Keep comments current
+   - Use docstrings
+
+4. **Error Handling**
+   - Use specific exceptions
+   - Add error messages
+   - Handle edge cases
+   - Log errors
+
+## Common Patterns
+
+### 1. Configuration Pattern
+```python
+class Config:
+    """Configuration handler."""
+    
+    def __init__(self, config_path):
+        self.config = self._load_config(config_path)
+    
+    def _load_config(self, path):
+        """Load configuration from file."""
+        pass
+    
+    def get(self, key, default=None):
+        """Get configuration value."""
+        pass
+```
+
+### 2. Error Handling Pattern
+```python
+class ComponentError(Exception):
+    """Base exception for component."""
+    pass
+
+class ValidationError(ComponentError):
+    """Validation error."""
+    pass
+
+def process_data(data):
+    """Process data with error handling."""
+    try:
+        validate_data(data)
+        return transform_data(data)
+    except ValidationError as e:
+        logger.error(f"Validation failed: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Processing failed: {e}")
+        raise ComponentError(f"Processing failed: {e}")
+```
