@@ -10,13 +10,15 @@ LOGGER = get_logger(__name__)
 class Neo4jClientManager:
     _driver: AsyncDriver | None = None
 
-    ENTITY_LABELS = [
-        # Candidate-side family (context doc §7)
+    # Global entities — unique by id alone (exist across all workflows/jobs)
+    GLOBAL_LABELS = [
         "Candidate", "Company", "Technology", "GitHubProfile",
         "StageEnum", "SeniorityEnum",
-        # Recruiter-side family
         "Recruiter", "Domain", "CompanyStage", "Metric",
-        # Cross-family (enables rich GraphRAG queries)
+    ]
+
+    # Workflow-scoped entities — unique by (id, workflow_id) pair
+    WORKFLOW_SCOPED_LABELS = [
         "Job",
     ]
 
@@ -37,18 +39,26 @@ class Neo4jClientManager:
     @classmethod
     async def ensure_constraints(cls) -> None:
         async with await cls.get_session() as session:
-            # Drop legacy single-field constraints
+            # Drop ALL existing constraints first (clean slate for idempotency)
             result = await session.run("SHOW CONSTRAINTS")
-            for rec in await result.data():
-                if (
-                    rec.get("properties")
-                    and len(rec["properties"]) == 1
-                    and rec["properties"][0] == "id"
-                ):
-                    await session.run(f"DROP CONSTRAINT {rec['name']} IF EXISTS")
+            existing = await result.data()
+            for rec in existing:
+                name = rec.get("name")
+                if name and name.startswith("constraint_"):
+                    await session.run(f"DROP CONSTRAINT {name} IF EXISTS")
 
-            # Create composite constraints per label
-            for label in cls.ENTITY_LABELS:
+            # Create single-property unique constraints for global labels
+            for label in cls.GLOBAL_LABELS:
+                name = f"constraint_{label.lower()}_id_unique"
+                cypher = (
+                    f"CREATE CONSTRAINT {name} IF NOT EXISTS "
+                    f"FOR (n:{label}) REQUIRE n.id IS UNIQUE"
+                )
+                await session.run(cypher)
+                LOGGER.info(f"Ensured constraint: {name}")
+
+            # Create composite unique constraints for workflow-scoped labels
+            for label in cls.WORKFLOW_SCOPED_LABELS:
                 name = f"constraint_{label.lower()}_id_workflow_unique"
                 cypher = (
                     f"CREATE CONSTRAINT {name} IF NOT EXISTS "

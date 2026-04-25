@@ -94,10 +94,26 @@ class DatabaseSettings(BaseSettings):
 class LLMSettings(BaseSettings):
     """LLM provider settings."""
 
-    provider: str = Field(default="openrouter", validation_alias="LLM_PROVIDER")
+    provider: str = Field(default="ollama", validation_alias="LLM_PROVIDER")
+
+    # OpenRouter
     openrouter_api_key: str = Field(default="", validation_alias="OPENROUTER_API_KEY")
+    openrouter_api_url: str = Field(
+        default="https://openrouter.ai/api/v1",
+        validation_alias="OPENROUTER_API_URL",
+    )
+    openrouter_model: str = Field(
+        default="google/gemini-2.0-flash-001",
+        validation_alias="OPENROUTER_MODEL",
+    )
+
+    # Gemini direct
     gemini_api_key: str = Field(default="", validation_alias="GEMINI_API_KEY")
     gemini_model: str = Field(default="gemini-2.0-flash", validation_alias="GEMINI_MODEL")
+
+    # Ollama (local — default for dev, zero token cost)
+    ollama_host: str = Field(default="http://localhost:11434", validation_alias="OLLAMA_HOST")
+    ollama_model: str = Field(default="qwen2.5:7b", validation_alias="OLLAMA_MODEL")
 
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE) if ENV_FILE else None,

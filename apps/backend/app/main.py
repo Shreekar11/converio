@@ -13,6 +13,9 @@ from pydantic import BaseModel, Field
 from app.api.v1.middleware.auth import JWTAuthenticationMiddleware
 from app.api.v1.router import api_router
 from app.core.config import settings
+from app.core.github_client import close_github_client
+from app.core.llm.factory import close_llm_client
+from app.core.temporal_client import close_temporal_client
 from app.utils.logging import get_logger
 
 LOGGER = get_logger(__name__, level=settings.log_level)
@@ -113,6 +116,21 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         await close_database()
     except Exception as e:
         LOGGER.error("Error closing database", exc_info=True, extra={"error": str(e)})
+
+    try:
+        await close_llm_client()
+    except Exception as e:
+        LOGGER.error("Error closing LLM client", exc_info=True, extra={"error": str(e)})
+
+    try:
+        await close_temporal_client()
+    except Exception as e:
+        LOGGER.error("Error closing Temporal client", exc_info=True, extra={"error": str(e)})
+
+    try:
+        await close_github_client()
+    except Exception as e:
+        LOGGER.error("Error closing GitHub client", exc_info=True, extra={"error": str(e)})
 
 
 # ---------------------------------------------------------------------------
