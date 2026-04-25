@@ -13,7 +13,7 @@ from enum import StrEnum
 
 
 class CompanyStage(StrEnum):
-    """Funding stage of a Contrario client company."""
+    """Funding stage of a client company."""
 
     SEED = "seed"
     SERIES_A = "series_a"

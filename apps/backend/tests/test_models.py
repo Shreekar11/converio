@@ -109,7 +109,7 @@ async def test_create_company_user(session: AsyncSession):
 async def test_create_operator(session: AsyncSession):
     repo = OperatorRepository(session)
     op = await repo.create(
-        email=f"ops_{uuid.uuid4().hex[:6]}@contrario.ai",
+        email=f"ops_{uuid.uuid4().hex[:6]}@converio.ai",
         full_name="Talent Ops",
         status="active",
     )
@@ -288,7 +288,7 @@ async def test_assignment_operator_confirm(session: AsyncSession):
 
     op_repo = OperatorRepository(session)
     operator = await op_repo.create(
-        email=f"op_{uuid.uuid4().hex[:6]}@contrario.ai",
+        email=f"op_{uuid.uuid4().hex[:6]}@converio.ai",
         status="active",
     )
 

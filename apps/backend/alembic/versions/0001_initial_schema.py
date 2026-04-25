@@ -47,7 +47,7 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.PrimaryKeyConstraint("id"),
-        comment="Client orgs Contrario serves as managed recruiting service",
+        comment="Client orgs Converio serves as managed recruiting service",
     )
     op.create_table(
         "operators",
@@ -71,7 +71,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
         sa.UniqueConstraint("supabase_user_id"),
-        comment="Contrario internal talent-ops — not tied to any company",
+        comment="Converio internal talent-ops — not tied to any company",
     )
     op.create_table(
         "recruiters",
@@ -112,7 +112,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
         sa.UniqueConstraint("supabase_user_id"),
-        comment="Independent contractors vetted by Contrario",
+        comment="Independent contractors vetted by Converio",
     )
     op.create_table(
         "candidates",

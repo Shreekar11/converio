@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Converio Match",
+  title: "Converio",
   description: "AI-native talent matching engine",
 };
 

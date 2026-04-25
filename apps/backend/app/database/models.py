@@ -1,4 +1,4 @@
-"""SQLAlchemy models for all Converio Match database tables."""
+"""SQLAlchemy models for all Converio database tables."""
 
 import uuid
 from datetime import datetime
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 class Company(Base):
-    """Client org that engages Contrario as managed recruiting service."""
+    """Client org that engages Converio as managed recruiting service."""
 
     __tablename__ = "companies"
 
@@ -66,7 +66,7 @@ class Company(Base):
         "Job", back_populates="company", cascade="all, delete-orphan"
     )
 
-    __table_args__ = ({"comment": "Client orgs Contrario serves as managed recruiting service"},)
+    __table_args__ = ({"comment": "Client orgs Converio serves as managed recruiting service"},)
 
 
 class CompanyUser(Base):
@@ -109,7 +109,7 @@ class CompanyUser(Base):
 
 
 class Operator(Base):
-    """Contrario internal talent-ops team member. Not tied to any company."""
+    """Converio internal talent-ops team member. Not tied to any company."""
 
     __tablename__ = "operators"
 
@@ -135,11 +135,11 @@ class Operator(Base):
         "Assignment", back_populates="confirmed_by_operator"
     )
 
-    __table_args__ = ({"comment": "Contrario internal talent-ops — not tied to any company"},)
+    __table_args__ = ({"comment": "Converio internal talent-ops — not tied to any company"},)
 
 
 class Recruiter(Base):
-    """Independent contractor vetted by Contrario. Not tied to any company — brokered."""
+    """Independent contractor vetted by Converio. Not tied to any company — brokered."""
 
     __tablename__ = "recruiters"
 
@@ -160,7 +160,7 @@ class Recruiter(Base):
     )  # agency | startup | freelance | corporate | exec_search
     domain_expertise: Mapped[list | None] = mapped_column(
         ARRAY(String), nullable=False, server_default="{}"
-    )  # ['engineering','fintech','gtm',...]
+    )  # ['engineering','sales','gtm',...]
     acceptance_rate: Mapped[Decimal | None] = mapped_column(
         Numeric(4, 3), nullable=True
     )  # 0.000–1.000
@@ -201,7 +201,7 @@ class Recruiter(Base):
         "RecruiterPlacement", back_populates="recruiter", cascade="all, delete-orphan"
     )
 
-    __table_args__ = ({"comment": "Independent contractors vetted by Contrario"},)
+    __table_args__ = ({"comment": "Independent contractors vetted by Converio"},)
 
 
 class Candidate(Base):
@@ -657,7 +657,7 @@ class RecruiterClient(Base):
     )
     client_company_name: Mapped[str] = mapped_column(
         String, nullable=False
-    )  # freeform — past clients pre-Contrario, NOT FK to companies table
+    )  # freeform — past clients, NOT FK to companies table
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     role_focus: Mapped[list | None] = mapped_column(
         ARRAY(String), nullable=True
@@ -670,7 +670,7 @@ class RecruiterClient(Base):
     recruiter: Mapped["Recruiter"] = relationship("Recruiter", back_populates="past_clients")
 
     __table_args__ = (
-        {"comment": "Recruiter onboarding credibility — past Contrario-external clients"},
+        {"comment": "Recruiter onboarding credibility — past external clients"},
     )
 
 
@@ -678,7 +678,7 @@ class RecruiterPlacement(Base):
     """Recruiter onboarding credibility — past placements (candidates recruiter has placed).
 
     Captured by `Add Candidate` modal in recruiter onboarding wizard. Historical claims; not
-    linked to `candidates` table since these placements are pre-Contrario. Feeds Agent 0 fit
+    linked to `candidates` table since these placements. Feeds Agent 0 fit
     scoring + Neo4j PLACED_AT edges.
     """
 

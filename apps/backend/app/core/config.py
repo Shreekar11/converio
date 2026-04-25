@@ -39,7 +39,7 @@ class DatabaseSettings(BaseSettings):
     """Database connection and pool settings."""
 
     url: str = Field(
-        default="postgresql+asyncpg://converio:converio@localhost:5432/converio_match",
+        default="postgresql+asyncpg://converio:converio@localhost:5432/converio",
         validation_alias="DATABASE_URL",
     )
     postgres_url: str | None = Field(default=None, validation_alias="POSTGRES_URL")

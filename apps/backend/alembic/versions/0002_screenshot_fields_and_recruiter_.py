@@ -4,8 +4,7 @@ Revision ID: 0002
 Revises: 0001
 Create Date: 2026-04-25 10:05:17.297795
 
-Adds onboarding-form fields captured by Contrario UI screenshots
-(`docs/contrario_data_model_from_screenshots.md`):
+Data model changes:
 
 - companies: logo_url, company_size_range, founding_year, hq_location, description
 - recruiters: linkedin_url, bio, recruited_funding_stage, workspace_type
@@ -13,7 +12,7 @@ Adds onboarding-form fields captured by Contrario UI screenshots
 - jobs: location_text
 
 Plus two recruiter-credibility tables (Agent 0 fit-scoring inputs):
-- recruiter_clients (past Contrario-external clients)
+- recruiter_clients (past external clients)
 - recruiter_placements (past placements, historical claims)
 """
 from collections.abc import Sequence
@@ -47,7 +46,7 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(["recruiter_id"], ["recruiters.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
-        comment="Recruiter onboarding credibility — past Contrario-external clients",
+        comment="Recruiter onboarding credibility — past external clients",
     )
     op.create_table(
         "recruiter_placements",
