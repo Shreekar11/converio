@@ -5,7 +5,7 @@ using Supabase's JWKS keys and PyJWT library.
 """
 
 import time
-from typing import Dict, Any, Optional
+from typing import Any
 
 import jwt
 from pydantic import BaseModel
@@ -29,9 +29,9 @@ class JWTClaims(BaseModel):
     aud: str = ""  # Audience (optional)
 
     # Additional Supabase-specific claims
-    app_metadata: Optional[Dict[str, Any]] = None
-    user_metadata: Optional[Dict[str, Any]] = None
-    session_id: Optional[str] = None
+    app_metadata: dict[str, Any] | None = None
+    user_metadata: dict[str, Any] | None = None
+    session_id: str | None = None
 
 
 class JWTVerifier:
@@ -180,10 +180,11 @@ class JWTVerifier:
             raise ValueError(f"Unsupported key type: {jwk_key.kty}")
 
         try:
-            from cryptography.hazmat.primitives import serialization
-            from cryptography.hazmat.primitives.asymmetric import rsa, ec
-            from cryptography.hazmat.backends import default_backend
             import base64
+
+            from cryptography.hazmat.backends import default_backend
+            from cryptography.hazmat.primitives import serialization
+            from cryptography.hazmat.primitives.asymmetric import ec, rsa
 
             def base64url_decode(input_str: str) -> bytes:
                 if not input_str:

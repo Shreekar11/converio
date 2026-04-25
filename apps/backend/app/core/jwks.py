@@ -6,7 +6,6 @@ used for JWT signature verification.
 
 import asyncio
 import time
-from typing import List, Dict, Any, Optional
 
 import aiohttp
 from pydantic import BaseModel
@@ -23,13 +22,13 @@ class JWKKey(BaseModel):
     kid: str
     kty: str
     use: str
-    crv: Optional[str] = None
-    ext: Optional[bool] = None
-    x: Optional[str] = None
-    y: Optional[str] = None
-    n: Optional[str] = None
-    e: Optional[str] = None
-    key_ops: List[str]
+    crv: str | None = None
+    ext: bool | None = None
+    x: str | None = None
+    y: str | None = None
+    n: str | None = None
+    e: str | None = None
+    key_ops: list[str]
     alg: str
 
 
@@ -66,13 +65,13 @@ class JWKSService:
         self.cache_ttl = cache_ttl
         self.timeout = timeout
 
-        self._keys_cache: Optional[Dict[str, JWKKey]] = None
-        self._cache_timestamp: Optional[float] = None
+        self._keys_cache: dict[str, JWKKey] | None = None
+        self._cache_timestamp: float | None = None
         self._lock = asyncio.Lock()
 
         LOGGER.info(f"JWKS service initialized for {self.supabase_url}")
 
-    async def get_keys(self) -> Dict[str, JWKKey]:
+    async def get_keys(self) -> dict[str, JWKKey]:
         """Get JWKS keys, using cache if valid.
 
         Returns:
@@ -92,7 +91,7 @@ class JWKSService:
 
             return keys.copy()
 
-    async def get_key(self, kid: str) -> Optional[JWKKey]:
+    async def get_key(self, kid: str) -> JWKKey | None:
         """Get a specific key by key ID.
 
         Args:
@@ -112,7 +111,7 @@ class JWKSService:
         elapsed = time.time() - self._cache_timestamp
         return elapsed < self.cache_ttl
 
-    async def _fetch_keys(self) -> Dict[str, JWKKey]:
+    async def _fetch_keys(self) -> dict[str, JWKKey]:
         """Fetch JWKS keys from Supabase."""
         try:
             async with aiohttp.ClientSession(
@@ -138,7 +137,7 @@ class JWKSService:
             LOGGER.error(f"Error parsing JWKS response: {e}")
             raise RuntimeError(f"Invalid JWKS response: {e}") from e
 
-    def _update_cache(self, keys: Dict[str, JWKKey]) -> None:
+    def _update_cache(self, keys: dict[str, JWKKey]) -> None:
         """Update the internal cache."""
         self._keys_cache = keys.copy()
         self._cache_timestamp = time.time()

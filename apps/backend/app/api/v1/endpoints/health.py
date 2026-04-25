@@ -1,6 +1,7 @@
+from datetime import UTC, datetime
+
 from fastapi import APIRouter
 from pydantic import BaseModel
-from datetime import datetime, timezone
 
 router = APIRouter()
 
@@ -17,4 +18,4 @@ class EchoResponse(BaseModel):
 
 @router.get("/health/echo", operation_id="echo", tags=["Health"])
 async def echo(message: str = "hello") -> EchoResponse:
-    return EchoResponse(message=message, server_time=datetime.now(timezone.utc))
+    return EchoResponse(message=message, server_time=datetime.now(UTC))

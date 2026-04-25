@@ -1,8 +1,8 @@
-from typing import Callable, Dict
+from collections.abc import Callable
 
 
 class ActivityRegistry:
-    _activities: Dict[str, Callable] = {}
+    _activities: dict[str, Callable] = {}
 
     @classmethod
     def register(cls, category: str, name: str = None):
@@ -13,5 +13,5 @@ class ActivityRegistry:
         return decorator
 
     @classmethod
-    def get_all_activities(cls) -> Dict[str, Callable]:
+    def get_all_activities(cls) -> dict[str, Callable]:
         return cls._activities

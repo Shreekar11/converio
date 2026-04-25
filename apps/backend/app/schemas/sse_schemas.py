@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
-from typing import Dict, Optional
 from uuid import UUID
+
 from pydantic import BaseModel
 
 
@@ -21,4 +21,4 @@ class SSEEvent(BaseModel):
     event_type: SSEEventType
     workflow_id: UUID
     timestamp: datetime = datetime.utcnow()
-    data: Dict
+    data: dict

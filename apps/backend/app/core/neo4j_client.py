@@ -1,5 +1,6 @@
-from typing import Optional
+
 from neo4j import AsyncDriver, AsyncGraphDatabase
+
 from app.core.config import settings
 from app.utils.logging import get_logger
 
@@ -7,12 +8,16 @@ LOGGER = get_logger(__name__)
 
 
 class Neo4jClientManager:
-    _driver: Optional[AsyncDriver] = None
+    _driver: AsyncDriver | None = None
 
     ENTITY_LABELS = [
+        # Candidate-side family (context doc §7)
         "Candidate", "Company", "Technology", "GitHubProfile",
-        "Recruiter", "Industry", "RoleCategory", "Role",
-        "Evidence", "VectorEmbedding",
+        "StageEnum", "SeniorityEnum",
+        # Recruiter-side family
+        "Recruiter", "Domain", "CompanyStage", "Metric",
+        # Cross-family (enables rich GraphRAG queries)
+        "Job",
     ]
 
     @classmethod

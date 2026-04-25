@@ -1,9 +1,8 @@
 import logging
 import sys
-from typing import Optional
 
 
-def get_logger(name: str, level: Optional[str] = None) -> logging.Logger:
+def get_logger(name: str, level: str | None = None) -> logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(getattr(logging, (level or "INFO").upper()))
     if not logger.handlers:

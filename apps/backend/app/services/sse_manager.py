@@ -1,8 +1,7 @@
 import asyncio
-import json
-from datetime import datetime, timezone
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 from uuid import UUID
+
 from app.schemas.sse_schemas import SSEEvent, SSEEventType
 
 

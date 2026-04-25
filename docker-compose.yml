@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: converio
       POSTGRES_PASSWORD: converio
-      POSTGRES_DB: converio_match
+      POSTGRES_DB: converio
     ports:
       - "5432:5432"
     volumes:
@@ -106,7 +106,7 @@ services:
     env_file:
       - ./apps/backend/.env
     environment:
-      - DATABASE_URL=postgresql+asyncpg://converio:converio@converio_db:5432/converio_match
+      - DATABASE_URL=postgresql+asyncpg://converio:converio@converio_db:5432/converio
       - NEO4J_HOST=neo4j
       - NEO4J_PORT=7687
       - NEO4J_USERNAME=neo4j
@@ -133,7 +133,7 @@ services:
     env_file:
       - ./apps/backend/.env
     environment:
-      - DATABASE_URL=postgresql+asyncpg://converio:converio@converio_db:5432/converio_match
+      - DATABASE_URL=postgresql+asyncpg://converio:converio@converio_db:5432/converio
       - NEO4J_HOST=neo4j
       - NEO4J_PORT=7687
       - NEO4J_USERNAME=neo4j
