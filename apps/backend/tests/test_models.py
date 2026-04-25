@@ -50,6 +50,8 @@ def test_all_tables_registered():
         "hitl_events",
         "jobs",
         "operators",
+        "recruiter_clients",
+        "recruiter_placements",
         "recruiters",
         "rubrics",
         "scorecards",
@@ -476,3 +478,224 @@ async def test_workflow_run(session: AsyncSession):
     found = await repo.get_by_workflow_id(wf_id)
     assert found is not None
     assert found.status == "running"
+
+
+# ------------------------------------------------------------------ #
+# 12. Screenshot-driven fields (companies, recruiters, candidates, jobs)
+# ------------------------------------------------------------------ #
+
+
+@pytest.mark.asyncio
+async def test_company_onboarding_fields(session: AsyncSession):
+    """Verify all UI-captured company fields persist (logo, size, founding year, etc.)."""
+    repo = CompanyRepository(session)
+    company = await repo.create(
+        name="Onboard Co",
+        stage="series_b",
+        industry="Fintech",
+        website="https://onboard.co",
+        logo_url="https://cdn.example.com/logo.png",
+        company_size_range="51-200",
+        founding_year=2019,
+        hq_location="San Francisco, CA",
+        description="Banking infrastructure for SMBs.",
+        status="active",
+    )
+    fetched = await repo.get_by_id(company.id)
+    assert fetched.logo_url == "https://cdn.example.com/logo.png"
+    assert fetched.company_size_range == "51-200"
+    assert fetched.founding_year == 2019
+    assert fetched.hq_location == "San Francisco, CA"
+    assert fetched.description == "Banking infrastructure for SMBs."
+
+
+@pytest.mark.asyncio
+async def test_recruiter_onboarding_fields(session: AsyncSession):
+    """Verify recruiter wizard fields persist (linkedin, bio, recruited_funding_stage, workspace_type)."""
+    from app.schemas.enums import RecruitedFundingStage, WorkspaceType
+
+    repo = RecruiterRepository(session)
+    recruiter = await repo.create(
+        full_name="Wizard Recruiter",
+        email=f"wizard_{uuid.uuid4().hex[:6]}@firm.com",
+        linkedin_url="https://linkedin.com/in/wizard",
+        bio="10 years placing founding engineers at YC startups.",
+        recruited_funding_stage=RecruitedFundingStage.SERIES_A.value,
+        workspace_type=WorkspaceType.AGENCY.value,
+        domain_expertise=["engineering"],
+        status="active",
+        total_placements=20,
+        at_capacity=False,
+    )
+    fetched = await repo.get_by_email(recruiter.email)
+    assert fetched.linkedin_url == "https://linkedin.com/in/wizard"
+    assert fetched.bio.startswith("10 years")
+    assert fetched.recruited_funding_stage == "series_a"
+    assert fetched.workspace_type == "agency"
+
+
+@pytest.mark.asyncio
+async def test_candidate_phone_field(session: AsyncSession):
+    repo = CandidateRepository(session)
+    candidate = await repo.create(
+        full_name="Phone User",
+        phone="+1-415-555-0100",
+        completeness_score=Decimal("0.7"),
+        source="recruiter_upload",
+        dedup_hash=_dedup_hash("Phone User"),
+        status="indexed",
+    )
+    fetched = await repo.get_by_id(candidate.id)
+    assert fetched.phone == "+1-415-555-0100"
+
+
+@pytest.mark.asyncio
+async def test_job_location_text(session: AsyncSession):
+    company_repo = CompanyRepository(session)
+    company = await company_repo.create(name="LocCo", status="active")
+
+    job_repo = JobRepository(session)
+    job = await job_repo.create(
+        company_id=company.id,
+        title="Designer",
+        jd_text="Design things.",
+        remote_onsite="hybrid",
+        location_text="SF Bay Area, hybrid 2x/wk",
+        status="intake",
+    )
+    fetched = await job_repo.get_by_id(job.id)
+    assert fetched.location_text == "SF Bay Area, hybrid 2x/wk"
+
+
+# ------------------------------------------------------------------ #
+# 13. RecruiterClient + RecruiterPlacement (onboarding credibility)
+# ------------------------------------------------------------------ #
+
+
+@pytest.mark.asyncio
+async def test_recruiter_client_crud(session: AsyncSession):
+    from app.repositories.recruiter_clients import RecruiterClientRepository
+
+    recruiter_repo = RecruiterRepository(session)
+    recruiter = await recruiter_repo.create(
+        full_name="Client Recruiter",
+        email=f"cr_{uuid.uuid4().hex[:6]}@firm.com",
+        domain_expertise=["engineering"],
+        status="active",
+        total_placements=15,
+        at_capacity=False,
+    )
+
+    client_repo = RecruiterClientRepository(session)
+    await client_repo.create(
+        recruiter_id=recruiter.id,
+        client_company_name="Stripe",
+        description="Filled 3 SRE roles in 2023.",
+        role_focus=["sre", "platform_engineer"],
+    )
+    await client_repo.create(
+        recruiter_id=recruiter.id,
+        client_company_name="Notion",
+        description="Filled head of engineering.",
+        role_focus=["engineering_leadership"],
+    )
+
+    clients = await client_repo.get_by_recruiter(recruiter.id)
+    assert len(clients) == 2
+    names = sorted(c.client_company_name for c in clients)
+    assert names == ["Notion", "Stripe"]
+
+
+@pytest.mark.asyncio
+async def test_recruiter_placement_crud(session: AsyncSession):
+    from datetime import datetime as dt
+
+    from app.repositories.recruiter_placements import RecruiterPlacementRepository
+
+    recruiter_repo = RecruiterRepository(session)
+    recruiter = await recruiter_repo.create(
+        full_name="Placer",
+        email=f"placer_{uuid.uuid4().hex[:6]}@firm.com",
+        domain_expertise=["engineering"],
+        status="active",
+        total_placements=8,
+        at_capacity=False,
+    )
+
+    placement_repo = RecruiterPlacementRepository(session)
+    await placement_repo.create(
+        recruiter_id=recruiter.id,
+        candidate_name="Alice Engineer",
+        company_name="Anthropic",
+        role_title="Founding Engineer",
+        linkedin_url="https://linkedin.com/in/alice",
+        description="Placed Q4 2024.",
+        placed_at=dt(2024, 10, 15),
+    )
+    placements = await placement_repo.get_by_recruiter(recruiter.id)
+    assert len(placements) == 1
+    assert placements[0].candidate_name == "Alice Engineer"
+    assert placements[0].placed_at.year == 2024
+
+
+@pytest.mark.asyncio
+async def test_recruiter_credibility_cascade_delete(session: AsyncSession):
+    """Deleting a recruiter cascades to clients + placements."""
+    from sqlalchemy import select
+
+    from app.database.models import RecruiterClient, RecruiterPlacement
+    from app.repositories.recruiter_clients import RecruiterClientRepository
+    from app.repositories.recruiter_placements import RecruiterPlacementRepository
+
+    recruiter_repo = RecruiterRepository(session)
+    recruiter = await recruiter_repo.create(
+        full_name="Cascade Recruiter",
+        email=f"cas_{uuid.uuid4().hex[:6]}@firm.com",
+        domain_expertise=["gtm"],
+        status="active",
+        total_placements=2,
+        at_capacity=False,
+    )
+    rc_repo = RecruiterClientRepository(session)
+    rp_repo = RecruiterPlacementRepository(session)
+    await rc_repo.create(recruiter_id=recruiter.id, client_company_name="X")
+    await rp_repo.create(
+        recruiter_id=recruiter.id,
+        candidate_name="Bob",
+        company_name="Y",
+        role_title="PM",
+    )
+
+    await session.delete(recruiter)
+    await session.commit()
+
+    clients = (
+        (await session.execute(select(RecruiterClient).where(RecruiterClient.recruiter_id == recruiter.id)))
+        .scalars()
+        .all()
+    )
+    placements = (
+        (await session.execute(select(RecruiterPlacement).where(RecruiterPlacement.recruiter_id == recruiter.id)))
+        .scalars()
+        .all()
+    )
+    assert clients == []
+    assert placements == []
+
+
+# ------------------------------------------------------------------ #
+# 14. Enums sanity
+# ------------------------------------------------------------------ #
+
+
+def test_enum_values_match_doc():
+    from app.schemas.enums import RecruitedFundingStage, WorkspaceType
+
+    assert {e.value for e in WorkspaceType} == {
+        "agency",
+        "startup",
+        "freelance",
+        "corporate",
+        "exec_search",
+    }
+    assert "series_d_plus" in {e.value for e in RecruitedFundingStage}

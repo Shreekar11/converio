@@ -37,9 +37,16 @@ class Company(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
     stage: Mapped[str | None] = mapped_column(
         String(20), nullable=True
-    )  # seed | series_a | series_b | growth
+    )  # seed | series_a | series_b | series_c | growth
     industry: Mapped[str | None] = mapped_column(String, nullable=True)
     website: Mapped[str | None] = mapped_column(String, nullable=True)
+    logo_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    company_size_range: Mapped[str | None] = mapped_column(
+        String(20), nullable=True
+    )  # 1-10 | 11-50 | 51-200 | 201-1000 | 1001+
+    founding_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    hq_location: Mapped[str | None] = mapped_column(String, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(
         String(20), nullable=False, default="active"
     )  # active | paused | churned
@@ -143,6 +150,14 @@ class Recruiter(Base):
     supabase_user_id: Mapped[str | None] = mapped_column(String, unique=True, nullable=True)
     full_name: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    linkedin_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    bio: Mapped[str | None] = mapped_column(Text, nullable=True)
+    recruited_funding_stage: Mapped[str | None] = mapped_column(
+        String(20), nullable=True
+    )  # pre_seed | seed | series_a | series_b | series_c | series_d_plus | public
+    workspace_type: Mapped[str | None] = mapped_column(
+        String(30), nullable=True
+    )  # agency | startup | freelance | corporate | exec_search
     domain_expertise: Mapped[list | None] = mapped_column(
         ARRAY(String), nullable=False, server_default="{}"
     )  # ['engineering','fintech','gtm',...]
@@ -179,6 +194,12 @@ class Recruiter(Base):
     submissions: Mapped[list["CandidateSubmission"]] = relationship(
         "CandidateSubmission", back_populates="recruiter"
     )
+    past_clients: Mapped[list["RecruiterClient"]] = relationship(
+        "RecruiterClient", back_populates="recruiter", cascade="all, delete-orphan"
+    )
+    past_placements: Mapped[list["RecruiterPlacement"]] = relationship(
+        "RecruiterPlacement", back_populates="recruiter", cascade="all, delete-orphan"
+    )
 
     __table_args__ = ({"comment": "Independent contractors vetted by Contrario"},)
 
@@ -193,6 +214,7 @@ class Candidate(Base):
     )
     full_name: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str | None] = mapped_column(String, nullable=True)  # recruiter upload may omit
+    phone: Mapped[str | None] = mapped_column(String(40), nullable=True)
     github_username: Mapped[str | None] = mapped_column(
         String, nullable=True
     )  # partial unique index: WHERE github_username IS NOT NULL
@@ -297,6 +319,9 @@ class Job(Base):
     remote_onsite: Mapped[str | None] = mapped_column(
         String(10), nullable=True
     )  # remote | onsite | hybrid
+    location_text: Mapped[str | None] = mapped_column(
+        String, nullable=True
+    )  # freeform e.g. "SF Bay Area, hybrid 2x/wk"
     must_have_skills: Mapped[list | None] = mapped_column(ARRAY(String), nullable=True)
     nice_to_have_skills: Mapped[list | None] = mapped_column(ARRAY(String), nullable=True)
     compensation_min: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -614,6 +639,79 @@ class WorkflowRun(Base):
     )
 
 
+class RecruiterClient(Base):
+    """Recruiter onboarding credibility — past clients (companies recruiter has filled roles for).
+
+    Captured by `Add Client` modal in recruiter onboarding wizard. Feeds Agent 0 fit scoring:
+    a recruiter who has placed at Series-A SaaS companies before is a stronger match for a
+    Series-A SaaS role.
+    """
+
+    __tablename__ = "recruiter_clients"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    recruiter_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("recruiters.id", ondelete="CASCADE"), nullable=False
+    )
+    client_company_name: Mapped[str] = mapped_column(
+        String, nullable=False
+    )  # freeform — past clients pre-Contrario, NOT FK to companies table
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    role_focus: Mapped[list | None] = mapped_column(
+        ARRAY(String), nullable=True
+    )  # which roles recruiter filled at this client
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default="NOW()", nullable=False
+    )
+
+    # Relationships
+    recruiter: Mapped["Recruiter"] = relationship("Recruiter", back_populates="past_clients")
+
+    __table_args__ = (
+        {"comment": "Recruiter onboarding credibility — past Contrario-external clients"},
+    )
+
+
+class RecruiterPlacement(Base):
+    """Recruiter onboarding credibility — past placements (candidates recruiter has placed).
+
+    Captured by `Add Candidate` modal in recruiter onboarding wizard. Historical claims; not
+    linked to `candidates` table since these placements are pre-Contrario. Feeds Agent 0 fit
+    scoring + Neo4j PLACED_AT edges.
+    """
+
+    __tablename__ = "recruiter_placements"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    recruiter_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("recruiters.id", ondelete="CASCADE"), nullable=False
+    )
+    candidate_name: Mapped[str] = mapped_column(
+        String, nullable=False
+    )  # freeform — historical claim, NOT FK to candidates table
+    company_name: Mapped[str] = mapped_column(String, nullable=False)
+    role_title: Mapped[str] = mapped_column(String, nullable=False)
+    linkedin_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    placed_at: Mapped[datetime | None] = mapped_column(
+        TIMESTAMP(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default="NOW()", nullable=False
+    )
+
+    # Relationships
+    recruiter: Mapped["Recruiter"] = relationship("Recruiter", back_populates="past_placements")
+
+    __table_args__ = (
+        {"comment": "Recruiter onboarding credibility — past placements (historical claims)"},
+    )
+
+
 __all__ = [
     "Base",
     "Company",
@@ -628,4 +726,6 @@ __all__ = [
     "Scorecard",
     "HitlEvent",
     "WorkflowRun",
+    "RecruiterClient",
+    "RecruiterPlacement",
 ]
