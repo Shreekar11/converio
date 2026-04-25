@@ -1,0 +1,4996 @@
+[
+  {
+    "full_name": "Aarav Sharma",
+    "email": "aarav.sharma@example.com",
+    "github_username": "aarav-sharma",
+    "linkedin_url": "https://linkedin.com/in/aaravsharma",
+    "location": "San Francisco, CA",
+    "seniority": "junior",
+    "years_experience": 1,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Docker",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Linear",
+        "role_title": "Junior Backend Engineer",
+        "start_date": "2024",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "UC Berkeley",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2024
+      }
+    ],
+    "resume_text": "Junior backend engineer with one year of professional experience building REST APIs in Python and FastAPI. Contributed to internal billing services and ran first production deploy with Docker and PostgreSQL. Looking to join a fast-moving early-stage team where I can own services end-to-end. Comfortable pairing, asking questions, and learning the operational side of distributed systems."
+  },
+  {
+    "full_name": "Brianna Chen",
+    "email": "brianna.chen@example.com",
+    "github_username": "briannachen",
+    "linkedin_url": "https://linkedin.com/in/briannachen",
+    "location": "New York, NY",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Next.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Tailwind CSS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Vercel",
+        "role_title": "Frontend Engineer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "NYU",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Frontend engineer focused on building accessible, performant React applications with Next.js and TypeScript. Shipped marketing surfaces and dashboard features at Vercel. Care a lot about design polish, animations, and performance budgets. Eager to grow into a full-stack role at a product-led startup."
+  },
+  {
+    "full_name": "Carlos Mendez",
+    "email": "carlos.mendez@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/carlosmendez",
+    "location": "Austin, TX",
+    "seniority": "junior",
+    "years_experience": 1,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "gRPC",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "HashiCorp",
+        "role_title": "Software Engineer I",
+        "start_date": "2024",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "UT Austin",
+        "degree": "B.S.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2024
+      }
+    ],
+    "resume_text": "Backend engineer working in Go on infrastructure tooling. Built internal gRPC services and helm charts during my first year at HashiCorp. Curious about distributed systems and scheduling. Want to join a small team where I can write Go in production every day."
+  },
+  {
+    "full_name": "Diana Park",
+    "email": "diana.park@example.com",
+    "github_username": "dianapark",
+    "linkedin_url": "https://linkedin.com/in/dianapark",
+    "location": "Seattle, WA",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Redis",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Amazon",
+        "role_title": "SDE I",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Washington",
+        "degree": "B.S.",
+        "field_of_study": "Informatics",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Backend engineer at Amazon building internal services for the retail org. Comfortable with Python, Django, Redis caching layers, and AWS primitives like Lambda, SQS, and DynamoDB. Looking for a smaller environment where I can shape architecture instead of inheriting it."
+  },
+  {
+    "full_name": "Ethan Williams",
+    "email": "ethan.williams@example.com",
+    "github_username": "ethan-w",
+    "linkedin_url": null,
+    "location": "Remote",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Prisma",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Render",
+        "role_title": "Software Engineer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Georgia Tech",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Full-stack engineer at Render building developer tooling and the deploy pipeline UI. Strong with TypeScript, Node.js, Prisma and PostgreSQL. Have shipped features end-to-end from spec to migration to production rollout. Want to join a remote-first seed-stage company with a strong engineering bar."
+  },
+  {
+    "full_name": "Farah Khan",
+    "email": "farah.khan@example.com",
+    "github_username": "farahkhan",
+    "linkedin_url": "https://linkedin.com/in/farahkhan",
+    "location": "London, UK",
+    "seniority": "junior",
+    "years_experience": 1,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Pandas",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "SQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Airflow",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Monzo",
+        "role_title": "Junior Data Engineer",
+        "start_date": "2024",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Imperial College London",
+        "degree": "B.Eng.",
+        "field_of_study": "Information Engineering",
+        "graduation_year": 2024
+      }
+    ],
+    "resume_text": "Junior data engineer at Monzo working on the analytics platform. Build Airflow DAGs in Python, model data in dbt, and write a lot of SQL against BigQuery. Interested in moving deeper into data infrastructure and exploring streaming systems."
+  },
+  {
+    "full_name": "Gavin O'Connor",
+    "email": "gavin.oconnor@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/gavinoconnor",
+    "location": "Toronto, ON",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Ruby",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Rails",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Sidekiq",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Shopify",
+        "role_title": "Software Developer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Waterloo",
+        "degree": "B.Math",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Junior engineer at Shopify on a checkout feature team. Comfortable in Rails monoliths, write good Sidekiq jobs, and have learned a lot about migrations at scale. Looking for a Ruby-heavy startup where I can grow into mid-level."
+  },
+  {
+    "full_name": "Hannah Goldberg",
+    "email": "hannah.goldberg@example.com",
+    "github_username": "hannahg",
+    "linkedin_url": "https://linkedin.com/in/hannahgoldberg",
+    "location": "San Francisco, CA",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PyTorch",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Hugging Face",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Scale AI",
+        "role_title": "ML Engineer I",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Stanford University",
+        "degree": "B.S.",
+        "field_of_study": "Symbolic Systems",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "ML engineer at Scale AI working on data quality pipelines for LLM fine-tuning. Comfortable training and evaluating models in PyTorch, serving inference behind FastAPI, and writing pragmatic Python. Want to work on applied LLM products at an early-stage AI startup."
+  },
+  {
+    "full_name": "Ian Petrov",
+    "email": "ian.petrov@example.com",
+    "github_username": "ianpetrov",
+    "linkedin_url": null,
+    "location": "Berlin, Germany",
+    "seniority": "junior",
+    "years_experience": 1,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Rust",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Tokio",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Qdrant",
+        "role_title": "Software Engineer",
+        "start_date": "2024",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "TU Berlin",
+        "degree": "B.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2024
+      }
+    ],
+    "resume_text": "Rust engineer at Qdrant contributing to the vector search engine. Comfortable with async Rust, Tokio, and low-level performance work. Curious about databases and storage engines. Want to keep writing Rust full-time at a serious infra startup."
+  },
+  {
+    "full_name": "Jasmine Wright",
+    "email": "jasmine.wright@example.com",
+    "github_username": "jasminewright",
+    "linkedin_url": "https://linkedin.com/in/jasminewright",
+    "location": "Remote",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Vue",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Nuxt",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "GitLab",
+        "role_title": "Frontend Engineer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Toronto",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Frontend engineer at GitLab working on the merge request UI. Vue and Nuxt are home for me, but I am comfortable picking up React. Strong sense for accessibility and care about test coverage. Want to join a tight remote team building a developer-facing product."
+  },
+  {
+    "full_name": "Kenji Tanaka",
+    "email": "kenji.tanaka@example.com",
+    "github_username": "kenjitanaka",
+    "linkedin_url": "https://linkedin.com/in/kenjitanaka",
+    "location": "San Francisco, CA",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Notion",
+        "role_title": "Software Engineer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Carnegie Mellon University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Full-stack engineer at Notion working on the API platform. Comfortable across Python and TypeScript, write FastAPI services, and have shipped React components used by millions. Looking to join an early-stage startup where I can wear more hats."
+  },
+  {
+    "full_name": "Lara Schmidt",
+    "email": "lara.schmidt@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/laraschmidt",
+    "location": "Berlin, Germany",
+    "seniority": "junior",
+    "years_experience": 1,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spring Boot",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "N26",
+        "role_title": "Backend Engineer",
+        "start_date": "2024",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "TU Munich",
+        "degree": "B.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2024
+      }
+    ],
+    "resume_text": "Junior backend engineer at N26 building event-driven services in Java and Spring Boot on top of Kafka. First exposure to high-throughput payments systems. Want to keep doing JVM backend work but at a smaller, faster company."
+  },
+  {
+    "full_name": "Mateo Garcia",
+    "email": "mateo.garcia@example.com",
+    "github_username": "mateogarcia",
+    "linkedin_url": "https://linkedin.com/in/mateogarcia",
+    "location": "Remote",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Celery",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Doximity",
+        "role_title": "Software Engineer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Universidad de los Andes",
+        "degree": "B.S.",
+        "field_of_study": "Systems Engineering",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Backend engineer working remotely from Bogotá with a U.S.-based health tech company. Django, Celery, PostgreSQL stack. Comfortable building HIPAA-conscious services. Looking to join an English-speaking startup with strong async culture."
+  },
+  {
+    "full_name": "Naomi Clark",
+    "email": "naomi.clark@example.com",
+    "github_username": "naomiclark",
+    "linkedin_url": "https://linkedin.com/in/naomiclark",
+    "location": "New York, NY",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GraphQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Ramp",
+        "role_title": "Software Engineer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Columbia University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Backend engineer at Ramp building GraphQL APIs for the spend management product. Strong with TypeScript, Node.js, and PostgreSQL. Care about API design and developer experience. Want to join a smaller fintech where I can have more architectural say."
+  },
+  {
+    "full_name": "Oscar Lindqvist",
+    "email": "oscar.lindqvist@example.com",
+    "github_username": null,
+    "linkedin_url": null,
+    "location": "Remote",
+    "seniority": "junior",
+    "years_experience": 1,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Flask",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Klarna",
+        "role_title": "Software Engineer",
+        "start_date": "2024",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "KTH Stockholm",
+        "degree": "B.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2024
+      }
+    ],
+    "resume_text": "Backend engineer at Klarna working on the merchant onboarding service. Mostly Python and Flask. Curious about Temporal and durable execution. Want to learn from senior engineers at an early-stage startup."
+  },
+  {
+    "full_name": "Priya Nair",
+    "email": "priya.nair@example.com",
+    "github_username": "priyanair",
+    "linkedin_url": "https://linkedin.com/in/priyanair",
+    "location": "Remote",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS Lambda",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "DynamoDB",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Razorpay",
+        "role_title": "Software Engineer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "IIT Madras",
+        "degree": "B.Tech",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Backend engineer at Razorpay shipping serverless services on AWS. Comfortable with FastAPI, DynamoDB, and Lambda. Have built event-driven flows for fraud detection. Want to join a U.S. startup as a fully remote engineer."
+  },
+  {
+    "full_name": "Quentin Martin",
+    "email": "quentin.martin@example.com",
+    "github_username": "quentinm",
+    "linkedin_url": "https://linkedin.com/in/quentinmartin",
+    "location": "Paris, France",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Terraform",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Datadog",
+        "role_title": "Software Engineer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "École Polytechnique",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Software engineer at Datadog working on the agent team. Go all day, every day. Have learned the operational side of large fleets. Want to keep doing Go infra work at a smaller startup with more product ownership."
+  },
+  {
+    "full_name": "Rachel Adler",
+    "email": "rachel.adler@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/racheladler",
+    "location": "Boston, MA",
+    "seniority": "junior",
+    "years_experience": 1,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "HubSpot",
+        "role_title": "Software Engineer I",
+        "start_date": "2024",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "MIT",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2024
+      }
+    ],
+    "resume_text": "Junior full-stack engineer at HubSpot. TypeScript, React, Node.js. First production rotation taught me a lot about feature flags, gradual rollouts, and incident response. Want to grow into a more senior individual contributor at a small team."
+  },
+  {
+    "full_name": "Samuel Okafor",
+    "email": "samuel.okafor@example.com",
+    "github_username": "samuelokafor",
+    "linkedin_url": "https://linkedin.com/in/samuelokafor",
+    "location": "Remote",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Andela",
+        "role_title": "Software Engineer",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Lagos",
+        "degree": "B.Eng.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2022
+      }
+    ],
+    "resume_text": "Full-stack engineer placed via Andela at a U.S. fintech. Django on the backend, React on the frontend. Have shipped a lot of forms, KYC flows, and admin tools. Want to join a startup directly as a remote engineer."
+  },
+  {
+    "full_name": "Tara Lee",
+    "email": "tara.lee@example.com",
+    "github_username": "taralee",
+    "linkedin_url": "https://linkedin.com/in/taralee",
+    "location": "San Francisco, CA",
+    "seniority": "junior",
+    "years_experience": 2,
+    "stage_fit": [
+      "seed",
+      "series_a"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PyTorch",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Anthropic",
+        "role_title": "Member of Technical Staff",
+        "start_date": "2023",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Harvey Mudd College",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2023
+      }
+    ],
+    "resume_text": "Engineer at Anthropic on the developer platform team. Python and FastAPI. Have shipped internal tools used across the company. Looking to join a small AI-native startup where I can ship product directly."
+  },
+  {
+    "full_name": "Aditi Verma",
+    "email": "aditi.verma@example.com",
+    "github_username": "aditi-verma",
+    "linkedin_url": "https://linkedin.com/in/aditiverma",
+    "location": "San Francisco, CA",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Redis",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Celery",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Stripe",
+        "role_title": "Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Square",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "UC Berkeley",
+        "degree": "B.S.",
+        "field_of_study": "EECS",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Mid-level backend engineer at Stripe on the dispute lifecycle team. Python, FastAPI, PostgreSQL, Redis, Celery. Owned a payout reconciliation service that processes millions of events daily. Want to take that ownership to an earlier-stage company where the same skills compound faster."
+  },
+  {
+    "full_name": "Benjamin Kowalski",
+    "email": "benjamin.kowalski@example.com",
+    "github_username": "benkowalski",
+    "linkedin_url": "https://linkedin.com/in/benjaminkowalski",
+    "location": "New York, NY",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Datadog",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      },
+      {
+        "company": "Bloomberg",
+        "role_title": "Software Engineer",
+        "start_date": "2020",
+        "end_date": "2021"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Cornell University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Full-stack engineer at Datadog working on integrations and the dashboard editor. TypeScript end to end. Comfortable owning features from API design through UI rollout. Want a more product-focused environment with clearer customer feedback."
+  },
+  {
+    "full_name": "Chloe Ramirez",
+    "email": "chloe.ramirez@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/chloeramirez",
+    "location": "Austin, TX",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "gRPC",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Cloudflare",
+        "role_title": "Systems Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Indeed",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "UT Austin",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Systems engineer at Cloudflare working on Workers internals. Go and Rust. Comfortable in a low-level performance-sensitive codebase. Want to join an earlier-stage infra startup where I can be in the top three engineers, not the top three hundred."
+  },
+  {
+    "full_name": "Dmitri Volkov",
+    "email": "dmitri.volkov@example.com",
+    "github_username": "dmitrivolkov",
+    "linkedin_url": "https://linkedin.com/in/dmitrivolkov",
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Rust",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Tokio",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Discord",
+        "role_title": "Backend Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Yandex",
+        "role_title": "Software Engineer",
+        "start_date": "2020",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Moscow Institute of Physics and Technology",
+        "degree": "M.S.",
+        "field_of_study": "Applied Mathematics",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Mid-level Rust engineer at Discord working on message storage. Built and operated services at the billion-message-per-day scale. Want to keep writing Rust at a smaller infra-flavored startup."
+  },
+  {
+    "full_name": "Emma Brennan",
+    "email": "emma.brennan@example.com",
+    "github_username": "emmabrennan",
+    "linkedin_url": "https://linkedin.com/in/emmabrennan",
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Next.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GraphQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Linear",
+        "role_title": "Frontend Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Asana",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Brown University",
+        "degree": "B.A.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Frontend engineer at Linear working on the issue editor and command menu. Care deeply about latency, animation, and keyboard accessibility. Strong with TypeScript, React, and GraphQL. Want to keep working on tools for builders."
+  },
+  {
+    "full_name": "Felipe Santos",
+    "email": "felipe.santos@example.com",
+    "github_username": "felipesantos",
+    "linkedin_url": null,
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Terraform",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Nubank",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Universidade de São Paulo",
+        "degree": "B.S.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Nubank for four years, mostly on lending. Python, Django, PostgreSQL on AWS managed via Terraform. Comfortable with on-call and incident response. Want to join a U.S. startup remotely."
+  },
+  {
+    "full_name": "Grace Bennett",
+    "email": "grace.bennett@example.com",
+    "github_username": "gracebennett",
+    "linkedin_url": "https://linkedin.com/in/gracebennett",
+    "location": "Seattle, WA",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spark",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Airflow",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Snowflake",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "dbt",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Convoy",
+        "role_title": "Data Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Microsoft",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Washington",
+        "degree": "B.S.",
+        "field_of_study": "Informatics",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Data engineer at Convoy building the analytics warehouse. Spark, Airflow, Snowflake, dbt. Have rebuilt the marketplace metrics pipeline twice. Want to join a smaller team where data infrastructure is treated as core product."
+  },
+  {
+    "full_name": "Hugo Larsen",
+    "email": "hugo.larsen@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/hugolarsen",
+    "location": "London, UK",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spring Boot",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Revolut",
+        "role_title": "Backend Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University College London",
+        "degree": "B.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Revolut on the cards platform. Java, Spring Boot, Kafka, PostgreSQL. Have shipped many event-driven services and learned a lot about consistency in money movement. Want to keep doing JVM backend work at a more focused product company."
+  },
+  {
+    "full_name": "Isabella Romano",
+    "email": "isabella.romano@example.com",
+    "github_username": "isabellaromano",
+    "linkedin_url": "https://linkedin.com/in/isabellaromano",
+    "location": "San Francisco, CA",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PyTorch",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Hugging Face",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Ray",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "OpenAI",
+        "role_title": "Member of Technical Staff",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Google",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Stanford University",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "ML engineer with two years at OpenAI on training infrastructure. PyTorch, Ray, large-scale data pipelines. Strong applied research instincts. Want to join an early-stage AI startup where I can build product, not just infra."
+  },
+  {
+    "full_name": "Jacob Foster",
+    "email": "jacob.foster@example.com",
+    "github_username": "jacobfoster",
+    "linkedin_url": "https://linkedin.com/in/jacobfoster",
+    "location": "Denver, CO",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Terraform",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Prometheus",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Datadog",
+        "role_title": "Site Reliability Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Colorado School of Mines",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "SRE at Datadog for four years. Go, Kubernetes, Terraform, AWS. Have run incident commander rotations and built observability platforms used by hundreds of teams. Want to be the first or second SRE at a Series A startup."
+  },
+  {
+    "full_name": "Kavya Reddy",
+    "email": "kavya.reddy@example.com",
+    "github_username": "kavyareddy",
+    "linkedin_url": "https://linkedin.com/in/kavyareddy",
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Temporal",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Faire",
+        "role_title": "Backend Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Flipkart",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "BITS Pilani",
+        "degree": "B.E.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Backend engineer at Faire on the order workflow team. Heavy Temporal user — have built durable order, refund, and notification workflows. Comfortable with FastAPI and PostgreSQL too. Want to join a Temporal-native startup."
+  },
+  {
+    "full_name": "Liam Murphy",
+    "email": "liam.murphy@example.com",
+    "github_username": null,
+    "linkedin_url": null,
+    "location": "Dublin, Ireland",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Intercom",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Trinity College Dublin",
+        "degree": "B.A.I.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Intercom on the inbox team. Mostly Python and Ruby. Have led migrations off legacy services. Want to join an earlier-stage company where the codebase is younger and decisions matter more."
+  },
+  {
+    "full_name": "Mia Johansson",
+    "email": "mia.johansson@example.com",
+    "github_username": "miajohansson",
+    "linkedin_url": "https://linkedin.com/in/miajohansson",
+    "location": "Stockholm, Sweden",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GraphQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PostgreSQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Spotify",
+        "role_title": "Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "KTH Stockholm",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Backend engineer at Spotify on the playlists API. TypeScript, Node.js, GraphQL, PostgreSQL. Have shipped features used by hundreds of millions of users. Want to step into a smaller environment where my work has more direct impact."
+  },
+  {
+    "full_name": "Noah Patel",
+    "email": "noah.patel@example.com",
+    "github_username": "noahpatel",
+    "linkedin_url": "https://linkedin.com/in/noahpatel",
+    "location": "San Francisco, CA",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "pgvector",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Celery",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Pinecone",
+        "role_title": "Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Lyft",
+        "role_title": "Software Engineer",
+        "start_date": "2020",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "UCLA",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Pinecone on the index serving layer. Strong Python and Postgres skills, hands-on with pgvector and other vector index implementations. Want to join an AI-native product startup."
+  },
+  {
+    "full_name": "Olivia Park",
+    "email": "olivia.park@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/oliviapark",
+    "location": "Toronto, ON",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Shopify",
+        "role_title": "Senior Developer",
+        "start_date": "2022",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Waterloo",
+        "degree": "B.Math",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Full-stack engineer at Shopify on a payments squad. TypeScript on the front and back end. Comfortable with React and Node.js. Want to join an earlier-stage commerce startup with more architectural latitude."
+  },
+  {
+    "full_name": "Pranav Iyer",
+    "email": "pranav.iyer@example.com",
+    "github_username": "pranaviyer",
+    "linkedin_url": "https://linkedin.com/in/pranaviyer",
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Terraform",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Confluent",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "IIT Bombay",
+        "degree": "B.Tech",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Confluent on Kafka Connect. Strong Python and JVM skills. Have run multi-region rollouts. Want to bring streaming experience to an earlier-stage company."
+  },
+  {
+    "full_name": "Quinn Holloway",
+    "email": "quinn.holloway@example.com",
+    "github_username": "quinnholloway",
+    "linkedin_url": null,
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Helm",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Prometheus",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Render",
+        "role_title": "Platform Engineer",
+        "start_date": "2022",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "RIT",
+        "degree": "B.S.",
+        "field_of_study": "Software Engineering",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Platform engineer at Render building the multi-tenant Kubernetes substrate. Go, Helm, Prometheus. Have deep experience with operators and controllers. Want to bring that to a smaller team."
+  },
+  {
+    "full_name": "Riley Anderson",
+    "email": "riley.anderson@example.com",
+    "github_username": "rileyanderson",
+    "linkedin_url": "https://linkedin.com/in/rileyanderson",
+    "location": "Austin, TX",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Atlassian",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "UT Austin",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Full-stack engineer at Atlassian working on Jira's automation product. Django on the backend, React on the frontend. Have led several feature launches. Want a smaller environment with more direct customer feedback."
+  },
+  {
+    "full_name": "Sofia Esposito",
+    "email": "sofia.esposito@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/sofiaesposito",
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Figma",
+        "role_title": "Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Booking.com",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Politecnico di Milano",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Full-stack engineer at Figma on the comments and notifications product. TypeScript across the stack. Care about clean abstractions and good DX. Want to keep building product at a smaller place."
+  },
+  {
+    "full_name": "Tomas Jansen",
+    "email": "tomas.jansen@example.com",
+    "github_username": "tomasjansen",
+    "linkedin_url": "https://linkedin.com/in/tomasjansen",
+    "location": "Amsterdam, Netherlands",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GCP",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Adyen",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "TU Delft",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Adyen on the risk team. Python, FastAPI, Kafka, GCP. Have built fraud detection services that handle thousands of TPS. Want a smaller scale and a faster feedback loop."
+  },
+  {
+    "full_name": "Uma Krishnan",
+    "email": "uma.krishnan@example.com",
+    "github_username": "umakrishnan",
+    "linkedin_url": "https://linkedin.com/in/umakrishnan",
+    "location": "San Francisco, CA",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PyTorch",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Vector DBs",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Hugging Face",
+        "role_title": "ML Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Coursera",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "UCSD",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "ML engineer at Hugging Face working on the inference endpoints product. PyTorch, FastAPI, vector databases. Comfortable shipping LLM-backed APIs to production. Want to join an applied AI startup with a strong product vision."
+  },
+  {
+    "full_name": "Victor Nguyen",
+    "email": "victor.nguyen@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/victornguyen",
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Twilio",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Cal Poly SLO",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Twilio on the Verify product. Python, Django, Postgres on AWS. Have rotated through on-call for years. Want a more product-led seat at a smaller company."
+  },
+  {
+    "full_name": "Wei Zhang",
+    "email": "wei.zhang@example.com",
+    "github_username": "weizhang",
+    "linkedin_url": "https://linkedin.com/in/weizhang",
+    "location": "Seattle, WA",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spring Boot",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Amazon",
+        "role_title": "SDE II",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Microsoft",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Illinois Urbana-Champaign",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Backend engineer at Amazon on the AWS Lambda team. Java, Spring Boot, Kafka. Want to leave big tech for a Series A or B startup where I can have a larger surface."
+  },
+  {
+    "full_name": "Xiomara Reyes",
+    "email": "xiomara.reyes@example.com",
+    "github_username": "xiomarareyes",
+    "linkedin_url": "https://linkedin.com/in/xiomarareyes",
+    "location": "Mexico City, Mexico",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Kavak",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "ITESM",
+        "degree": "B.S.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Full-stack engineer at Kavak working on the inventory pricing product. Python, FastAPI, React. Want to take Latin American marketplace experience to a U.S. startup remotely."
+  },
+  {
+    "full_name": "Yusuf Ahmed",
+    "email": "yusuf.ahmed@example.com",
+    "github_username": "yusufahmed",
+    "linkedin_url": "https://linkedin.com/in/yusufahmed",
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Temporal",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Temporal Technologies",
+        "role_title": "Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Toronto",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Temporal Technologies. Go, Postgres, Kubernetes. Have contributed to the worker SDKs and helped on-board major customers. Want to work at a company building heavily on Temporal — practitioner side."
+  },
+  {
+    "full_name": "Zara Hassan",
+    "email": "zara.hassan@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/zarahassan",
+    "location": "London, UK",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Wise",
+        "role_title": "Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Imperial College London",
+        "degree": "M.Eng.",
+        "field_of_study": "Computing",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Full-stack engineer at Wise on the consumer money movement product. TypeScript, Node.js, React, Postgres. Want to join a smaller fintech where I can drive architecture, not just contribute to it."
+  },
+  {
+    "full_name": "Aaron Black",
+    "email": "aaron.black@example.com",
+    "github_username": "aaronblack",
+    "linkedin_url": "https://linkedin.com/in/aaronblack",
+    "location": "San Francisco, CA",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Redis",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Plaid",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "USC",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Plaid on the link product. Python, FastAPI, Postgres, Redis. Comfortable with high-traffic API surfaces. Want a smaller fintech or developer tools startup."
+  },
+  {
+    "full_name": "Beatrice Walker",
+    "email": "beatrice.walker@example.com",
+    "github_username": "beatricewalker",
+    "linkedin_url": "https://linkedin.com/in/beatricewalker",
+    "location": "Boston, MA",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Next.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Tailwind CSS",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "tRPC",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Wayfair",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Northeastern University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Frontend engineer at Wayfair on the seller experience. Next.js, Tailwind, tRPC. Have led several rebuilds. Want to keep building product UI at a smaller company."
+  },
+  {
+    "full_name": "Cesar Lopez",
+    "email": "cesar.lopez@example.com",
+    "github_username": null,
+    "linkedin_url": null,
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 5,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Celery",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Zapier",
+        "role_title": "Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Universidad Nacional Autónoma de México",
+        "degree": "B.S.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2020
+      }
+    ],
+    "resume_text": "Backend engineer at Zapier on the integrations platform. Django, Celery, Postgres. Comfortable in a fully async, fully remote environment. Want to keep that culture at a smaller startup."
+  },
+  {
+    "full_name": "Dahlia Brown",
+    "email": "dahlia.brown@example.com",
+    "github_username": "dahliabrown",
+    "linkedin_url": "https://linkedin.com/in/dahliabrown",
+    "location": "Remote",
+    "seniority": "mid",
+    "years_experience": 4,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Neo4j",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Neo4j",
+        "role_title": "Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Edinburgh",
+        "degree": "M.Sc.",
+        "field_of_study": "Informatics",
+        "graduation_year": 2021
+      }
+    ],
+    "resume_text": "Backend engineer at Neo4j on the graph data science library. Python, Cypher, FastAPI. Comfortable with graph modeling problems. Want to join a startup that uses graphs as a core data structure."
+  },
+  {
+    "full_name": "Ezra Cooper",
+    "email": "ezra.cooper@example.com",
+    "github_username": "ezracooper",
+    "linkedin_url": "https://linkedin.com/in/ezracooper",
+    "location": "San Francisco, CA",
+    "seniority": "senior",
+    "years_experience": 7,
+    "stage_fit": [
+      "series_a",
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Stripe",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      },
+      {
+        "company": "Square",
+        "role_title": "Software Engineer",
+        "start_date": "2018",
+        "end_date": "2021"
+      }
+    ],
+    "education": [
+      {
+        "institution": "UC Berkeley",
+        "degree": "B.S.",
+        "field_of_study": "EECS",
+        "graduation_year": 2018
+      }
+    ],
+    "resume_text": "Senior engineer at Stripe leading the disputes platform. Architected the move to event-sourced state with Kafka. Python, FastAPI, Postgres, Kubernetes. Looking for a Series A or B where I can be one of the first senior backend engineers."
+  },
+  {
+    "full_name": "Fiona Lambert",
+    "email": "fiona.lambert@example.com",
+    "github_username": "fionalambert",
+    "linkedin_url": "https://linkedin.com/in/fionalambert",
+    "location": "New York, NY",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_b",
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GraphQL",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Airbnb",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Princeton University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior full-stack engineer at Airbnb on the host experience product. TypeScript, React, GraphQL, Node.js. Have led 0-to-1 features and large refactors. Want a smaller environment with more product ownership."
+  },
+  {
+    "full_name": "Gideon Stewart",
+    "email": "gideon.stewart@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/gideonstewart",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 9,
+    "stage_fit": [
+      "series_a",
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Terraform",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Cloudflare",
+        "role_title": "Senior Systems Engineer",
+        "start_date": "2020",
+        "end_date": null
+      },
+      {
+        "company": "Heroku",
+        "role_title": "Software Engineer",
+        "start_date": "2016",
+        "end_date": "2020"
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Michigan",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2016
+      }
+    ],
+    "resume_text": "Senior systems engineer with a decade of platform experience. Built and operated multi-tenant Kubernetes systems at scale. Go, Terraform, Kubernetes, AWS. Want to be a foundational engineer at an infra-flavored startup."
+  },
+  {
+    "full_name": "Helena Wright",
+    "email": "helena.wright@example.com",
+    "github_username": "helenawright",
+    "linkedin_url": "https://linkedin.com/in/helenawright",
+    "location": "London, UK",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GCP",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Monzo",
+        "role_title": "Senior Backend Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Cambridge",
+        "degree": "B.A.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior engineer at Monzo working on the lending product. Python, Django, Postgres, GCP. Have led a team and managed an on-call rotation. Want a smaller fintech where senior IC work matters more."
+  },
+  {
+    "full_name": "Idris Cole",
+    "email": "idris.cole@example.com",
+    "github_username": "idriscole",
+    "linkedin_url": "https://linkedin.com/in/idriscole",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 7,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Rust",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Tokio",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "WASM",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Fly.io",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      },
+      {
+        "company": "Mozilla",
+        "role_title": "Software Engineer",
+        "start_date": "2018",
+        "end_date": "2021"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Carnegie Mellon University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior Rust engineer at Fly.io on the orchestrator. Tokio, Postgres, WASM internals. Want to keep doing systems Rust at a smaller infra startup."
+  },
+  {
+    "full_name": "Juno Park",
+    "email": "juno.park@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/junopark",
+    "location": "San Francisco, CA",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PyTorch",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Ray",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Anthropic",
+        "role_title": "Member of Technical Staff",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Google DeepMind",
+        "role_title": "Software Engineer",
+        "start_date": "2018",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Stanford University",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2018
+      }
+    ],
+    "resume_text": "Senior ML engineer at Anthropic on inference. Python, PyTorch, Ray. Comfortable with both systems-y ML work and shipping product-facing APIs. Want to be one of the first MLEs at an applied AI startup."
+  },
+  {
+    "full_name": "Kenji Hayashi",
+    "email": "kenji.hayashi@example.com",
+    "github_username": "kenjihayashi",
+    "linkedin_url": "https://linkedin.com/in/kenjihayashi",
+    "location": "Tokyo, Japan",
+    "seniority": "senior",
+    "years_experience": 9,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Mercari",
+        "role_title": "Senior Backend Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Tokyo",
+        "degree": "M.Eng.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2015
+      }
+    ],
+    "resume_text": "Senior engineer at Mercari on the marketplace platform. Go, Kubernetes, Postgres, Kafka. Multilingual Japanese / English engineer wanting to join a U.S. startup remotely or with relocation."
+  },
+  {
+    "full_name": "Lena Vogel",
+    "email": "lena.vogel@example.com",
+    "github_username": "lenavogel",
+    "linkedin_url": "https://linkedin.com/in/lenavogel",
+    "location": "Berlin, Germany",
+    "seniority": "senior",
+    "years_experience": 7,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Temporal",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Personio",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "TU Munich",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior engineer at Personio building HR workflow infrastructure. Python, FastAPI, Postgres. Heavy Temporal user. Want to join a small Temporal-native startup as a foundational engineer."
+  },
+  {
+    "full_name": "Marcus Bell",
+    "email": "marcus.bell@example.com",
+    "github_username": "marcusbell",
+    "linkedin_url": "https://linkedin.com/in/marcusbell",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Notion",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      },
+      {
+        "company": "Dropbox",
+        "role_title": "Software Engineer",
+        "start_date": "2017",
+        "end_date": "2021"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Carnegie Mellon University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior full-stack engineer at Notion on collaboration features. Strong TypeScript across the stack. Have led multi-quarter projects. Looking for a smaller team where senior IC craft matters."
+  },
+  {
+    "full_name": "Nadia Petrova",
+    "email": "nadia.petrova@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/nadiapetrova",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 9,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spark",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Airflow",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "BigQuery",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Uber",
+        "role_title": "Senior Data Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "St. Petersburg State University",
+        "degree": "M.S.",
+        "field_of_study": "Applied Mathematics",
+        "graduation_year": 2015
+      }
+    ],
+    "resume_text": "Senior data engineer at Uber on the marketplace data team. Spark, Airflow, BigQuery. Have led platform migrations and big rewrites. Want to bring data platform experience to a Series B/C startup."
+  },
+  {
+    "full_name": "Owen Mitchell",
+    "email": "owen.mitchell@example.com",
+    "github_username": "owenmitchell",
+    "linkedin_url": "https://linkedin.com/in/owenmitchell",
+    "location": "Austin, TX",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Indeed",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "UT Austin",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2016
+      }
+    ],
+    "resume_text": "Senior backend engineer at Indeed on the matching platform. Python, FastAPI, Postgres on AWS. Have led services that handle hundreds of millions of requests daily. Want a smaller team where I can move faster."
+  },
+  {
+    "full_name": "Penelope Cruz-Diaz",
+    "email": "penelope.cruz@example.com",
+    "github_username": "pcruzdiaz",
+    "linkedin_url": "https://linkedin.com/in/penelopecruzdiaz",
+    "location": "Madrid, Spain",
+    "seniority": "senior",
+    "years_experience": 7,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Vue",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Nuxt",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Cabify",
+        "role_title": "Senior Frontend Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Universidad Politécnica de Madrid",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior frontend engineer at Cabify. Vue and Nuxt expert with strong product instincts. Want to bring polished frontend craft to a U.S. or European startup."
+  },
+  {
+    "full_name": "Quincy Adams",
+    "email": "quincy.adams@example.com",
+    "github_username": "quincyadams",
+    "linkedin_url": "https://linkedin.com/in/quincyadams",
+    "location": "San Francisco, CA",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Confluent",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Harvard University",
+        "degree": "B.A.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2016
+      }
+    ],
+    "resume_text": "Senior backend engineer at Confluent on Cloud Kafka. Go, Postgres, Kubernetes. Strong distributed systems intuition. Want to be a foundational engineer at a Series A streaming or infra company."
+  },
+  {
+    "full_name": "Rosa Martinez",
+    "email": "rosa.martinez@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/rosamartinez",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 9,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Redis",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Buffer",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Universidad de Buenos Aires",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2014
+      }
+    ],
+    "resume_text": "Senior backend engineer at Buffer in a fully remote setup for five years. Django, Postgres, Redis. Strong async-communication-first engineer. Want to bring that to a small startup."
+  },
+  {
+    "full_name": "Sebastian Klein",
+    "email": "sebastian.klein@example.com",
+    "github_username": "sebastianklein",
+    "linkedin_url": "https://linkedin.com/in/sebastianklein",
+    "location": "Munich, Germany",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spring Boot",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "BMW",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "TU Munich",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2016
+      }
+    ],
+    "resume_text": "Senior engineer at BMW connected services. Java and Spring Boot stack. Want to leave automotive enterprise for a fast-moving European startup."
+  },
+  {
+    "full_name": "Talia Cohen",
+    "email": "talia.cohen@example.com",
+    "github_username": "taliacohen",
+    "linkedin_url": "https://linkedin.com/in/taliacohen",
+    "location": "Tel Aviv, Israel",
+    "seniority": "senior",
+    "years_experience": 7,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Wiz",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Technion",
+        "degree": "B.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior engineer at Wiz. Python, FastAPI, Postgres on AWS. Strong security background. Want to bring it to a Series A or B company."
+  },
+  {
+    "full_name": "Ulysses Grant",
+    "email": "ulysses.grant@example.com",
+    "github_username": "ulyssesgrant",
+    "linkedin_url": "https://linkedin.com/in/ulyssesgrant",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Vercel",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Yale University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2016
+      }
+    ],
+    "resume_text": "Senior full-stack engineer at Vercel on the dashboard product. TypeScript, Next.js, Node.js. Have led 0-to-1 launches. Want to be one of the first senior product engineers at a Series A startup."
+  },
+  {
+    "full_name": "Valentina Ricci",
+    "email": "valentina.ricci@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/valentinaricci",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 9,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Asana",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Politecnico di Torino",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2014
+      }
+    ],
+    "resume_text": "Senior backend engineer at Asana on the search platform. Python, FastAPI, Postgres, Kafka. Want to take search and platform experience to a smaller team."
+  },
+  {
+    "full_name": "Wesley Kim",
+    "email": "wesley.kim@example.com",
+    "github_username": "wesleykim",
+    "linkedin_url": "https://linkedin.com/in/wesleykim",
+    "location": "Seoul, South Korea",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Coupang",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "KAIST",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2016
+      }
+    ],
+    "resume_text": "Senior backend engineer at Coupang. Go, Postgres, Kubernetes. Have shipped at very high scale. Want to bring that to a U.S. startup."
+  },
+  {
+    "full_name": "Xander Roberts",
+    "email": "xander.roberts@example.com",
+    "github_username": "xanderroberts",
+    "linkedin_url": "https://linkedin.com/in/xanderroberts",
+    "location": "San Francisco, CA",
+    "seniority": "senior",
+    "years_experience": 7,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Neo4j",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Temporal",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Scale AI",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2021",
+        "end_date": null
+      },
+      {
+        "company": "Palantir",
+        "role_title": "Forward Deployed Engineer",
+        "start_date": "2018",
+        "end_date": "2021"
+      }
+    ],
+    "education": [
+      {
+        "institution": "MIT",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2018
+      }
+    ],
+    "resume_text": "Senior backend engineer at Scale AI. Python, FastAPI, Neo4j, Temporal. Forward-deployed background means I know how to ship product fast against fuzzy specs. Want to be a foundational engineer at an applied AI startup."
+  },
+  {
+    "full_name": "Yara Almasi",
+    "email": "yara.almasi@example.com",
+    "github_username": "yaraalmasi",
+    "linkedin_url": "https://linkedin.com/in/yaraalmasi",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Next.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Tailwind CSS",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Linear",
+        "role_title": "Senior Engineer",
+        "start_date": "2021",
+        "end_date": null
+      },
+      {
+        "company": "Slack",
+        "role_title": "Software Engineer",
+        "start_date": "2017",
+        "end_date": "2021"
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Waterloo",
+        "degree": "B.Math",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior engineer at Linear with deep frontend specialization. TypeScript, Next.js, Tailwind. Have led product launches and obsess over detail. Want to keep that craft level at a smaller startup."
+  },
+  {
+    "full_name": "Zachary Hill",
+    "email": "zachary.hill@example.com",
+    "github_username": null,
+    "linkedin_url": null,
+    "location": "Denver, CO",
+    "seniority": "senior",
+    "years_experience": 9,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Terraform",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Snowflake",
+        "role_title": "Senior Site Reliability Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Colorado State University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2014
+      }
+    ],
+    "resume_text": "Senior SRE at Snowflake. Go, Kubernetes, Terraform, AWS. Have led incident response programs. Want to be the first dedicated SRE at a Series B company."
+  },
+  {
+    "full_name": "Adelaide Brooks",
+    "email": "adelaide.brooks@example.com",
+    "github_username": "adelaidebrooks",
+    "linkedin_url": "https://linkedin.com/in/adelaidebrooks",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 7,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PyTorch",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Replicate",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Twitch",
+        "role_title": "Software Engineer",
+        "start_date": "2018",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of British Columbia",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior engineer at Replicate building model hosting infrastructure. Python, FastAPI, PyTorch, Postgres. Want to stay in applied ML infra at a smaller startup."
+  },
+  {
+    "full_name": "Beck Ferreira",
+    "email": "beck.ferreira@example.com",
+    "github_username": "beckferreira",
+    "linkedin_url": "https://linkedin.com/in/beckferreira",
+    "location": "Lisbon, Portugal",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GraphQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Remote.com",
+        "role_title": "Senior Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Universidade do Porto",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2015
+      }
+    ],
+    "resume_text": "Senior full-stack engineer at Remote.com. TypeScript, Node.js, React, GraphQL. Have led platform initiatives. Want to be a foundational hire at a Series A."
+  },
+  {
+    "full_name": "Camila Ortiz",
+    "email": "camila.ortiz@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/camilaortiz",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 9,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Celery",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Rappi",
+        "role_title": "Staff Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Pontificia Universidad Javeriana",
+        "degree": "B.S.",
+        "field_of_study": "Systems Engineering",
+        "graduation_year": 2014
+      }
+    ],
+    "resume_text": "Senior+ engineer at Rappi on the merchant platform. Django, Postgres, Celery. Have led migrations and performance work. Want to bring this to a U.S. or European Series A."
+  },
+  {
+    "full_name": "Dario Greco",
+    "email": "dario.greco@example.com",
+    "github_username": "dariogreco",
+    "linkedin_url": "https://linkedin.com/in/dariogreco",
+    "location": "Rome, Italy",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kotlin",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spring Boot",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Satispay",
+        "role_title": "Senior Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Sapienza Università di Roma",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2015
+      }
+    ],
+    "resume_text": "Senior JVM backend engineer at Satispay. Java, Kotlin, Spring Boot, Kafka. Want to take payments experience to a fast-moving European fintech."
+  },
+  {
+    "full_name": "Esme Whitaker",
+    "email": "esme.whitaker@example.com",
+    "github_username": "esmewhitaker",
+    "linkedin_url": "https://linkedin.com/in/esmewhitaker",
+    "location": "San Francisco, CA",
+    "seniority": "staff",
+    "years_experience": 11,
+    "stage_fit": [
+      "series_b",
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Stripe",
+        "role_title": "Staff Engineer",
+        "start_date": "2019",
+        "end_date": null
+      },
+      {
+        "company": "Square",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2015",
+        "end_date": "2019"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Stanford University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2014
+      }
+    ],
+    "resume_text": "Staff engineer at Stripe leading a multi-team initiative on dispute platform consolidation. Python, FastAPI, Kafka, Kubernetes. Strong technical leader. Want to step into a foundational staff role at a Series B startup."
+  },
+  {
+    "full_name": "Finn Eriksen",
+    "email": "finn.eriksen@example.com",
+    "github_username": "finneriksen",
+    "linkedin_url": "https://linkedin.com/in/finneriksen",
+    "location": "Copenhagen, Denmark",
+    "seniority": "staff",
+    "years_experience": 12,
+    "stage_fit": [
+      "series_b",
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Zendesk",
+        "role_title": "Staff Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "DTU Copenhagen",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2012
+      }
+    ],
+    "resume_text": "Staff engineer at Zendesk leading the messaging platform. Go, Kubernetes, Postgres on AWS. Have set platform direction across teams. Want to be a foundational staff engineer at a Series B."
+  },
+  {
+    "full_name": "Genevieve Park",
+    "email": "genevieve.park@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/genevievepark",
+    "location": "New York, NY",
+    "seniority": "staff",
+    "years_experience": 11,
+    "stage_fit": [
+      "series_b",
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GraphQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Datadog",
+        "role_title": "Staff Engineer",
+        "start_date": "2019",
+        "end_date": null
+      },
+      {
+        "company": "Etsy",
+        "role_title": "Senior Engineer",
+        "start_date": "2015",
+        "end_date": "2019"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Cornell University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2013
+      }
+    ],
+    "resume_text": "Staff engineer at Datadog leading frontend platform. TypeScript, Node.js, GraphQL. Have driven multi-team initiatives. Want to take that to a smaller, faster company."
+  },
+  {
+    "full_name": "Hassan Al-Rashid",
+    "email": "hassan.alrashid@example.com",
+    "github_username": "hassanalrashid",
+    "linkedin_url": "https://linkedin.com/in/hassanalrashid",
+    "location": "Dubai, UAE",
+    "seniority": "staff",
+    "years_experience": 13,
+    "stage_fit": [
+      "series_b",
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spring Boot",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Careem",
+        "role_title": "Staff Engineer",
+        "start_date": "2018",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "American University of Beirut",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2011
+      }
+    ],
+    "resume_text": "Staff engineer at Careem (Uber subsidiary). Java, Spring Boot, Kafka, AWS. Have led architecture for the rides platform. Want to bring scale experience to a smaller, faster company."
+  },
+  {
+    "full_name": "Ines Moreau",
+    "email": "ines.moreau@example.com",
+    "github_username": "inesmoreau",
+    "linkedin_url": "https://linkedin.com/in/inesmoreau",
+    "location": "Paris, France",
+    "seniority": "staff",
+    "years_experience": 12,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Doctolib",
+        "role_title": "Staff Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "École Centrale Paris",
+        "degree": "M.Eng.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2012
+      }
+    ],
+    "resume_text": "Staff engineer at Doctolib leading the appointment booking platform. Python, FastAPI, Postgres, Kafka. Want to be the first staff engineer at a smaller European startup."
+  },
+  {
+    "full_name": "Jonas Becker",
+    "email": "jonas.becker@example.com",
+    "github_username": "jonasbecker",
+    "linkedin_url": "https://linkedin.com/in/jonasbecker",
+    "location": "Remote",
+    "seniority": "staff",
+    "years_experience": 11,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Rust",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Tokio",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Cloudflare",
+        "role_title": "Staff Engineer",
+        "start_date": "2018",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "ETH Zurich",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2013
+      }
+    ],
+    "resume_text": "Staff Rust engineer at Cloudflare. Tokio, Postgres, Kubernetes. Have driven low-level infra direction. Want to be foundational staff at a Rust-heavy infra startup."
+  },
+  {
+    "full_name": "Kimberly Stone",
+    "email": "kimberly.stone@example.com",
+    "github_username": "kimberlystone",
+    "linkedin_url": "https://linkedin.com/in/kimberlystone",
+    "location": "San Francisco, CA",
+    "seniority": "staff",
+    "years_experience": 12,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PyTorch",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Ray",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "OpenAI",
+        "role_title": "Staff Engineer",
+        "start_date": "2021",
+        "end_date": null
+      },
+      {
+        "company": "Google",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2014",
+        "end_date": "2021"
+      }
+    ],
+    "education": [
+      {
+        "institution": "Caltech",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2012
+      }
+    ],
+    "resume_text": "Staff engineer at OpenAI on inference platform. Python, PyTorch, Ray, FastAPI. Have led across organizations. Want to be a foundational staff at an applied AI Series B."
+  },
+  {
+    "full_name": "Leonardo Bianchi",
+    "email": "leonardo.bianchi@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/leonardobianchi",
+    "location": "Milan, Italy",
+    "seniority": "staff",
+    "years_experience": 13,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spring",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "ING",
+        "role_title": "Staff Engineer",
+        "start_date": "2017",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Politecnico di Milano",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Engineering",
+        "graduation_year": 2010
+      }
+    ],
+    "resume_text": "Staff engineer at ING leading retail banking platform engineering. Java, Spring, Postgres, AWS. Want to leave banking for a fast-moving fintech startup."
+  },
+  {
+    "full_name": "Maya Brennan",
+    "email": "maya.brennan@example.com",
+    "github_username": "mayabrennan",
+    "linkedin_url": "https://linkedin.com/in/mayabrennan",
+    "location": "Remote",
+    "seniority": "staff",
+    "years_experience": 11,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Temporal",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Coinbase",
+        "role_title": "Staff Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Pennsylvania",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2013
+      }
+    ],
+    "resume_text": "Staff engineer at Coinbase leading custody platform. Heavy Temporal user — built durable workflows for fund movements. Python, FastAPI, Postgres, Kubernetes. Want to take Temporal expertise to a Temporal-first startup."
+  },
+  {
+    "full_name": "Nikolai Sokolov",
+    "email": "nikolai.sokolov@example.com",
+    "github_username": "nikolaisokolov",
+    "linkedin_url": "https://linkedin.com/in/nikolaisokolov",
+    "location": "Remote",
+    "seniority": "staff",
+    "years_experience": 13,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "GitHub",
+        "role_title": "Staff Engineer",
+        "start_date": "2018",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Moscow State University",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2010
+      }
+    ],
+    "resume_text": "Staff engineer at GitHub leading the Actions runtime. Go, Postgres, Kafka, Kubernetes. Have led architecture and run incident programs. Want to bring developer-tools expertise to a Series B."
+  },
+  {
+    "full_name": "Olive Sutton",
+    "email": "olive.sutton@example.com",
+    "github_username": "olivesutton",
+    "linkedin_url": "https://linkedin.com/in/olivesutton",
+    "location": "London, UK",
+    "seniority": "staff",
+    "years_experience": 12,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Django",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GCP",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "DeepMind",
+        "role_title": "Staff Engineer",
+        "start_date": "2018",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Cambridge",
+        "degree": "M.Phil.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2011
+      }
+    ],
+    "resume_text": "Staff engineer at DeepMind on research infrastructure. Python, Django, Postgres, GCP. Want to bring research-infra reliability to an applied AI startup."
+  },
+  {
+    "full_name": "Patrick Sweeney",
+    "email": "patrick.sweeney@example.com",
+    "github_username": null,
+    "linkedin_url": null,
+    "location": "Dublin, Ireland",
+    "seniority": "staff",
+    "years_experience": 14,
+    "stage_fit": [
+      "series_b",
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Scala",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Spark",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "LinkedIn",
+        "role_title": "Staff Engineer",
+        "start_date": "2017",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University College Dublin",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2009
+      }
+    ],
+    "resume_text": "Staff data engineer at LinkedIn working on the messaging platform. Java, Scala, Spark, AWS. Want to step into a smaller environment as a data platform leader."
+  },
+  {
+    "full_name": "Quintessa Hayes",
+    "email": "quintessa.hayes@example.com",
+    "github_username": "quintessahayes",
+    "linkedin_url": "https://linkedin.com/in/quintessahayes",
+    "location": "Toronto, ON",
+    "seniority": "staff",
+    "years_experience": 11,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Shopify",
+        "role_title": "Staff Developer",
+        "start_date": "2018",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Waterloo",
+        "degree": "B.Math",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2013
+      }
+    ],
+    "resume_text": "Staff full-stack engineer at Shopify on the storefront platform. TypeScript, React, Node.js, Postgres. Have led platform modernization. Want to take it to a smaller commerce or developer-tools company."
+  },
+  {
+    "full_name": "Rafael Sousa",
+    "email": "rafael.sousa@example.com",
+    "github_username": "rafaelsousa",
+    "linkedin_url": "https://linkedin.com/in/rafaelsousa",
+    "location": "Remote",
+    "seniority": "principal",
+    "years_experience": 15,
+    "stage_fit": [
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Netflix",
+        "role_title": "Principal Engineer",
+        "start_date": "2017",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Universidade Federal do Rio de Janeiro",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2009
+      }
+    ],
+    "resume_text": "Principal engineer at Netflix leading edge platform direction. Go, Postgres, Kafka, Kubernetes, AWS. Have set architecture across organizations. Want to be a principal/founding engineer at a serious infra Series C."
+  },
+  {
+    "full_name": "Sienna Reeves",
+    "email": "sienna.reeves@example.com",
+    "github_username": "siennareeves",
+    "linkedin_url": "https://linkedin.com/in/siennareeves",
+    "location": "San Francisco, CA",
+    "seniority": "principal",
+    "years_experience": 16,
+    "stage_fit": [
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "PyTorch",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Ray",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Anthropic",
+        "role_title": "Principal Engineer",
+        "start_date": "2022",
+        "end_date": null
+      },
+      {
+        "company": "Google Brain",
+        "role_title": "Staff Software Engineer",
+        "start_date": "2014",
+        "end_date": "2022"
+      }
+    ],
+    "education": [
+      {
+        "institution": "MIT",
+        "degree": "Ph.D.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2012
+      }
+    ],
+    "resume_text": "Principal engineer at Anthropic. Deep ML systems and inference background. Python, PyTorch, Ray. Want to be a founding/principal engineer at a small applied AI startup."
+  },
+  {
+    "full_name": "Theodore Marsh",
+    "email": "theodore.marsh@example.com",
+    "github_username": null,
+    "linkedin_url": "https://linkedin.com/in/theodoremarsh",
+    "location": "Seattle, WA",
+    "seniority": "principal",
+    "years_experience": 17,
+    "stage_fit": [
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Scala",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Amazon",
+        "role_title": "Principal Engineer",
+        "start_date": "2015",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Washington",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2008
+      }
+    ],
+    "resume_text": "Principal engineer at Amazon on AWS Kinesis. Java, Scala, Kafka, AWS. Have set platform direction across hundreds of services. Want a principal seat at a smaller scale-up."
+  },
+  {
+    "full_name": "Una Lindgren",
+    "email": "una.lindgren@example.com",
+    "github_username": "unalindgren",
+    "linkedin_url": "https://linkedin.com/in/unalindgren",
+    "location": "Stockholm, Sweden",
+    "seniority": "principal",
+    "years_experience": 15,
+    "stage_fit": [
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Spotify",
+        "role_title": "Principal Engineer",
+        "start_date": "2016",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "KTH Stockholm",
+        "degree": "Ph.D.",
+        "field_of_study": "Distributed Systems",
+        "graduation_year": 2010
+      }
+    ],
+    "resume_text": "Principal engineer at Spotify on platform engineering. Python, FastAPI, Postgres, Kafka, Kubernetes. Want to take platform DNA to a smaller company."
+  },
+  {
+    "full_name": "Vikram Singh",
+    "email": "vikram.singh@example.com",
+    "github_username": "vikramsingh",
+    "linkedin_url": "https://linkedin.com/in/vikramsingh",
+    "location": "Remote",
+    "seniority": "principal",
+    "years_experience": 18,
+    "stage_fit": [
+      "series_c",
+      "growth"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kafka",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Temporal",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Uber",
+        "role_title": "Principal Engineer",
+        "start_date": "2014",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "IIT Delhi",
+        "degree": "M.Tech",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2007
+      }
+    ],
+    "resume_text": "Principal engineer at Uber. Was an early adopter of Temporal/Cadence and shaped its use across the marketplace. Go, Postgres, Kafka, Kubernetes. Want to be a founding/principal engineer at a Temporal-native startup."
+  },
+  {
+    "full_name": "Cara Donovan",
+    "email": "cara.donovan@example.com",
+    "github_username": "caradonovan",
+    "linkedin_url": "https://linkedin.com/in/caradonovan",
+    "location": "Boston, MA",
+    "seniority": "senior",
+    "years_experience": 7,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "GraphQL",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Klaviyo",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Tufts University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior engineer at Klaviyo on the API platform. TypeScript, Node.js, Postgres, GraphQL. Want a smaller team for more direct impact."
+  },
+  {
+    "full_name": "Damon Pierce",
+    "email": "damon.pierce@example.com",
+    "github_username": "damonpierce",
+    "linkedin_url": "https://linkedin.com/in/damonpierce",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Terraform",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Segment",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Northwestern University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2016
+      }
+    ],
+    "resume_text": "Senior backend engineer at Segment / Twilio. Python, FastAPI, Postgres, AWS, Terraform. Want to bring data-platform experience to a smaller startup."
+  },
+  {
+    "full_name": "Frederick Hayes",
+    "email": "frederick.hayes@example.com",
+    "github_username": null,
+    "linkedin_url": null,
+    "location": "Austin, TX",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Go",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Terraform",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Mattermost",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Texas A&M",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2016
+      }
+    ],
+    "resume_text": "Senior backend engineer at Mattermost. Go, Postgres, Kubernetes, Terraform. Want to be a foundational engineer at a smaller infra-flavored startup."
+  },
+  {
+    "full_name": "Henry Osei",
+    "email": "henry.osei@example.com",
+    "github_username": "henryosei",
+    "linkedin_url": "https://linkedin.com/in/henryosei",
+    "location": "Remote",
+    "seniority": "senior",
+    "years_experience": 7,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "AWS",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Flutterwave",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2020",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Ashesi University",
+        "degree": "B.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      }
+    ],
+    "resume_text": "Senior backend engineer at Flutterwave. Python, FastAPI, Postgres, AWS. Want to take African fintech experience to a global Series A."
+  },
+  {
+    "full_name": "Iris Holloway",
+    "email": "iris.holloway@example.com",
+    "github_username": "irisholloway",
+    "linkedin_url": "https://linkedin.com/in/irisholloway",
+    "location": "Remote",
+    "seniority": "staff",
+    "years_experience": 11,
+    "stage_fit": [
+      "series_b",
+      "series_c"
+    ],
+    "skills": [
+      {
+        "name": "Python",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "FastAPI",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "pgvector",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Kubernetes",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Weaviate",
+        "role_title": "Staff Engineer",
+        "start_date": "2021",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "Carnegie Mellon University",
+        "degree": "M.S.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2013
+      }
+    ],
+    "resume_text": "Staff engineer at Weaviate building the vector search engine. Strong with Python, FastAPI, pgvector, Kubernetes. Want to take vector-search expertise to an applied AI Series B."
+  },
+  {
+    "full_name": "Jude Carlsen",
+    "email": "jude.carlsen@example.com",
+    "github_username": "judecarlsen",
+    "linkedin_url": "https://linkedin.com/in/judecarlsen",
+    "location": "Oslo, Norway",
+    "seniority": "senior",
+    "years_experience": 8,
+    "stage_fit": [
+      "series_a",
+      "series_b"
+    ],
+    "skills": [
+      {
+        "name": "TypeScript",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Node.js",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "React",
+        "depth": "claimed_only"
+      },
+      {
+        "name": "Postgres",
+        "depth": "claimed_only"
+      }
+    ],
+    "work_history": [
+      {
+        "company": "Schibsted",
+        "role_title": "Senior Software Engineer",
+        "start_date": "2019",
+        "end_date": null
+      }
+    ],
+    "education": [
+      {
+        "institution": "NTNU Trondheim",
+        "degree": "M.Sc.",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2015
+      }
+    ],
+    "resume_text": "Senior full-stack engineer at Schibsted. TypeScript, Node.js, React, Postgres. Want a smaller European startup with strong product DNA."
+  }
+]
