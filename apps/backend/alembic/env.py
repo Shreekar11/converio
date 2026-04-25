@@ -1,8 +1,7 @@
 from logging.config import fileConfig
-from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
