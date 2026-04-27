@@ -34,13 +34,17 @@ async def infer_skill_depth(profile_data: dict, github_signals_data: dict) -> di
     if github.is_empty() or not profile.skills:
         LOGGER.info(
             "Skipping skill depth inference - no GitHub data or no skills",
-            extra={"name": profile.full_name, "github_empty": github.is_empty()},
+            extra={"candidate_name": profile.full_name, "github_empty": github.is_empty()},
         )
         return profile.model_dump(mode="json")
 
     LOGGER.info(
         "Inferring skill depths",
-        extra={"name": profile.full_name, "skills": len(profile.skills), "languages": len(github.languages)},
+        extra={
+            "candidate_name": profile.full_name,
+            "skills": len(profile.skills),
+            "languages": len(github.languages),
+        },
     )
 
     skills_input = json.dumps([{"name": s.name, "depth": s.depth} for s in profile.skills])
@@ -90,7 +94,7 @@ async def infer_skill_depth(profile_data: dict, github_signals_data: dict) -> di
     LOGGER.info(
         "Skill depths updated",
         extra={
-            "name": profile.full_name,
+            "candidate_name": profile.full_name,
             "evidenced_commits": sum(1 for s in updated_skills if s.depth == "evidenced_commits"),
             "evidenced_projects": sum(1 for s in updated_skills if s.depth == "evidenced_projects"),
         },

@@ -5,6 +5,7 @@ from app.schemas.product.candidate import (
     GitHubSignals,
     IndexingResult,
     ResolveDuplicatesResult,
+    ResumeFileRef,
     Skill,
     WorkHistoryItem,
 )
@@ -16,6 +17,7 @@ __all__ = [
     "GitHubSignals",
     "IndexingResult",
     "ResolveDuplicatesResult",
+    "ResumeFileRef",
     "Skill",
     "WorkHistoryItem",
 ]

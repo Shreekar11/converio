@@ -10,6 +10,13 @@ class OpenRouterClient(LLMClient):
     provider_name = "openrouter"
 
     def __init__(self, api_key: str, base_url: str, default_model: str) -> None:
+        api_key = (api_key or "").strip()
+        if not api_key:
+            # Fail fast with a clear error instead of letting httpx crash with:
+            # "LocalProtocolError: Illegal header value b'Bearer '"
+            raise ValueError(
+                "OpenRouter API key is missing. Set OPENROUTER_API_KEY or switch LLM_PROVIDER."
+            )
         self._client = httpx.AsyncClient(
             base_url=base_url,
             headers={
