@@ -1,11 +1,10 @@
-import base64
-
 from temporalio import activity
 
 from app.core.document_parser import parse_document
+from app.core.storage.supabase_storage import get_supabase_storage_client
 from app.core.llm.base import LLMMessage
 from app.core.llm.factory import get_llm_client
-from app.schemas.product.candidate import CandidateProfile
+from app.schemas.product.candidate import CandidateProfile, ResumeFileRef
 from app.temporal.core.activity_registry import ActivityRegistry
 from app.utils.logging import get_logger
 
@@ -26,14 +25,24 @@ Rules:
 
 @ActivityRegistry.register("candidate_indexing", "parse_resume")
 @activity.defn
-async def parse_resume(raw_bytes_b64: str, mime_type: str) -> dict:
-    """Step 1: decode bytes -> Markdown via docling. Step 2: LLM extracts CandidateProfile."""
-    raw_bytes = base64.b64decode(raw_bytes_b64)
+async def parse_resume(resume_file_data: dict) -> dict:
+    """Step 1: fetch object bytes -> Markdown via docling. Step 2: LLM extracts CandidateProfile."""
+    resume_file = ResumeFileRef.model_validate(resume_file_data)
+    storage = get_supabase_storage_client()
+    raw_bytes = await storage.download_bytes(bucket=resume_file.bucket, path=resume_file.path)
 
-    LOGGER.info("Parsing document", extra={"mime_type": mime_type, "bytes": len(raw_bytes)})
+    LOGGER.info(
+        "Parsing document",
+        extra={
+            "bucket": resume_file.bucket,
+            "path": resume_file.path,
+            "mime_type": resume_file.mime_type,
+            "bytes": len(raw_bytes),
+        },
+    )
 
     # Step 1: docling -> Markdown (deterministic, no LLM)
-    markdown = await parse_document(raw_bytes, mime_type)
+    markdown = await parse_document(raw_bytes, resume_file.mime_type)
 
     LOGGER.info("Document parsed to markdown", extra={"markdown_len": len(markdown)})
 
@@ -54,7 +63,7 @@ async def parse_resume(raw_bytes_b64: str, mime_type: str) -> dict:
     LOGGER.info(
         "Resume parsed",
         extra={
-            "name": profile.full_name,
+            "candidate_name": profile.full_name,
             "skills": len(profile.skills),
             "work_history": len(profile.work_history),
         },

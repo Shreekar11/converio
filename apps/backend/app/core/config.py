@@ -170,6 +170,7 @@ class SupabaseSettings(BaseSettings):
     url: str = Field(default="", validation_alias="SUPABASE_URL")
     anon_key: str = Field(default="", validation_alias="SUPABASE_ANON_KEY")
     service_role_key: str = Field(default="", validation_alias="SUPABASE_SERVICE_ROLE_KEY")
+    storage_bucket: str = Field(default="resumes", validation_alias="SUPABASE_STORAGE_BUCKET")
     jwt_secret: str = Field(default="", validation_alias="SUPABASE_JWT_SECRET")
     jwks_cache_ttl: int = Field(default=3600, validation_alias="SUPABASE_JWKS_CACHE_TTL")
 

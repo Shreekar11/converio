@@ -5,7 +5,7 @@ Triggers CandidateIndexingWorkflow on the Temporal `converio-queue`.
 """
 from __future__ import annotations
 
-import base64
+import hashlib
 import mimetypes
 from typing import Annotated
 from uuid import uuid4
@@ -24,10 +24,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import CurrentUser, get_current_user
+from app.core.config import settings
 from app.core.database import get_async_session
+from app.core.storage.supabase_storage import get_supabase_storage_client
 from app.core.temporal_client import get_temporal_client
 from app.database.models import Recruiter
-from app.schemas.product.candidate import CandidateIndexingInput
+from app.schemas.product.candidate import CandidateIndexingInput, ResumeFileRef
 from app.temporal.product.candidate_indexing.workflows.candidate_indexing_workflow import (
     CandidateIndexingWorkflow,
 )
@@ -105,8 +107,6 @@ async def index_candidate(
             detail="Uploaded file is empty.",
         )
 
-    raw_bytes_b64 = base64.b64encode(raw_bytes).decode("ascii")
-
     # 3. Resolve recruiter row from authenticated Supabase user (parameterized query).
     source_recruiter_id: str | None = None
     try:
@@ -123,13 +123,37 @@ async def index_candidate(
             extra={"user_id": current_user.id, "error": str(exc)},
         )
 
-    # 4. Fire CandidateIndexingWorkflow.
+    # 4. Upload resume bytes to Supabase Storage and pass object reference to workflow.
+    file_ext = (
+        mimetypes.guess_extension(mime_type) or
+        (f".{file.filename.rsplit('.', 1)[1].lower()}" if file.filename and "." in file.filename else ".bin")
+    )
+    owner_key = source_recruiter_id or current_user.id
+    object_path = f"resumes/{owner_key}/{uuid4()}{file_ext}"
+    file_sha256 = hashlib.sha256(raw_bytes).hexdigest()
+
+    storage = get_supabase_storage_client()
+    await storage.upload_bytes(
+        bucket=settings.supabase.storage_bucket,
+        path=object_path,
+        data=raw_bytes,
+        content_type=mime_type,
+    )
+
+    # 5. Fire CandidateIndexingWorkflow.
     workflow_id = f"candidate-indexing-{uuid4()}"
     client = await get_temporal_client()
 
     workflow_input = CandidateIndexingInput(
-        raw_bytes_b64=raw_bytes_b64,
-        mime_type=mime_type,
+        input_kind="resume_file",
+        resume_file=ResumeFileRef(
+            bucket=settings.supabase.storage_bucket,
+            path=object_path,
+            mime_type=mime_type,
+            original_filename=file.filename,
+            size_bytes=len(raw_bytes),
+            sha256=file_sha256,
+        ),
         source="recruiter_upload",
         source_recruiter_id=source_recruiter_id,
     )
@@ -148,13 +172,19 @@ async def index_candidate(
             "filename": file.filename,
             "mime_type": mime_type,
             "size_bytes": len(raw_bytes),
+            "storage_bucket": settings.supabase.storage_bucket,
+            "storage_path": object_path,
             "user_id": current_user.id,
             "recruiter_id": source_recruiter_id,
         },
     )
 
     return create_api_response(
-        data={"workflow_id": workflow_id, "filename": file.filename},
+        data={
+            "workflow_id": workflow_id,
+            "filename": file.filename,
+            "resume_object_path": object_path,
+        },
         message="Resume uploaded — indexing started",
         request=request,
     )
