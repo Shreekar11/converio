@@ -95,14 +95,20 @@ class CandidateIndexingWorkflow:
         """
         inp = CandidateIndexingInput.model_validate(input_data)
 
-        # Step 1: Parse resume (docling + LLM)
-        self._phase = "parsing_resume"
-        profile_data = await workflow.execute_activity(
-            parse_resume,
-            args=[inp.raw_bytes_b64, inp.mime_type],
-            start_to_close_timeout=timedelta(seconds=90),
-            retry_policy=_LLM_RETRY,
-        )
+        # Step 1: Obtain structured candidate profile.
+        # - resume_file: parse file bytes via docling + LLM.
+        # - profile: seed fast path, parsing is skipped.
+        if inp.input_kind == "resume_file":
+            self._phase = "parsing_resume"
+            profile_data = await workflow.execute_activity(
+                parse_resume,
+                args=[inp.resume_file.model_dump(mode="json")],
+                start_to_close_timeout=timedelta(seconds=90),
+                retry_policy=_LLM_RETRY,
+            )
+        else:
+            self._phase = "profile_provided"
+            profile_data = inp.profile.model_dump(mode="json")
 
         # Step 2: Fetch GitHub signals (external API, high-retry)
         self._phase = "fetching_github"

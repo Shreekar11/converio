@@ -29,7 +29,11 @@ async def resolve_entity_duplicates(profile_data: dict) -> dict:
 
     LOGGER.info(
         "Checking for duplicate candidate",
-        extra={"name": profile.full_name, "email": profile.email, "hash": dedup_hash[:12]},
+        extra={
+            "candidate_name": profile.full_name,
+            "email": profile.email,
+            "hash": dedup_hash[:12],
+        },
     )
 
     async with async_session_maker() as session:
@@ -62,7 +66,7 @@ async def resolve_entity_duplicates(profile_data: dict) -> dict:
                     match_source="github_username",
                 ).model_dump(mode="json")
 
-    LOGGER.info("No duplicate found", extra={"name": profile.full_name})
+    LOGGER.info("No duplicate found", extra={"candidate_name": profile.full_name})
     return ResolveDuplicatesResult(
         is_duplicate=False,
         existing_candidate_id=None,

@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class GitHubSignals(BaseModel):
@@ -65,12 +65,39 @@ class CandidateProfile(BaseModel):
     resume_text: str | None = None  # raw text for citation resolver (downstream agents)
 
 
+class ResumeFileRef(BaseModel):
+    """Reference to a resume file stored in object storage."""
+
+    bucket: str
+    path: str
+    mime_type: str
+    original_filename: str | None = None
+    size_bytes: int | None = None
+    sha256: str | None = None
+
+
 class CandidateIndexingInput(BaseModel):
     """Input to CandidateIndexingWorkflow."""
-    raw_bytes_b64: str          # base64-encoded file bytes
-    mime_type: str              # application/pdf | application/vnd.openxmlformats... | text/markdown
-    source: str                 # "seed" | "recruiter_upload" | "sourcing_agent"
+
+    input_kind: Literal["resume_file", "profile"] = "resume_file"
+    resume_file: ResumeFileRef | None = None
+    profile: CandidateProfile | None = None
+    source: str  # "seed" | "recruiter_upload" | "sourcing_agent"
     source_recruiter_id: str | None = None  # UUID string; null for seed/sourcing
+
+    @model_validator(mode="after")
+    def validate_input_kind(self) -> "CandidateIndexingInput":
+        if self.input_kind == "resume_file":
+            if self.resume_file is None:
+                raise ValueError("resume_file must be set when input_kind='resume_file'")
+            if self.profile is not None:
+                raise ValueError("profile must be null when input_kind='resume_file'")
+        if self.input_kind == "profile":
+            if self.profile is None:
+                raise ValueError("profile must be set when input_kind='profile'")
+            if self.resume_file is not None:
+                raise ValueError("resume_file must be null when input_kind='profile'")
+        return self
 
 
 class ResolveDuplicatesResult(BaseModel):
