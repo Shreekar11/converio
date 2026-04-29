@@ -1,0 +1,457 @@
+[
+  {
+    "full_name": "Priya Krishnan",
+    "email": "priya.krishnan@example.com",
+    "linkedin_url": "https://linkedin.com/in/priyakrishnan",
+    "bio": "Engineering recruiter focused on early-stage backend and platform teams. Ten years placing infra and distributed systems engineers at YC-backed startups.",
+    "domain_expertise": ["engineering"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_a",
+    "past_clients": [
+      {"client_company_name": "Linear", "description": "Backend platform team build-out", "role_focus": ["Backend Engineer", "Staff Engineer"]},
+      {"client_company_name": "Vercel", "description": "Edge runtime hires", "role_focus": ["Infra Engineer"]},
+      {"client_company_name": "Supabase", "description": "Database team scale-up", "role_focus": ["Database Engineer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Daniel Park", "company_name": "Linear", "company_stage": "series_b", "role_title": "Senior Backend Engineer", "placed_at": "2025-09-12", "description": "Closed in 21 days"},
+      {"candidate_name": "Maya Iyer", "company_name": "Vercel", "company_stage": "growth", "role_title": "Staff Infra Engineer", "placed_at": "2025-06-04", "description": null},
+      {"candidate_name": "Elena Ruiz", "company_name": "Supabase", "company_stage": "series_a", "role_title": "Backend Engineer", "placed_at": "2024-11-18", "description": null},
+      {"candidate_name": "Tom Becker", "company_name": "Render", "company_stage": "series_b", "role_title": "Platform Engineer", "placed_at": "2024-04-22", "description": null}
+    ]
+  },
+  {
+    "full_name": "Marcus Bell",
+    "email": "marcus.bell@example.com",
+    "linkedin_url": "https://linkedin.com/in/marcusbell",
+    "bio": "Sales and GTM recruiter for B2B SaaS. Specialize in founding AEs and first sales hires at Series A startups.",
+    "domain_expertise": ["gtm"],
+    "workspace_type": "exec_search",
+    "recruited_funding_stage": "series_a",
+    "past_clients": [
+      {"client_company_name": "Notion", "description": "First enterprise AE class", "role_focus": ["AE", "Sales Lead"]},
+      {"client_company_name": "Retool", "description": "Mid-market sales build-out", "role_focus": ["AE"]},
+      {"client_company_name": "Airbyte", "description": "Founding SDR team", "role_focus": ["SDR"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Rachel Wong", "company_name": "Notion", "company_stage": "growth", "role_title": "Enterprise AE", "placed_at": "2025-10-02", "description": null},
+      {"candidate_name": "James Olsen", "company_name": "Retool", "company_stage": "series_b", "role_title": "Account Executive", "placed_at": "2025-07-15", "description": null},
+      {"candidate_name": "Sara Mendez", "company_name": "Airbyte", "company_stage": "series_a", "role_title": "Founding AE", "placed_at": "2025-02-08", "description": "Pipeline-driver"},
+      {"candidate_name": "Devon Liu", "company_name": "Hex", "company_stage": "series_b", "role_title": "Sales Lead", "placed_at": "2024-09-30", "description": null}
+    ]
+  },
+  {
+    "full_name": "Sophie Laurent",
+    "email": "sophie.laurent@example.com",
+    "linkedin_url": "https://linkedin.com/in/sophielaurent",
+    "bio": "Product design recruiter — placed senior ICs and design leads at consumer-first startups.",
+    "domain_expertise": ["design"],
+    "workspace_type": "freelance",
+    "recruited_funding_stage": "seed",
+    "past_clients": [
+      {"client_company_name": "Arc Browser", "description": "Founding design team", "role_focus": ["Senior Product Designer"]},
+      {"client_company_name": "Cron", "description": "Design lead search", "role_focus": ["Design Lead"]},
+      {"client_company_name": "Raycast", "description": "Brand + product design", "role_focus": ["Product Designer", "Brand Designer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Hugo Tanaka", "company_name": "Arc Browser", "company_stage": "series_a", "role_title": "Senior Product Designer", "placed_at": "2025-08-21", "description": null},
+      {"candidate_name": "Ana Petrova", "company_name": "Cron", "company_stage": "seed", "role_title": "Design Lead", "placed_at": "2025-03-11", "description": null},
+      {"candidate_name": "Ben Kovacs", "company_name": "Raycast", "company_stage": "series_b", "role_title": "Product Designer", "placed_at": "2024-12-05", "description": null}
+    ]
+  },
+  {
+    "full_name": "Ravi Subramanian",
+    "email": "ravi.subramanian@example.com",
+    "linkedin_url": "https://linkedin.com/in/ravisubramanian",
+    "bio": "Operations and BizOps recruiter. Scale-stage finance, RevOps, and Chief of Staff placements.",
+    "domain_expertise": ["ops"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_b",
+    "past_clients": [
+      {"client_company_name": "Brex", "description": "RevOps team", "role_focus": ["RevOps", "BizOps"]},
+      {"client_company_name": "Ramp", "description": "Strategic finance", "role_focus": ["Strategic Finance"]},
+      {"client_company_name": "Mercury", "description": "Chief of Staff search", "role_focus": ["Chief of Staff"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Olivia Reyes", "company_name": "Brex", "company_stage": "growth", "role_title": "RevOps Lead", "placed_at": "2025-09-25", "description": null},
+      {"candidate_name": "Ivan Sokolov", "company_name": "Ramp", "company_stage": "growth", "role_title": "Strategic Finance Manager", "placed_at": "2025-05-19", "description": null},
+      {"candidate_name": "Helena Marsh", "company_name": "Mercury", "company_stage": "series_b", "role_title": "Chief of Staff", "placed_at": "2024-10-08", "description": null},
+      {"candidate_name": "Owen Nakamura", "company_name": "Brex", "company_stage": "growth", "role_title": "BizOps Manager", "placed_at": "2024-06-12", "description": null}
+    ]
+  },
+  {
+    "full_name": "Dana Whitaker",
+    "email": "dana.whitaker@example.com",
+    "linkedin_url": "https://linkedin.com/in/danawhitaker",
+    "bio": "Data and ML recruiter. Senior ICs across data engineering, analytics engineering, and applied ML.",
+    "domain_expertise": ["data"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_b",
+    "past_clients": [
+      {"client_company_name": "dbt Labs", "description": "Analytics engineering team", "role_focus": ["Analytics Engineer"]},
+      {"client_company_name": "Hex", "description": "Data platform hires", "role_focus": ["Data Engineer", "ML Engineer"]},
+      {"client_company_name": "Modal", "description": "Applied ML hires", "role_focus": ["ML Engineer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Felix Zhang", "company_name": "dbt Labs", "company_stage": "series_b", "role_title": "Analytics Engineer", "placed_at": "2025-10-18", "description": null},
+      {"candidate_name": "Amelia Ngata", "company_name": "Hex", "company_stage": "series_b", "role_title": "Senior Data Engineer", "placed_at": "2025-07-03", "description": null},
+      {"candidate_name": "Roy Patel", "company_name": "Modal", "company_stage": "series_a", "role_title": "Applied ML Engineer", "placed_at": "2025-01-29", "description": null}
+    ]
+  },
+  {
+    "full_name": "Hannah Goldberg",
+    "email": "hannah.goldberg@example.com",
+    "linkedin_url": "https://linkedin.com/in/hannahgoldberg",
+    "bio": "Engineering and platform recruiter. Frontend leadership and full-stack roles at growth-stage SaaS.",
+    "domain_expertise": ["engineering", "design"],
+    "workspace_type": "exec_search",
+    "recruited_funding_stage": "series_c",
+    "past_clients": [
+      {"client_company_name": "Figma", "description": "Frontend platform leadership", "role_focus": ["Staff Engineer", "Eng Manager"]},
+      {"client_company_name": "Webflow", "description": "Full-stack hires", "role_focus": ["Senior Full-Stack"]},
+      {"client_company_name": "Framer", "description": "Editor team", "role_focus": ["Frontend Engineer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Leah Friedman", "company_name": "Figma", "company_stage": "growth", "role_title": "Staff Engineer", "placed_at": "2025-10-09", "description": null},
+      {"candidate_name": "Kenji Mori", "company_name": "Webflow", "company_stage": "series_c", "role_title": "Senior Full-Stack Engineer", "placed_at": "2025-04-21", "description": null},
+      {"candidate_name": "Sasha Volkov", "company_name": "Framer", "company_stage": "series_b", "role_title": "Frontend Engineer", "placed_at": "2024-11-02", "description": null},
+      {"candidate_name": "Nina Costa", "company_name": "Figma", "company_stage": "growth", "role_title": "Engineering Manager", "placed_at": "2024-05-14", "description": null}
+    ]
+  },
+  {
+    "full_name": "Alejandro Reyes",
+    "email": "alejandro.reyes@example.com",
+    "linkedin_url": "https://linkedin.com/in/alejandroreyes",
+    "bio": "Founding GTM hires. Marketing, growth, and partnerships at pre-seed and seed stage.",
+    "domain_expertise": ["gtm"],
+    "workspace_type": "freelance",
+    "recruited_funding_stage": "seed",
+    "past_clients": [
+      {"client_company_name": "Resend", "description": "First marketing hire", "role_focus": ["Head of Marketing"]},
+      {"client_company_name": "Trigger.dev", "description": "Growth lead", "role_focus": ["Growth Marketer"]},
+      {"client_company_name": "Liveblocks", "description": "Founding partnerships", "role_focus": ["Partnerships Lead"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Riley Adams", "company_name": "Resend", "company_stage": "seed", "role_title": "Head of Marketing", "placed_at": "2025-09-30", "description": null},
+      {"candidate_name": "Mateo Silva", "company_name": "Trigger.dev", "company_stage": "seed", "role_title": "Growth Marketer", "placed_at": "2025-04-08", "description": null},
+      {"candidate_name": "Jenna Park", "company_name": "Liveblocks", "company_stage": "seed", "role_title": "Partnerships Lead", "placed_at": "2024-12-19", "description": null}
+    ]
+  },
+  {
+    "full_name": "Kenji Watanabe",
+    "email": "kenji.watanabe@example.com",
+    "linkedin_url": "https://linkedin.com/in/kenjiwatanabe",
+    "bio": "Infra and SRE recruiter. Senior ICs and team leads for distributed systems, kernel, and observability.",
+    "domain_expertise": ["engineering"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_c",
+    "past_clients": [
+      {"client_company_name": "Cloudflare", "description": "Edge infra team", "role_focus": ["Systems Engineer"]},
+      {"client_company_name": "Datadog", "description": "Observability platform", "role_focus": ["Senior Backend"]},
+      {"client_company_name": "Chronosphere", "description": "Metrics team", "role_focus": ["SRE", "Backend"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Greta Holm", "company_name": "Cloudflare", "company_stage": "growth", "role_title": "Senior Systems Engineer", "placed_at": "2025-08-17", "description": null},
+      {"candidate_name": "Adrian Kovacs", "company_name": "Datadog", "company_stage": "growth", "role_title": "Senior Backend", "placed_at": "2025-03-25", "description": null},
+      {"candidate_name": "Yuki Sato", "company_name": "Chronosphere", "company_stage": "series_c", "role_title": "Staff SRE", "placed_at": "2024-10-30", "description": null},
+      {"candidate_name": "Pavel Ivanov", "company_name": "Cloudflare", "company_stage": "growth", "role_title": "Backend Engineer", "placed_at": "2024-07-11", "description": null}
+    ]
+  },
+  {
+    "full_name": "Camila Duarte",
+    "email": "camila.duarte@example.com",
+    "linkedin_url": "https://linkedin.com/in/camiladuarte",
+    "bio": "Data science and analytics recruiter. Analytics leaders and senior ICs in growth and product analytics.",
+    "domain_expertise": ["data"],
+    "workspace_type": "freelance",
+    "recruited_funding_stage": "series_b",
+    "past_clients": [
+      {"client_company_name": "Amplitude", "description": "Analytics team", "role_focus": ["Senior Data Scientist"]},
+      {"client_company_name": "Mixpanel", "description": "ML hires", "role_focus": ["ML Engineer"]},
+      {"client_company_name": "Snowflake", "description": "Data engineering scale-up", "role_focus": ["Data Engineer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Mira Choudhury", "company_name": "Amplitude", "company_stage": "growth", "role_title": "Senior Data Scientist", "placed_at": "2025-09-05", "description": null},
+      {"candidate_name": "Henrik Bergstrom", "company_name": "Mixpanel", "company_stage": "growth", "role_title": "ML Engineer", "placed_at": "2025-04-30", "description": null},
+      {"candidate_name": "Fatima Hassan", "company_name": "Snowflake", "company_stage": "growth", "role_title": "Senior Data Engineer", "placed_at": "2024-09-18", "description": null}
+    ]
+  },
+  {
+    "full_name": "Theo Marchetti",
+    "email": "theo.marchetti@example.com",
+    "linkedin_url": "https://linkedin.com/in/theomarchetti",
+    "bio": "Product design and design ops recruiter. Generalist senior ICs and team leads for B2B SaaS.",
+    "domain_expertise": ["design", "ops"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_b",
+    "past_clients": [
+      {"client_company_name": "Loom", "description": "Product design team", "role_focus": ["Product Designer"]},
+      {"client_company_name": "Linear", "description": "Design lead search", "role_focus": ["Design Lead"]},
+      {"client_company_name": "Pitch", "description": "Brand designer", "role_focus": ["Brand Designer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Naomi Reyes", "company_name": "Loom", "company_stage": "growth", "role_title": "Senior Product Designer", "placed_at": "2025-10-22", "description": null},
+      {"candidate_name": "Quincy Adams", "company_name": "Linear", "company_stage": "series_b", "role_title": "Design Lead", "placed_at": "2025-06-01", "description": null},
+      {"candidate_name": "Lily Sato", "company_name": "Pitch", "company_stage": "series_b", "role_title": "Brand Designer", "placed_at": "2025-01-18", "description": null}
+    ]
+  },
+  {
+    "full_name": "Bianca Oliveira",
+    "email": "bianca.oliveira@example.com",
+    "linkedin_url": "https://linkedin.com/in/biancaoliveira",
+    "bio": "Engineering recruiter focused on Latin America. Remote-first hires for distributed startups.",
+    "domain_expertise": ["engineering"],
+    "workspace_type": "freelance",
+    "recruited_funding_stage": "series_a",
+    "past_clients": [
+      {"client_company_name": "Doppler", "description": "Remote backend hires", "role_focus": ["Backend Engineer"]},
+      {"client_company_name": "Plain", "description": "Founding engineer search", "role_focus": ["Founding Engineer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Sergio Romero", "company_name": "Doppler", "company_stage": "series_a", "role_title": "Backend Engineer", "placed_at": "2025-07-09", "description": null},
+      {"candidate_name": "Lucia Vargas", "company_name": "Plain", "company_stage": "seed", "role_title": "Founding Engineer", "placed_at": "2024-12-20", "description": null}
+    ]
+  },
+  {
+    "full_name": "Oren Katz",
+    "email": "oren.katz@example.com",
+    "linkedin_url": "https://linkedin.com/in/orenkatz",
+    "bio": "Sales recruiter — enterprise AEs, RVPs, and CROs at growth and late-stage SaaS.",
+    "domain_expertise": ["gtm"],
+    "workspace_type": "exec_search",
+    "recruited_funding_stage": "series_d_plus",
+    "past_clients": [
+      {"client_company_name": "Snowflake", "description": "Enterprise AE search", "role_focus": ["Enterprise AE"]},
+      {"client_company_name": "Databricks", "description": "RVP search", "role_focus": ["RVP"]},
+      {"client_company_name": "Confluent", "description": "CRO search", "role_focus": ["CRO"]},
+      {"client_company_name": "MongoDB", "description": "Sales leadership", "role_focus": ["Sales VP"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Beatrix Andersen", "company_name": "Snowflake", "company_stage": "growth", "role_title": "Enterprise AE", "placed_at": "2025-10-01", "description": null},
+      {"candidate_name": "Gabriel Tanaka", "company_name": "Databricks", "company_stage": "growth", "role_title": "RVP East", "placed_at": "2025-06-25", "description": null},
+      {"candidate_name": "Miriam Lowe", "company_name": "Confluent", "company_stage": "growth", "role_title": "CRO", "placed_at": "2025-02-12", "description": null},
+      {"candidate_name": "Calvin Ross", "company_name": "MongoDB", "company_stage": "growth", "role_title": "Sales VP", "placed_at": "2024-08-08", "description": null}
+    ]
+  },
+  {
+    "full_name": "Yusuf Demir",
+    "email": "yusuf.demir@example.com",
+    "linkedin_url": "https://linkedin.com/in/yusufdemir",
+    "bio": "Generalist startup recruiter, all functions, pre-seed to Series A.",
+    "domain_expertise": ["engineering", "gtm", "ops"],
+    "workspace_type": "freelance",
+    "recruited_funding_stage": "pre_seed",
+    "past_clients": [
+      {"client_company_name": "Fly.io", "description": "Founding engineering", "role_focus": ["Backend Engineer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Tara Solberg", "company_name": "Fly.io", "company_stage": "seed", "role_title": "Backend Engineer", "placed_at": "2025-05-22", "description": null}
+    ]
+  },
+  {
+    "full_name": "Rosalind Park",
+    "email": "rosalind.park@example.com",
+    "linkedin_url": "https://linkedin.com/in/rosalindpark",
+    "bio": "Engineering leadership recruiter. EMs, Directors, and VPs at Series B+ SaaS.",
+    "domain_expertise": ["engineering"],
+    "workspace_type": "exec_search",
+    "recruited_funding_stage": "series_b",
+    "past_clients": [
+      {"client_company_name": "PlanetScale", "description": "Engineering Director search", "role_focus": ["Director of Engineering"]},
+      {"client_company_name": "Convex", "description": "VP Eng search", "role_focus": ["VP Engineering"]},
+      {"client_company_name": "Neon", "description": "EM search", "role_focus": ["Engineering Manager"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Vihaan Mehra", "company_name": "PlanetScale", "company_stage": "series_b", "role_title": "Director of Engineering", "placed_at": "2025-08-29", "description": null},
+      {"candidate_name": "Esme Whitfield", "company_name": "Convex", "company_stage": "series_a", "role_title": "VP Engineering", "placed_at": "2025-04-04", "description": null},
+      {"candidate_name": "Niko Aaltonen", "company_name": "Neon", "company_stage": "series_b", "role_title": "Engineering Manager", "placed_at": "2024-11-25", "description": null},
+      {"candidate_name": "Saanvi Iyer", "company_name": "PlanetScale", "company_stage": "series_b", "role_title": "Senior EM", "placed_at": "2024-06-30", "description": null}
+    ]
+  },
+  {
+    "full_name": "Marcellus King",
+    "email": "marcellus.king@example.com",
+    "linkedin_url": "https://linkedin.com/in/marcellusking",
+    "bio": "Data engineering and data platform recruiter. Senior ICs in batch and streaming infra.",
+    "domain_expertise": ["data", "engineering"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_c",
+    "past_clients": [
+      {"client_company_name": "Materialize", "description": "Streaming engine team", "role_focus": ["Backend Engineer", "Data Engineer"]},
+      {"client_company_name": "Tinybird", "description": "Data platform hires", "role_focus": ["Data Engineer"]},
+      {"client_company_name": "ClickHouse", "description": "Analytics engine hires", "role_focus": ["Senior Backend"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Lev Dragunov", "company_name": "Materialize", "company_stage": "series_c", "role_title": "Senior Data Engineer", "placed_at": "2025-09-14", "description": null},
+      {"candidate_name": "Mei Tanaka", "company_name": "Tinybird", "company_stage": "series_a", "role_title": "Data Engineer", "placed_at": "2025-05-07", "description": null},
+      {"candidate_name": "Otto Lindqvist", "company_name": "ClickHouse", "company_stage": "series_b", "role_title": "Senior Backend Engineer", "placed_at": "2024-12-01", "description": null}
+    ]
+  },
+  {
+    "full_name": "Imani Johnson",
+    "email": "imani.johnson@example.com",
+    "linkedin_url": "https://linkedin.com/in/imanijohnson",
+    "bio": "People ops and HR recruiter. Talent leaders, people partners, and recruiting hires for scale-stage SaaS.",
+    "domain_expertise": ["ops"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_c",
+    "past_clients": [
+      {"client_company_name": "Stripe", "description": "Recruiting leader search", "role_focus": ["Head of Recruiting"]},
+      {"client_company_name": "Plaid", "description": "People partner search", "role_focus": ["People Partner"]},
+      {"client_company_name": "Brex", "description": "Talent hires", "role_focus": ["Recruiter"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Naveen Kapoor", "company_name": "Stripe", "company_stage": "growth", "role_title": "Head of Recruiting", "placed_at": "2025-10-15", "description": null},
+      {"candidate_name": "Cherie Doyle", "company_name": "Plaid", "company_stage": "growth", "role_title": "People Partner", "placed_at": "2025-06-09", "description": null},
+      {"candidate_name": "Ade Bankole", "company_name": "Brex", "company_stage": "growth", "role_title": "Senior Recruiter", "placed_at": "2024-12-12", "description": null}
+    ]
+  },
+  {
+    "full_name": "Quentin Larue",
+    "email": "quentin.larue@example.com",
+    "linkedin_url": "https://linkedin.com/in/quentinlarue",
+    "bio": "Founding designer recruiter — pre-seed and seed product designers, generalist with brand range.",
+    "domain_expertise": ["design"],
+    "workspace_type": "freelance",
+    "recruited_funding_stage": "pre_seed",
+    "past_clients": [
+      {"client_company_name": "Beam", "description": "Founding designer", "role_focus": ["Founding Designer"]},
+      {"client_company_name": "Quill", "description": "Brand and product", "role_focus": ["Senior Designer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Inara Husain", "company_name": "Beam", "company_stage": "seed", "role_title": "Founding Designer", "placed_at": "2025-08-03", "description": null},
+      {"candidate_name": "Per Anderssen", "company_name": "Quill", "company_stage": "seed", "role_title": "Senior Designer", "placed_at": "2024-10-25", "description": null}
+    ]
+  },
+  {
+    "full_name": "Alina Karpov",
+    "email": "alina.karpov@example.com",
+    "linkedin_url": "https://linkedin.com/in/alinakarpov",
+    "bio": "ML and applied research recruiter. Research engineers and applied scientists at AI startups.",
+    "domain_expertise": ["data", "engineering"],
+    "workspace_type": "corporate",
+    "recruited_funding_stage": "series_b",
+    "past_clients": [
+      {"client_company_name": "Anthropic", "description": "Research engineering", "role_focus": ["Research Engineer"]},
+      {"client_company_name": "Mistral", "description": "Applied scientist hires", "role_focus": ["Applied Scientist"]},
+      {"client_company_name": "Cohere", "description": "Research scientist", "role_focus": ["Research Scientist"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Bohdan Lysenko", "company_name": "Anthropic", "company_stage": "growth", "role_title": "Research Engineer", "placed_at": "2025-09-22", "description": null},
+      {"candidate_name": "Thalia Markou", "company_name": "Mistral", "company_stage": "series_b", "role_title": "Applied Scientist", "placed_at": "2025-05-13", "description": null},
+      {"candidate_name": "Jasper Olin", "company_name": "Cohere", "company_stage": "growth", "role_title": "Research Scientist", "placed_at": "2024-11-09", "description": null}
+    ]
+  },
+  {
+    "full_name": "Cyrus Banerjee",
+    "email": "cyrus.banerjee@example.com",
+    "linkedin_url": "https://linkedin.com/in/cyrusbanerjee",
+    "bio": "Generalist seed recruiter — small batches of high-trust hires for first-time founders.",
+    "domain_expertise": ["engineering", "design"],
+    "workspace_type": "freelance",
+    "recruited_funding_stage": "seed",
+    "past_clients": [
+      {"client_company_name": "Cursor", "description": "Founding engineering", "role_focus": ["Founding Engineer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Maeve OConnor", "company_name": "Cursor", "company_stage": "seed", "role_title": "Founding Engineer", "placed_at": "2024-08-19", "description": null}
+    ]
+  },
+  {
+    "full_name": "Talia Rosen",
+    "email": "talia.rosen@example.com",
+    "linkedin_url": "https://linkedin.com/in/taliarosen",
+    "bio": "GTM and BizDev recruiter. Series A through C, channel sales and partnerships specialty.",
+    "domain_expertise": ["gtm"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_b",
+    "past_clients": [
+      {"client_company_name": "Segment", "description": "Channel sales", "role_focus": ["Channel Sales"]},
+      {"client_company_name": "Heap", "description": "Partnerships search", "role_focus": ["Partnerships Lead"]},
+      {"client_company_name": "Iterable", "description": "BizDev hires", "role_focus": ["BizDev"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Ronan Fitzgerald", "company_name": "Segment", "company_stage": "growth", "role_title": "Channel Sales Lead", "placed_at": "2025-07-29", "description": null},
+      {"candidate_name": "Penelope Alves", "company_name": "Heap", "company_stage": "series_c", "role_title": "Partnerships Lead", "placed_at": "2025-03-17", "description": null},
+      {"candidate_name": "Dmitri Kraus", "company_name": "Iterable", "company_stage": "series_c", "role_title": "BizDev Manager", "placed_at": "2024-10-21", "description": null}
+    ]
+  },
+  {
+    "full_name": "Esha Pillai",
+    "email": "esha.pillai@example.com",
+    "linkedin_url": "https://linkedin.com/in/eshapillai",
+    "bio": "Mid-market sales recruiter. Account executives, sales engineers, and CSMs.",
+    "domain_expertise": ["gtm", "ops"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_a",
+    "past_clients": [
+      {"client_company_name": "Pylon", "description": "Customer support roles", "role_focus": ["CSM"]},
+      {"client_company_name": "Default", "description": "Sales engineer search", "role_focus": ["SE"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Vidya Rao", "company_name": "Pylon", "company_stage": "seed", "role_title": "CSM Lead", "placed_at": "2025-06-14", "description": null}
+    ]
+  },
+  {
+    "full_name": "Jonas Lindberg",
+    "email": "jonas.lindberg@example.com",
+    "linkedin_url": "https://linkedin.com/in/jonaslindberg",
+    "bio": "Platform engineering recruiter — Kubernetes, infra, and SRE specialists.",
+    "domain_expertise": ["engineering"],
+    "workspace_type": "startup",
+    "recruited_funding_stage": "series_a",
+    "past_clients": [
+      {"client_company_name": "Northflank", "description": "Platform infra", "role_focus": ["Platform Engineer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Aitor Vega", "company_name": "Northflank", "company_stage": "seed", "role_title": "Platform Engineer", "placed_at": "2025-02-26", "description": null}
+    ]
+  },
+  {
+    "full_name": "Layla Mansour",
+    "email": "layla.mansour@example.com",
+    "linkedin_url": "https://linkedin.com/in/laylamansour",
+    "bio": "Senior product designer recruiter — fintech and consumer roles, Series B and beyond.",
+    "domain_expertise": ["design"],
+    "workspace_type": "exec_search",
+    "recruited_funding_stage": "series_b",
+    "past_clients": [
+      {"client_company_name": "Wise", "description": "Product design lead", "role_focus": ["Design Lead"]},
+      {"client_company_name": "Revolut", "description": "Senior product designer", "role_focus": ["Senior Product Designer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Cosmo Petrov", "company_name": "Wise", "company_stage": "growth", "role_title": "Design Lead", "placed_at": "2025-04-12", "description": null}
+    ]
+  },
+  {
+    "full_name": "Xavier Mubanga",
+    "email": "xavier.mubanga@example.com",
+    "linkedin_url": "https://linkedin.com/in/xaviermubanga",
+    "bio": "Operations recruiter — supply chain, logistics, and ops leaders for marketplace startups.",
+    "domain_expertise": ["ops"],
+    "workspace_type": "agency",
+    "recruited_funding_stage": "series_b",
+    "past_clients": [
+      {"client_company_name": "Faire", "description": "Ops leadership", "role_focus": ["Head of Ops"]},
+      {"client_company_name": "Whatnot", "description": "Logistics hires", "role_focus": ["Logistics Manager"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Idris Bello", "company_name": "Faire", "company_stage": "growth", "role_title": "Head of Ops", "placed_at": "2025-05-28", "description": null},
+      {"candidate_name": "Sienna Park", "company_name": "Whatnot", "company_stage": "series_c", "role_title": "Logistics Manager", "placed_at": "2024-09-09", "description": null}
+    ]
+  },
+  {
+    "full_name": "Wren Caldwell",
+    "email": "wren.caldwell@example.com",
+    "linkedin_url": "https://linkedin.com/in/wrencaldwell",
+    "bio": "Data team recruiter — analytics engineers and analysts for product and growth teams.",
+    "domain_expertise": ["data"],
+    "workspace_type": "freelance",
+    "recruited_funding_stage": "seed",
+    "past_clients": [
+      {"client_company_name": "Census", "description": "Analytics engineer search", "role_focus": ["Analytics Engineer"]}
+    ],
+    "past_placements": [
+      {"candidate_name": "Sven Hoffman", "company_name": "Census", "company_stage": "seed", "role_title": "Analytics Engineer", "placed_at": "2024-07-30", "description": null}
+    ]
+  }
+]
