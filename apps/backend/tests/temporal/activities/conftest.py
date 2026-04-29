@@ -12,7 +12,12 @@ from sqlalchemy import delete
 
 from app.core.database import async_session_maker
 from app.core.neo4j_client import Neo4jClientManager
-from app.database.models import Candidate
+from app.database.models import (
+    Candidate,
+    Recruiter,
+    RecruiterClient,
+    RecruiterPlacement,
+)
 
 
 @pytest_asyncio.fixture
@@ -25,6 +30,25 @@ async def truncate_candidates(db_engine):  # noqa: ARG001 — depend on schema s
     async with async_session_maker() as sess:
         await sess.execute(delete(Candidate))
         await sess.commit()
+
+
+@pytest_asyncio.fixture
+async def truncate_recruiters(db_engine):  # noqa: ARG001 — depend on schema setup
+    """Delete all rows from recruiter tables (placements + clients + recruiters) before each test.
+
+    Order matters because of FKs: placements / clients reference recruiters.
+    """
+
+    async def _wipe() -> None:
+        async with async_session_maker() as sess:
+            await sess.execute(delete(RecruiterPlacement))
+            await sess.execute(delete(RecruiterClient))
+            await sess.execute(delete(Recruiter))
+            await sess.commit()
+
+    await _wipe()
+    yield
+    await _wipe()
 
 
 @pytest_asyncio.fixture
