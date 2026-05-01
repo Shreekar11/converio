@@ -1,0 +1,152 @@
+---
+alwaysApply: true
+---
+# Commit Message Guidelines
+
+Defines commit message standards for this repository. All commits MUST follow these rules.
+
+## Format
+
+```
+<type>: <message>
+```
+
+- `<type>`: Conventional Commits type (see below)
+- `<message>`: short imperative description of the change
+
+Example:
+```
+feat: add candidate indexing workflow
+fix: handle empty embedding response from LLM
+chore: bump neo4j version in docker compose
+```
+
+## Allowed Types
+
+| Type       | When to use                                                      |
+|------------|------------------------------------------------------------------|
+| `feat`     | New feature or capability                                        |
+| `fix`      | Bug fix                                                          |
+| `chore`    | Tooling, deps, config, non-functional housekeeping               |
+| `docs`     | Documentation only                                               |
+| `refactor` | Code change that neither fixes a bug nor adds a feature          |
+| `perf`     | Performance improvement                                          |
+| `test`     | Adding or updating tests                                         |
+| `build`    | Build system, package manager, Dockerfile changes                |
+| `ci`       | CI/CD pipeline changes                                           |
+| `style`    | Formatting, whitespace, lint fixes (no code logic change)        |
+| `revert`   | Reverts a previous commit                                        |
+
+## Casing Rules
+
+1. **Lowercase by default.** Type and message body MUST start in lowercase.
+   - Yes: `feat: add new endpoint`
+   - No:  `Feat: Add New Endpoint`
+
+2. **Preserve uppercase only for proper nouns / acronyms.** Examples that stay uppercase:
+   - `LLM`, `API`, `SDK`, `URL`, `JSON`, `YAML`, `HTTP`, `SQL`, `JWT`, `OAuth`, `OIDC`
+   - product/library names: `Neo4j`, `FastAPI`, `Temporal`, `OpenAPI`, `pgvector`, `Next.js`
+
+   Example:
+   ```
+   feat: add LLM-based candidate scorer
+   chore: update Neo4j version in docker compose
+   docs: add OpenAPI specs for recruiter indexing
+   ```
+
+## Banned Patterns
+
+These add no third-person context and MUST NOT appear in commit messages:
+
+- Phase / milestone tags: `Phase 1`, `Phase X`, `Step 2`, `Milestone A`
+  - No:  `feat: Phase 2 - add recruiter indexing`
+  - Yes: `feat: add recruiter indexing workflow`
+- Personal pronouns: `I`, `my`, `we`, `our`
+- Vague filler: `stuff`, `things`, `misc`, `wip`, `update code`, `fix bug`, `final fix`
+- Ticket-only messages with no description: `fix: JIRA-1234`
+  - Reference tickets in the body or footer instead.
+- Trailing punctuation on the subject line (no period at the end).
+- Emojis in the subject line.
+
+## Subject Line Rules
+
+1. **Imperative mood.** Write as a command: `add`, `fix`, `remove`, `rename`, `switch`. Not `added`, `adding`, `adds`.
+2. **Length.** Keep under 72 characters. Aim for ~50.
+3. **No file paths or function names** unless essential for disambiguation.
+4. **Describe the *what* and *why*, not the *how*.** Diff already shows how.
+
+## Body (Optional)
+
+Use a body when the *why* is non-obvious or the change has wider impact.
+
+- Separate body from subject with a blank line.
+- Wrap at ~72 characters.
+- Explain motivation, trade-offs, side effects, or links to issues.
+
+```
+fix: handle empty embedding response from LLM
+
+Provider intermittently returns empty vectors on rate-limit. Retry
+with backoff and fall back to cached embedding when retry budget
+is exhausted to prevent workflow failure.
+
+Refs: ENG-482
+```
+
+## Footer (Optional)
+
+Use trailers for metadata:
+
+- `Refs: <ticket>` — related ticket
+- `Closes: <ticket>` — auto-close ticket
+- `BREAKING CHANGE: <description>` — breaking API/contract change
+- `Co-Authored-By: <name> <email>`
+
+## Breaking Changes
+
+Mark breaking changes either with `!` after type or with a `BREAKING CHANGE:` footer:
+
+```
+feat!: switch recruiter indexing endpoint to execute_workflow
+
+BREAKING CHANGE: callers of /index/recruiter must now poll the
+returned workflow_id instead of waiting on the response body.
+```
+
+## Atomic Commits
+
+- One logical change per commit. Don't bundle unrelated edits.
+- If you find yourself writing `and` in the subject, split the commit.
+  - No:  `feat: add scorer and fix typo in readme`
+  - Yes: two commits — `feat: add scorer` + `docs: fix typo in readme`
+
+## Examples — Good
+
+```
+feat: add LLM-based resume scorer
+fix: prevent duplicate vector inserts in pgvector
+chore: pin neo4j to 5.18 in docker compose
+docs: add OpenAPI spec for candidate indexing
+refactor: extract embedding client into shared module
+perf: batch Neo4j writes in indexing workflow
+test: cover edge cases in tenant isolation filter
+ci: pin actions/checkout to full SHA
+revert: revert "feat: add experimental scorer"
+```
+
+## Examples — Bad → Good
+
+| Bad | Good |
+|-----|------|
+| `Feat: Phase 2 - Add Recruiter Indexing` | `feat: add recruiter indexing workflow` |
+| `update stuff` | `chore: bump dependency versions` |
+| `fixed bug.` | `fix: handle null candidate id in matcher` |
+| `feat: implemented a solution for embedding cache` | `feat: add embedding cache` |
+| `WIP` | (don't commit WIP to main; use a draft branch) |
+
+## Enforcement
+
+- Subject MUST match `^(feat|fix|chore|docs|refactor|perf|test|build|ci|style|revert)(!)?: [a-z0-9]`.
+- Subject MUST be ≤ 72 characters.
+- Subject MUST NOT end with a period.
+- Body lines SHOULD be ≤ 72 characters.
