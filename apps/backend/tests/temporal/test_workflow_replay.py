@@ -35,6 +35,9 @@ from temporalio.worker import Replayer
 from app.temporal.product.candidate_indexing.workflows.candidate_indexing_workflow import (
     CandidateIndexingWorkflow,
 )
+from app.temporal.product.job_intake.workflows.job_intake_workflow import (
+    JobIntakeWorkflow,
+)
 from app.temporal.product.recruiter_indexing.workflows.recruiter_indexing_workflow import (
     RecruiterIndexingWorkflow,
 )
@@ -43,6 +46,7 @@ from app.temporal.product.recruiter_indexing.workflows.recruiter_indexing_workfl
 _FIXTURES_DIR = Path(__file__).parent.parent / "fixtures"
 _CANDIDATE_HISTORY_FIXTURE = _FIXTURES_DIR / "workflow_history_indexed.json"
 _RECRUITER_HISTORY_FIXTURE = _FIXTURES_DIR / "workflow_history_recruiter_indexed.json"
+_JOB_INTAKE_HISTORY_FIXTURE = _FIXTURES_DIR / "workflow_history_job_intake.json"
 
 
 async def test_workflow_replay_determinism() -> None:
@@ -73,4 +77,27 @@ async def test_recruiter_indexing_workflow_replay_determinism() -> None:
     history_json = _RECRUITER_HISTORY_FIXTURE.read_text()
 
     replayer = Replayer(workflows=[RecruiterIndexingWorkflow])
+    await replayer.replay_workflow(history_json)
+
+
+async def test_job_intake_workflow_replay_determinism() -> None:
+    """Replay a recorded JobIntakeWorkflow history — no NondeterminismError.
+
+    Capture once via:
+        temporal workflow show --workflow-id test-job-intake-happy \\
+            --output json > tests/fixtures/workflow_history_job_intake.json
+
+    Until the fixture is committed, this test is skipped (matches the
+    candidate / recruiter pattern above).
+    """
+    if not _JOB_INTAKE_HISTORY_FIXTURE.exists():
+        pytest.skip(
+            f"job intake workflow history fixture not present at "
+            f"{_JOB_INTAKE_HISTORY_FIXTURE} — run the happy-path workflow once and "
+            "export its history (see module docstring)."
+        )
+
+    history_json = _JOB_INTAKE_HISTORY_FIXTURE.read_text()
+
+    replayer = Replayer(workflows=[JobIntakeWorkflow])
     await replayer.replay_workflow(history_json)
