@@ -53,13 +53,14 @@ Three independent surfaces fire `RecruiterIndexingWorkflow`. All produce a `Recr
 | Auth | `get_current_user` (Supabase JWT) — same dependency as candidate endpoint |
 | Path param | `recruiter_id: UUID` (must already exist in PG) |
 | Request body | none (wizard data already in PG; endpoint loads it) |
-| Response | `202 Accepted` with `{workflow_id, recruiter_id, source}` |
-| Error modes | `404` recruiter not found; `409` recruiter has no clients/placements yet (defensive); `5xx` Temporal client unreachable |
+| Response | `200 OK` with the full `RecruiterIndexingResult` (`{workflow_id, recruiter_id, status, credibility_score, source}`) |
+| Error modes | `404` recruiter not found; `504` workflow exceeded 30s execution timeout (frontend should fall back to a status poll using `workflow_id`); `5xx` other workflow / Temporal failures |
 | Source tag | `source="onboarding"` |
-| Workflow ID | `recruiter-indexing-{recruiter_id}` — see `apps/backend/app/api/v1/endpoints/recruiters.py:153` |
-| Reuse policy | `WorkflowIDReusePolicy.ALLOW_DUPLICATE` (`apps/backend/app/api/v1/endpoints/recruiters.py:171`) |
+| Workflow ID | `recruiter-indexing-{recruiter_id}` |
+| Reuse policy | `WorkflowIDReusePolicy.ALLOW_DUPLICATE` |
+| Invocation | `client.execute_workflow(...)` (blocking) with `execution_timeout=timedelta(seconds=30)` |
 
-The endpoint reads the canonical `Recruiter` + linked `RecruiterClient` + `RecruiterPlacement` rows out of PG, assembles a `RecruiterProfile`, and fires the workflow. The wizard-write step is intentionally **synchronous** at the HTTP layer (Decision 4) so the workflow only handles enrichment.
+The endpoint reads the canonical `Recruiter` + linked `RecruiterClient` + `RecruiterPlacement` rows out of PG, assembles a `RecruiterProfile`, and **executes** (not just starts) the workflow. Indexing is enrichment-only — no LLM, no external API, total runtime 1-3s — so the wizard gets the full result inline and can redirect to the dashboard with the resulting `status` (active vs pending) without needing SSE/polling. Temporal still owns retry semantics, event history, and the dedicated worker process that hosts the sentence-transformers model. The wizard-write step is intentionally **synchronous** at the HTTP layer (Decision 4) so the workflow only handles enrichment.
 
 `ALLOW_DUPLICATE` is required because the same `recruiter_id` will need to be re-indexed every time the recruiter mutates their portfolio — most commonly via the planned `Add Client` / `Add Placement` modals (still out of scope for this PR, see §9). Without `ALLOW_DUPLICATE`, the second invocation would error out as a workflow-already-exists conflict.
 
@@ -312,7 +313,8 @@ docker exec -it converio-postgres-1 psql -U converio -d converio -c \
 ```bash
 curl -X POST http://localhost:8000/api/v1/recruiters/{recruiter_id}/index \
   -H "Authorization: Bearer $JWT"
-# → 202 Accepted with workflow_id; poll Temporal UI or `temporal workflow query` for phase
+# → 200 OK with {workflow_id, recruiter_id, status, credibility_score, source}.
+#   On timeout (rare): 504 with workflow_id — fall back to a Temporal status poll.
 ```
 
 ### Idempotency check

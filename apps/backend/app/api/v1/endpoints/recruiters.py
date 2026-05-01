@@ -1,9 +1,9 @@
 """Recruiter-facing API endpoints (operator + recruiter portal).
 
-POST /api/v1/recruiters/{recruiter_id}/index — fires RecruiterIndexingWorkflow
-on the Temporal `converio-queue`. Loads the recruiter row + linked clients +
-linked placements from PG, builds a `RecruiterProfile`, and starts the
-workflow with `source="onboarding"`.
+POST /api/v1/recruiters/{recruiter_id}/index — runs RecruiterIndexingWorkflow
+on the Temporal `converio-queue` and returns the result inline. Loads the
+recruiter row + linked clients + linked placements from PG, builds a
+`RecruiterProfile`, and executes the workflow with `source="onboarding"`.
 
 This endpoint does NOT perform any indexing logic itself — it only loads
 data and dispatches the workflow. Re-indexing after `Add Client` / `Add
@@ -11,11 +11,13 @@ Placement` mutations is supported via `ALLOW_DUPLICATE` reuse policy.
 """
 from __future__ import annotations
 
+from datetime import timedelta
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from temporalio.client import WorkflowFailureError
 from temporalio.common import WorkflowIDReusePolicy
 
 from app.core.auth import CurrentUser, get_current_user
@@ -33,6 +35,7 @@ from app.schemas.enums import (
 from app.schemas.product.recruiter import (
     RecruiterClientItem,
     RecruiterIndexingInput,
+    RecruiterIndexingResult,
     RecruiterPlacementItem,
     RecruiterProfile,
 )
@@ -84,9 +87,15 @@ def _safe_enum(enum_cls, value):
 @router.post(
     "/{recruiter_id}/index",
     response_model=ApiResponse,
-    status_code=status.HTTP_202_ACCEPTED,
-    summary="Trigger recruiter indexing workflow",
+    status_code=status.HTTP_200_OK,
+    summary="Run recruiter indexing workflow and return result",
     operation_id="index_recruiter",
+    responses={
+        status.HTTP_504_GATEWAY_TIMEOUT: {
+            "description": "Workflow exceeded the 30s execution timeout; "
+            "frontend should fall back to a status poll using workflow_id.",
+        },
+    },
 )
 async def index_recruiter(
     request: Request,
@@ -94,12 +103,14 @@ async def index_recruiter(
     current_user: Annotated[CurrentUser, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ) -> ApiResponse:
-    """Build RecruiterProfile from PG and fire RecruiterIndexingWorkflow.
+    """Build RecruiterProfile from PG and execute RecruiterIndexingWorkflow.
 
-    Returns 202 Accepted with the `workflow_id` so the client can poll status
-    via the Temporal `get_status` query handler.
+    Returns 200 OK with the full `RecruiterIndexingResult` so the wizard can
+    redirect to the dashboard with the resulting status (active vs pending)
+    immediately. On the rare 30s timeout, returns 504 with `workflow_id` so
+    the frontend can fall back to a Temporal status poll.
 
-    Auth: any authenticated user (mirrors candidates.py for now). Tenant /
+    Auth: any authenticated user. Tenant /
     role-based authorization will tighten when the recruiter portal lands.
     """
     # 1. Load recruiter row (404 on miss).
@@ -149,7 +160,19 @@ async def index_recruiter(
         ],
     )
 
-    # 4. Fire RecruiterIndexingWorkflow.
+    # 4. Execute RecruiterIndexingWorkflow inline.
+    #
+    # Why blocking (`execute_workflow`) instead of fire-and-forget (`start_workflow`):
+    #   - Recruiter indexing is enrichment-only: no LLM, no external API; total
+    #     runtime 1-3s. Synchronous response keeps the wizard UX simple — frontend
+    #     redirects to the dashboard with the resulting status (active vs pending)
+    #     without needing SSE/polling for a single short-lived operation.
+    #   - Temporal is still load-bearing underneath: `_DB_RETRY` semantics on
+    #     Neo4j, event history / replay observability, and a dedicated worker
+    #     that owns the 80MB sentence-transformers model (kept out of every API
+    #     worker process).
+    #   - `ALLOW_DUPLICATE` keeps re-indexing after `Add Client` / `Add Placement`
+    #     mutations idempotent.
     workflow_id = f"recruiter-indexing-{recruiter_id}"
     inp = RecruiterIndexingInput(
         input_kind="profile",
@@ -159,23 +182,48 @@ async def index_recruiter(
 
     try:
         client = await get_temporal_client()
-        await client.start_workflow(
+        raw_result = await client.execute_workflow(
             "RecruiterIndexingWorkflow",
             inp.model_dump(mode="json"),
             id=workflow_id,
             task_queue=_TASK_QUEUE,
-            # ALLOW_DUPLICATE so re-indexing after `Add Client` / `Add Placement`
-            # mutations works without operator intervention. candidates.py uses
-            # a fresh uuid per upload so it does not need to override; recruiter
-            # ids are stable per recruiter, so duplicate reuse is required.
             id_reuse_policy=WorkflowIDReusePolicy.ALLOW_DUPLICATE,
+            execution_timeout=timedelta(seconds=30),
         )
     except HTTPException:
         raise
-    except Exception as exc:
-        # Do not surface internals (host, namespace, stack) to the client.
+    except WorkflowFailureError as exc:
+        # Workflow ran but failed (timeout, activity error, terminate, etc.).
+        # Distinguish timeout (expected occasionally — 504 + fallback) from
+        # other failures (500 generic).
+        cause_name = type(exc.cause).__name__ if exc.cause is not None else ""
+        is_timeout = "Timeout" in cause_name
         LOGGER.exception(
-            "Failed to start RecruiterIndexingWorkflow",
+            "RecruiterIndexingWorkflow failed",
+            extra={
+                "workflow_id": workflow_id,
+                "recruiter_id": str(recruiter_id),
+                "user_id": current_user.id,
+                "cause": cause_name,
+                "is_timeout": is_timeout,
+            },
+        )
+        if is_timeout:
+            raise HTTPException(
+                status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+                detail={
+                    "workflow_id": workflow_id,
+                    "message": "Indexing exceeded 30s timeout; "
+                    "check status via Temporal UI",
+                },
+            ) from exc
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Recruiter indexing workflow failed",
+        ) from exc
+    except Exception as exc:
+        LOGGER.exception(
+            "Failed to execute RecruiterIndexingWorkflow",
             extra={
                 "workflow_id": workflow_id,
                 "recruiter_id": str(recruiter_id),
@@ -185,24 +233,32 @@ async def index_recruiter(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to start recruiter indexing workflow",
+            detail="Failed to execute recruiter indexing workflow",
         ) from exc
 
+    # Validate the workflow's return shape against the schema contract.
+    result = RecruiterIndexingResult.model_validate(raw_result)
+
     LOGGER.info(
-        "Recruiter indexing workflow started",
+        "Recruiter indexing workflow completed",
         extra={
             "workflow_id": workflow_id,
             "recruiter_id": str(recruiter_id),
             "user_id": current_user.id,
             "source": "onboarding",
+            "status": result.status,
+            "credibility_score": result.credibility_score,
         },
     )
 
     return create_api_response(
         data={
             "workflow_id": workflow_id,
-            "recruiter_id": str(recruiter_id),
+            "recruiter_id": result.recruiter_id,
+            "status": result.status,
+            "credibility_score": result.credibility_score,
+            "source": result.source,
         },
-        message="Recruiter indexing started",
+        message="Recruiter indexing completed",
         request=request,
     )
