@@ -11,6 +11,7 @@ class OperatorRepository(BaseRepository[Operator]):
         super().__init__(session, Operator)
 
     async def get_by_supabase_id(self, supabase_user_id: str) -> Operator | None:
+        """Fetch operator by Supabase auth user id."""
         result = await self.session.execute(
             select(Operator).where(Operator.supabase_user_id == supabase_user_id)
         )
