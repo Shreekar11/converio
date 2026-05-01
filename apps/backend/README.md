@@ -134,3 +134,65 @@ CandidateIndexingWorkflow (Temporal)
     ↓
 Candidate row in PostgreSQL + subgraph in Neo4j
 ```
+
+---
+
+## Agent 1 — Job Intake Workflow
+
+Root Temporal workflow for every role Converio takes on. Companies submit a managed intake; the workflow classifies the role and generates a weighted evaluation rubric. The pipeline exits with `jobs.status="recruiter_assignment"`, ready for Agent 0 to pick up in a follow-up PR.
+
+### End-to-end smoke
+
+Prereqs: same Docker stack as Agent 2 (PostgreSQL + Neo4j + Temporal) plus the worker running.
+
+```bash
+# 1. Seed operators + companies (idempotent re-runs)
+uv run python scripts/seed_operators.py
+uv run python scripts/seed_companies.py
+
+# 2. As an operator, create a company + provision a hiring-manager seat
+curl -X POST http://localhost:8000/api/v1/companies \
+  -H "Authorization: Bearer $OPERATOR_JWT" \
+  -d '{"name":"Lattice Labs","stage":"series_a"}'
+# → 201 with {id, name, ...}
+
+curl -X POST http://localhost:8000/api/v1/companies/$COMPANY_ID/users \
+  -H "Authorization: Bearer $OPERATOR_JWT" \
+  -d '{"email":"hm@lattice.example.com","role":"hiring_manager"}'
+# → 201
+
+# 3. Submit an intake (operator on behalf of, or hiring manager once signed in)
+curl -X POST http://localhost:8000/api/v1/jobs/intake \
+  -H "Authorization: Bearer $JWT" \
+  -d '{"company_id":"'"$COMPANY_ID"'","title":"Founding Engineer",
+       "jd_text":"...full JD...","intake_notes":"small team, generalist preferred"}'
+# → 202 with {job_id, workflow_id, status: "intake"}
+
+# 4. Watch the workflow in Temporal Web UI (http://localhost:8080)
+#    JobIntakeWorkflow → status: completed
+#    jobs.status flips intake → recruiter_assignment
+```
+
+### Architecture
+
+```
+POST /api/v1/jobs/intake (managed intake payload)
+    ↓
+INSERT jobs row (status=intake, workflow_id=job-intake-<uuid>)
+    ↓
+JobIntakeWorkflow (Temporal, REJECT_DUPLICATE)
+    classify_role_type (LLM structured output → RoleClassification)
+    generate_evaluation_rubric (LLM raw JSON → 4-8 weighted dimensions, normalized)
+    persist_job_record (UPDATE jobs + INSERT rubric v1 + UPSERT workflow_runs)
+    [TODO Agent 0: execute_child_workflow RecruiterAssignmentWorkflow]
+    ↓
+jobs.status = recruiter_assignment + rubrics row v1 in PostgreSQL
+```
+
+### Operational notes
+
+- **Auth on `/jobs/intake`**: dual path — Supabase JWT resolves to either an `operators` row (operator-on-behalf-of) or a `company_users` row (hiring-manager self-service). Company users can only intake roles for their own `company_id`.
+- **Rate limit**: 10 intakes per hour per `company_id`, in-process sliding window. Single-process only — multi-worker / multi-pod deployments compound this ceiling and reset on restart. Swap for Redis-backed limiter before production scale.
+- **Workflow ID convention**: `job-intake-<job_id>`. `WorkflowIDReusePolicy.REJECT_DUPLICATE` — re-intake is treated as a bug; rubric reeval flows through HITL #2 (separate PR).
+- **Logging**: `jd_text` and `intake_notes` are never logged. Log lines carry `job_id`, `workflow_id`, `company_id`, `actor_kind`, `actor_id` only.
+- **Out of scope this PR**: Agents 0/3/4/5/6, both HITL Signal handlers, frontend portals, ATS push, Slack notifications. See `docs/plans/job_intake_plan.md` for the full out-of-scope list.

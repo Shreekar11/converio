@@ -1,8 +1,8 @@
 # Job Intake Workflow — Design Doc
 
 > Companion to `docs/contrario_proof_of_work_context.md` §10 (Phase 2 — Job Intake) and §7 (Architecture).
-> Mirrors the format of `docs/recruiter_indexing_workflow.md` but is **forward-looking** — captures requirements before implementation begins.
-> Status: design. Not yet built. See §10 Out of Scope for what is deferred.
+> Mirrors the format of `docs/recruiter_indexing_workflow.md`.
+> Status: implemented in branch `feat/job-intake-workflow` (2026-05-01). Reference files: `apps/backend/app/temporal/product/job_intake/`. See §10 Out of Scope for what is intentionally deferred to follow-up PRs.
 
 ---
 
