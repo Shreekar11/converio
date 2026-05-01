@@ -9,7 +9,8 @@
     "lint": "eslint --max-warnings 0",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "next typegen && tsc --noEmit",
-    "generate:schemas": "pnpm generate:jobs && pnpm generate:candidates && pnpm generate:scorecards",
+    "generate:schemas": "pnpm generate:companies && pnpm generate:jobs && pnpm generate:candidates && pnpm generate:scorecards",
+    "generate:companies": "openapi-typescript-codegen --input specs/companies.json --output schema/generated --fileName companies --exportSchemas true",
     "generate:jobs": "openapi-typescript-codegen --input specs/jobs.json --output schema/generated --fileName jobs --exportSchemas true",
     "generate:candidates": "openapi-typescript-codegen --input specs/candidates.json --output schema/generated --fileName candidates --exportSchemas true",
     "generate:scorecards": "openapi-typescript-codegen --input specs/scorecards.json --output schema/generated --fileName scorecards --exportSchemas true"

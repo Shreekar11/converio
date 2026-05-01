@@ -1,0 +1,585 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Converio - Companies API",
+    "version": "0.1.0",
+    "description": "Operator-only endpoints for managing client companies and provisioning hiring-manager seats. Source of truth for the company onboarding API contract; backend Pydantic models and frontend TS clients are generated from this file."
+  },
+  "servers": [
+    { "url": "/api/v1" }
+  ],
+  "tags": [
+    { "name": "Companies", "description": "Operator-only company onboarding and seat provisioning." }
+  ],
+  "paths": {
+    "/companies": {
+      "post": {
+        "operationId": "create_company",
+        "tags": ["Companies"],
+        "summary": "Create a client company",
+        "description": "Operator-only. Creates a new client company row in PG with status='active'. No workflow fires. Duplicate name (case-insensitive) returns 409.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CompanyCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Company created.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CompanyResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request body.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Authenticated user is not an active operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "409": {
+            "description": "A company with the same name already exists (case-insensitive).",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Request body failed schema validation.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list_companies",
+        "tags": ["Companies"],
+        "summary": "List companies (paginated)",
+        "description": "Operator-only. Returns a paginated list of companies ordered by created_at descending.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of companies to return (1-100).",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20, "example": 20 }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Number of companies to skip before returning results.",
+            "schema": { "type": "integer", "minimum": 0, "default": 0, "example": 0 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of companies.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CompaniesListResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pagination parameters.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Authenticated user is not an active operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Query parameter validation failure.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/companies/{company_id}": {
+      "get": {
+        "operationId": "get_company",
+        "tags": ["Companies"],
+        "summary": "Get a single company by id with seated users",
+        "description": "Operator-only. Returns the company plus its provisioned hiring-manager / admin seats.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "Company row id (Postgres UUID).",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CompanyDetailResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Authenticated user is not an active operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "Company not found for the supplied id.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "`company_id` is not a valid UUID.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/companies/{company_id}/users": {
+      "post": {
+        "operationId": "provision_company_user",
+        "tags": ["Companies"],
+        "summary": "Provision a hiring-manager or admin seat for a company",
+        "description": "Operator-only. Creates a company_users row with supabase_user_id=null (filled in on first Supabase login). Duplicate email per company returns 409.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "Company row id (Postgres UUID).",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CompanyUserCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Company user seat provisioned.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CompanyUserResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request body.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Authenticated user is not an active operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "Company not found for the supplied id.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "409": {
+            "description": "A user with the same email is already seated at this company.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Request body failed schema validation.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list_company_users",
+        "tags": ["Companies"],
+        "summary": "List seated users for a company",
+        "description": "Operator-only. Returns all hiring-manager / admin seats provisioned for the company.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "Company row id (Postgres UUID).",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of company users.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CompanyUsersListResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Authenticated user is not an active operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "Company not found for the supplied id.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "`company_id` is not a valid UUID.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CompanyStage": {
+        "type": "string",
+        "enum": ["seed", "series_a", "series_b", "series_c", "growth"],
+        "description": "Funding stage of a client company."
+      },
+      "CompanySizeRange": {
+        "type": "string",
+        "enum": ["1-10", "11-50", "51-200", "201-1000", "1001+"],
+        "description": "Headcount band for the client company."
+      },
+      "CompanyStatus": {
+        "type": "string",
+        "enum": ["active", "paused", "churned"],
+        "description": "Lifecycle status of the client company in Converio."
+      },
+      "CompanyUserRole": {
+        "type": "string",
+        "enum": ["hiring_manager", "admin"],
+        "description": "Role granted to a seated company user."
+      },
+      "CompanyCreate": {
+        "type": "object",
+        "description": "Operator-supplied payload for creating a new client company.",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Display name of the company. Unique case-insensitively across Converio.",
+            "example": "Stripe (test)"
+          },
+          "stage": {
+            "allOf": [{ "$ref": "#/components/schemas/CompanyStage" }],
+            "nullable": true,
+            "description": "Funding stage. Optional; defaults to null."
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true,
+            "description": "Freeform industry label.",
+            "example": "Fintech"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Public marketing website. Internal/metadata IPs are rejected by the endpoint.",
+            "example": "https://stripe.com"
+          },
+          "logo_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Public logo URL.",
+            "example": "https://stripe.com/img/v3/home/twitter.png"
+          },
+          "company_size_range": {
+            "allOf": [{ "$ref": "#/components/schemas/CompanySizeRange" }],
+            "nullable": true,
+            "description": "Headcount band. Optional."
+          },
+          "founding_year": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 1800,
+            "maximum": 2100,
+            "description": "Year the company was founded.",
+            "example": 2010
+          },
+          "hq_location": {
+            "type": "string",
+            "nullable": true,
+            "description": "Freeform HQ location.",
+            "example": "San Francisco, CA"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Operator-supplied description / context for the company."
+          }
+        }
+      },
+      "CompanyResponse": {
+        "type": "object",
+        "description": "Persisted company row projection.",
+        "required": ["id", "name", "status", "created_at", "updated_at"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+          },
+          "name": {
+            "type": "string",
+            "example": "Stripe (test)"
+          },
+          "stage": {
+            "allOf": [{ "$ref": "#/components/schemas/CompanyStage" }],
+            "nullable": true
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "logo_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "company_size_range": {
+            "allOf": [{ "$ref": "#/components/schemas/CompanySizeRange" }],
+            "nullable": true
+          },
+          "founding_year": {
+            "type": "integer",
+            "nullable": true
+          },
+          "hq_location": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": { "$ref": "#/components/schemas/CompanyStatus" },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-05-01T12:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-05-01T12:00:00Z"
+          }
+        }
+      },
+      "CompanyDetailResponse": {
+        "type": "object",
+        "description": "Company row plus the list of seated users.",
+        "required": ["id", "name", "status", "created_at", "updated_at", "users"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "stage": {
+            "allOf": [{ "$ref": "#/components/schemas/CompanyStage" }],
+            "nullable": true
+          },
+          "industry": { "type": "string", "nullable": true },
+          "website": { "type": "string", "format": "uri", "nullable": true },
+          "logo_url": { "type": "string", "format": "uri", "nullable": true },
+          "company_size_range": {
+            "allOf": [{ "$ref": "#/components/schemas/CompanySizeRange" }],
+            "nullable": true
+          },
+          "founding_year": { "type": "integer", "nullable": true },
+          "hq_location": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "status": { "$ref": "#/components/schemas/CompanyStatus" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" },
+          "users": {
+            "type": "array",
+            "description": "Seated hiring-manager / admin users for this company.",
+            "items": { "$ref": "#/components/schemas/CompanyUserResponse" }
+          }
+        }
+      },
+      "CompaniesListResponse": {
+        "type": "object",
+        "description": "Paginated list of companies.",
+        "required": ["data", "limit", "offset", "total"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CompanyResponse" }
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Pagination limit echoed back from the request."
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Pagination offset echoed back from the request."
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total companies matching the query."
+          }
+        }
+      },
+      "CompanyUserCreate": {
+        "type": "object",
+        "description": "Operator-supplied payload for provisioning a hiring-manager or admin seat.",
+        "required": ["email", "role"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Hiring-manager / admin email. Unique per company.",
+            "example": "hm@stripe.test"
+          },
+          "full_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional display name.",
+            "example": "Jane Doe"
+          },
+          "role": { "$ref": "#/components/schemas/CompanyUserRole" }
+        }
+      },
+      "CompanyUserResponse": {
+        "type": "object",
+        "description": "Persisted company_users row projection.",
+        "required": ["id", "company_id", "email", "role", "created_at", "updated_at"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "company_id": { "type": "string", "format": "uuid" },
+          "email": { "type": "string", "format": "email" },
+          "full_name": { "type": "string", "nullable": true },
+          "role": { "$ref": "#/components/schemas/CompanyUserRole" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CompanyUsersListResponse": {
+        "type": "object",
+        "description": "List of seated users for a company.",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CompanyUserResponse" }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "FastAPI error response. `detail` is either a string (HTTPException) or a list of validation error objects.",
+        "required": ["detail"],
+        "properties": {
+          "detail": {
+            "oneOf": [
+              { "type": "string", "example": "Company not found" },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Supabase-issued JWT supplied as `Authorization: Bearer <token>`. Must resolve to an active Operator row."
+      }
+    }
+  }
+}

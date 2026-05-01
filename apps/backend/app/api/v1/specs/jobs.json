@@ -1,0 +1,200 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Converio - Jobs API",
+    "version": "0.1.0",
+    "description": "Hiring-manager + operator endpoints for job intake. Today: managed-intake submission that fires the JobIntakeWorkflow fire-and-forget. Source of truth for the jobs API contract; backend Pydantic models and frontend TS clients are generated from this file."
+  },
+  "servers": [
+    { "url": "/api/v1" }
+  ],
+  "tags": [
+    { "name": "Jobs", "description": "Job intake and lifecycle operations." }
+  ],
+  "paths": {
+    "/jobs/intake": {
+      "post": {
+        "operationId": "submit_job_intake",
+        "tags": ["Jobs"],
+        "summary": "Submit a managed job intake and fire JobIntakeWorkflow",
+        "description": "Hiring-manager (or operator-on-behalf-of) submits role intake. Creates a Job row with status='intake', then starts JobIntakeWorkflow on the Temporal `converio-queue` with WorkflowIDReusePolicy.REJECT_DUPLICATE. Returns 202 Accepted immediately — the full pipeline (classify -> rubric -> recruiter assignment -> sourcing -> scoring -> review) is multi-day; clients should subscribe via SSE / polling. Rate-limited to 10/hour/company_id.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/JobIntakeRequest" }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Intake accepted. Job row persisted; JobIntakeWorkflow started on Temporal.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/JobIntakeAcceptedResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request body.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Authenticated user is not seated at the target company and is not an operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "Company not found for the supplied `company_id`.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Request body failed schema validation (e.g. compensation_min > compensation_max).",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "429": {
+            "description": "Rate limit exceeded for this company. Retry after the window resets.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error - database or Temporal unavailable.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RemoteOnsite": {
+        "type": "string",
+        "enum": ["remote", "onsite", "hybrid"],
+        "description": "Work location modality for the role."
+      },
+      "JobStatus": {
+        "type": "string",
+        "enum": ["intake", "recruiter_assignment", "sourcing", "scoring", "review", "closed"],
+        "description": "Lifecycle status of a Job. Mirrors the JobStatus enum in app/schemas/enums.py."
+      },
+      "JobIntakeRequest": {
+        "type": "object",
+        "description": "Hiring-manager (or operator) intake submission. Classification fields (role_category, seniority, must_have_skills) are intentionally absent — the workflow's classify_role_type activity extracts them.",
+        "required": ["company_id", "title", "jd_text"],
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Target company id. Authenticated user must be seated at this company (or be an operator).",
+            "example": "9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Role title.",
+            "example": "Founding Engineer"
+          },
+          "jd_text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "description": "Full job description body. Used as input to classify_role_type and generate_evaluation_rubric LLM activities."
+          },
+          "intake_notes": {
+            "type": "string",
+            "nullable": true,
+            "description": "Operator's onboarding-call notes. Fed into both LLM activities (classify + rubric).",
+            "example": "small team, generalist preferred"
+          },
+          "remote_onsite": {
+            "allOf": [{ "$ref": "#/components/schemas/RemoteOnsite" }],
+            "nullable": true,
+            "description": "Optional explicit work-location modality. If null, the workflow attempts to extract it from JD text."
+          },
+          "location_text": {
+            "type": "string",
+            "nullable": true,
+            "description": "Freeform location.",
+            "example": "SF Bay Area, hybrid 2x/wk"
+          },
+          "compensation_min": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "description": "Minimum compensation (USD, annualized).",
+            "example": 180000
+          },
+          "compensation_max": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "description": "Maximum compensation (USD, annualized). Must be >= compensation_min when both are supplied; enforced at the endpoint.",
+            "example": 240000
+          },
+          "extra": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true,
+            "description": "Pass-through bag for forward-compatible fields (e.g. company-supplied rubric hints)."
+          }
+        }
+      },
+      "JobIntakeAcceptedResponse": {
+        "type": "object",
+        "description": "202 response shape for accepted intake submissions.",
+        "required": ["job_id", "workflow_id", "status"],
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Newly created Job row id.",
+            "example": "7f3a8c0e-9d4b-4e1c-8a2f-3b5d6e7f8a9b"
+          },
+          "workflow_id": {
+            "type": "string",
+            "description": "Temporal workflow id (deterministic per job; REJECT_DUPLICATE reuse policy).",
+            "example": "job-intake-7f3a8c0e-9d4b-4e1c-8a2f-3b5d6e7f8a9b"
+          },
+          "status": {
+            "allOf": [{ "$ref": "#/components/schemas/JobStatus" }],
+            "description": "Initial Job status at creation time. Always 'intake' for fresh submissions.",
+            "example": "intake"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "FastAPI error response. `detail` is either a string (HTTPException) or a list of validation error objects.",
+        "required": ["detail"],
+        "properties": {
+          "detail": {
+            "oneOf": [
+              { "type": "string", "example": "Company not found" },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Supabase-issued JWT supplied as `Authorization: Bearer <token>`. Must resolve to a CompanyUser seated at the target company, or to an active Operator."
+      }
+    }
+  }
+}
