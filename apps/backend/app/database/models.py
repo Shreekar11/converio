@@ -694,6 +694,9 @@ class RecruiterPlacement(Base):
         String, nullable=False
     )  # freeform — historical claim, NOT FK to candidates table
     company_name: Mapped[str] = mapped_column(String, nullable=False)
+    company_stage: Mapped[str | None] = mapped_column(
+        String(20), nullable=True
+    )  # CompanyStage enum (app-layer constraint) — wizard dropdown; feeds PLACED_AT graph edges
     role_title: Mapped[str] = mapped_column(String, nullable=False)
     linkedin_url: Mapped[str | None] = mapped_column(String, nullable=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)

@@ -1,0 +1,203 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Converio - Recruiters API",
+    "version": "0.1.0",
+    "description": "Recruiter-facing endpoints for the operator + recruiter portal. Today: synchronous recruiter knowledge-base indexing. Source of truth for the recruiter API contract; backend Pydantic models and frontend TS clients are generated from this file."
+  },
+  "servers": [
+    { "url": "/api/v1" }
+  ],
+  "tags": [
+    { "name": "Recruiters", "description": "Recruiter onboarding, indexing, and lifecycle operations." }
+  ],
+  "paths": {
+    "/recruiters/{recruiter_id}/index": {
+      "post": {
+        "operationId": "index_recruiter",
+        "tags": ["Recruiters"],
+        "summary": "Run recruiter indexing workflow and return result",
+        "description": "Loads the recruiter row + linked clients + linked placements from Postgres, builds a `RecruiterProfile`, and synchronously executes RecruiterIndexingWorkflow on the Temporal `converio-queue`. Returns 200 with the resolved indexing result so the wizard can redirect to the dashboard immediately. On the rare 30s timeout, returns 504 with the workflow_id so the client can fall back to a status poll.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "parameters": [
+          {
+            "name": "recruiter_id",
+            "in": "path",
+            "required": true,
+            "description": "Recruiter row id (Postgres UUID).",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recruiter indexing completed. The data payload mirrors the workflow's RecruiterIndexingResult.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IndexRecruiterResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Recruiter not found for the supplied id.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "`recruiter_id` is not a valid UUID.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - workflow execution failed for a non-timeout reason.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "504": {
+            "description": "Workflow exceeded the 30s execution timeout. Frontend should fall back to a status poll using `workflow_id` from the response detail.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IndexRecruiterTimeoutResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IndexRecruiterResponse": {
+        "type": "object",
+        "description": "Standard ApiResponse envelope wrapping IndexRecruiterData.",
+        "required": ["status", "message", "data"],
+        "properties": {
+          "status": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Recruiter indexing completed"
+          },
+          "data": {
+            "$ref": "#/components/schemas/IndexRecruiterData"
+          },
+          "correlation_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Request correlation id propagated from middleware (X-Correlation-ID header).",
+            "example": "01HG3M9F0G3K8C4M2P5R7T9X2A"
+          }
+        }
+      },
+      "IndexRecruiterData": {
+        "type": "object",
+        "description": "Data payload for a completed recruiter indexing run. Projection of RecruiterIndexingResult.",
+        "required": ["workflow_id", "recruiter_id", "status", "credibility_score", "source"],
+        "properties": {
+          "workflow_id": {
+            "type": "string",
+            "description": "Temporal workflow id (deterministic per recruiter; ALLOW_DUPLICATE reuse policy enables re-indexing).",
+            "example": "recruiter-indexing-9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+          },
+          "recruiter_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "pending", "failed"],
+            "description": "Result status from RecruiterIndexingWorkflow. `pending` = enrichment partial; `active` = ready for matching; `failed` = retry / contact ops.",
+            "example": "active"
+          },
+          "credibility_score": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Credibility score in [0, 1] derived from past placements + linked clients.",
+            "example": 0.78
+          },
+          "source": {
+            "type": "string",
+            "enum": ["seed", "onboarding"],
+            "description": "Provenance of the indexing run - matches the workflow input contract.",
+            "example": "onboarding"
+          }
+        }
+      },
+      "IndexRecruiterTimeoutResponse": {
+        "type": "object",
+        "description": "504 response shape when the workflow exceeds the 30s execution timeout.",
+        "required": ["detail"],
+        "properties": {
+          "detail": {
+            "type": "object",
+            "required": ["workflow_id", "message"],
+            "properties": {
+              "workflow_id": {
+                "type": "string",
+                "example": "recruiter-indexing-9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+              },
+              "message": {
+                "type": "string",
+                "example": "Indexing exceeded 30s timeout; check status via Temporal UI"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "FastAPI error response. `detail` is either a string (HTTPException) or a list of validation error objects.",
+        "required": ["detail"],
+        "properties": {
+          "detail": {
+            "oneOf": [
+              { "type": "string", "example": "Recruiter not found" },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Supabase-issued JWT supplied as `Authorization: Bearer <token>`."
+      }
+    }
+  }
+}

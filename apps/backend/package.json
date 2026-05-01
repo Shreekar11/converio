@@ -5,7 +5,7 @@
     "private": true,
     "scripts": {
         "activate": "source .venv/bin/activate",
-        "dev": "source .venv/bin/activate && python3 -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+        "dev": "source .venv/bin/activate && python3 -m uvicorn app.main:app --reload --reload-dir app --reload-exclude .venv --host 0.0.0.0 --port 8000",
         "start": "source .venv/bin/activate && python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000",
         "test": "source .venv/bin/activate && pytest",
         "test:cov": "source .venv/bin/activate && pytest --cov=app --cov-report=html",

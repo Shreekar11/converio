@@ -53,6 +53,9 @@ WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
+# Pre-pull docling layout model so first activity invocation doesn't cold-download it
+RUN python -c "from docling.document_converter import DocumentConverter; DocumentConverter()"
+
 # Copy application code
 COPY . .
 
