@@ -32,6 +32,7 @@ from app.schemas.enums import (
     RoleCategory,
     WorkspaceType,
 )
+from app.schemas.generated.recruiters import IndexRecruiterData
 from app.schemas.product.recruiter import (
     RecruiterClientItem,
     RecruiterIndexingInput,
@@ -251,14 +252,21 @@ async def index_recruiter(
         },
     )
 
+    # Project the workflow-internal RecruiterIndexingResult onto the
+    # generated API-response model. The workflow contract (RecruiterIndexingResult)
+    # stays the source of truth for Temporal IO; this generated model is the
+    # source of truth for the API surface, and the two are kept aligned by the
+    # spec's enum + range constraints. Pydantic coerces the str literals on
+    # `status` / `source` to the generated Enum members at this boundary.
+    response_data = IndexRecruiterData(
+        workflow_id=workflow_id,
+        recruiter_id=result.recruiter_id,
+        status=result.status,
+        credibility_score=result.credibility_score,
+        source=result.source,
+    )
     return create_api_response(
-        data={
-            "workflow_id": workflow_id,
-            "recruiter_id": result.recruiter_id,
-            "status": result.status,
-            "credibility_score": result.credibility_score,
-            "source": result.source,
-        },
+        data=response_data.model_dump(mode="json"),
         message="Recruiter indexing completed",
         request=request,
     )

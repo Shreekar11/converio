@@ -29,6 +29,7 @@ from app.core.database import get_async_session
 from app.core.storage.supabase_storage import get_supabase_storage_client
 from app.core.temporal_client import get_temporal_client
 from app.database.models import Recruiter
+from app.schemas.generated.candidates import IndexCandidateData
 from app.schemas.product.candidate import CandidateIndexingInput, ResumeFileRef
 from app.temporal.product.candidate_indexing.workflows.candidate_indexing_workflow import (
     CandidateIndexingWorkflow,
@@ -179,12 +180,13 @@ async def index_candidate(
         },
     )
 
+    response_data = IndexCandidateData(
+        workflow_id=workflow_id,
+        filename=file.filename,
+        resume_object_path=object_path,
+    )
     return create_api_response(
-        data={
-            "workflow_id": workflow_id,
-            "filename": file.filename,
-            "resume_object_path": object_path,
-        },
+        data=response_data.model_dump(mode="json"),
         message="Resume uploaded — indexing started",
         request=request,
     )

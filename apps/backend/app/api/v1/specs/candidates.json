@@ -1,0 +1,187 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Converio - Candidates API",
+    "version": "0.1.0",
+    "description": "Candidate-facing endpoints for the recruiter portal. Today: resume upload + indexing. Source of truth for the candidate API contract; backend Pydantic models and frontend TS clients are generated from this file."
+  },
+  "servers": [
+    { "url": "/api/v1" }
+  ],
+  "tags": [
+    { "name": "Candidates", "description": "Candidate intake + indexing operations." }
+  ],
+  "paths": {
+    "/candidates/index": {
+      "post": {
+        "operationId": "index_candidate",
+        "tags": ["Candidates"],
+        "summary": "Upload candidate resume and trigger indexing workflow",
+        "description": "Recruiter-authenticated resume upload. Validates MIME type (PDF / DOCX / DOC / plain text / markdown) and 5 MiB size cap, persists the file to Supabase Storage, and starts CandidateIndexingWorkflow on the Temporal `converio-queue`. Returns 202 Accepted with the workflow_id so the client can poll status.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Resume file (PDF, DOCX, DOC, plain text, or markdown). 5 MiB hard cap."
+                  },
+                  "notes": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Optional free-form notes from the recruiter to attach to the indexing run."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Resume accepted. Indexing workflow has been started; poll the returned workflow_id for completion.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IndexCandidateResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Uploaded file is empty.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "413": {
+            "description": "File exceeds the 5 MiB upload limit.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported MIME type. Allowed: PDF, DOCX, DOC, plain text, markdown.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Request body failed schema validation.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - storage, database, or Temporal unavailable.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IndexCandidateResponse": {
+        "type": "object",
+        "description": "Standard ApiResponse envelope wrapping IndexCandidateData.",
+        "required": ["status", "message", "data"],
+        "properties": {
+          "status": {
+            "type": "boolean",
+            "description": "True for success responses; clients should still inspect HTTP status.",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Resume uploaded - indexing started"
+          },
+          "data": {
+            "$ref": "#/components/schemas/IndexCandidateData"
+          },
+          "correlation_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Request correlation id propagated from middleware (X-Correlation-ID header).",
+            "example": "01HG3M9F0G3K8C4M2P5R7T9X2A"
+          }
+        }
+      },
+      "IndexCandidateData": {
+        "type": "object",
+        "description": "Data payload for a successful candidate indexing dispatch.",
+        "required": ["workflow_id", "filename", "resume_object_path"],
+        "properties": {
+          "workflow_id": {
+            "type": "string",
+            "description": "Temporal workflow id - clients poll this for status.",
+            "example": "candidate-indexing-7e9f6a2c-3b4d-4a51-9c12-2f8a1b6d7e3c"
+          },
+          "filename": {
+            "type": "string",
+            "nullable": true,
+            "description": "Original filename as supplied by the upload, if available.",
+            "example": "jane_doe_resume.pdf"
+          },
+          "resume_object_path": {
+            "type": "string",
+            "description": "Object storage path inside the configured Supabase bucket.",
+            "example": "resumes/9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b/4a8d2f6e-1b3c-4d5e-6f7a-8b9c0d1e2f3a.pdf"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "FastAPI error response. `detail` is either a string (HTTPException) or a list of validation error objects.",
+        "required": ["detail"],
+        "properties": {
+          "detail": {
+            "oneOf": [
+              { "type": "string", "example": "Unsupported file type. Allowed: PDF, DOCX, plain text, markdown." },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Supabase-issued JWT supplied as `Authorization: Bearer <token>`."
+      }
+    }
+  }
+}

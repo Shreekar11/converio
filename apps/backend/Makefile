@@ -16,9 +16,10 @@ format:
 
 generate-schemas:
 	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/candidates.json --output app/schemas/generated/candidates.py --output-model-type pydantic_v2.BaseModel
-	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/jobs.json --output app/schemas/generated/jobs.py --output-model-type pydantic_v2.BaseModel
-	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/scorecards.json --output app/schemas/generated/scorecards.py --output-model-type pydantic_v2.BaseModel
 	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/health.json --output app/schemas/generated/health.py --output-model-type pydantic_v2.BaseModel
+	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/jobs.json --output app/schemas/generated/jobs.py --output-model-type pydantic_v2.BaseModel
+	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/recruiters.json --output app/schemas/generated/recruiters.py --output-model-type pydantic_v2.BaseModel
+	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/scorecards.json --output app/schemas/generated/scorecards.py --output-model-type pydantic_v2.BaseModel
 
 build:
 	docker build -t converio-backend --build-arg BUILD_MODE=development .
