@@ -10,7 +10,9 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from sqlalchemy import func, select
+from fastapi import HTTPException
+from fastapi import status as fastapi_status
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -57,6 +59,31 @@ class CompanyRepository(BaseRepository[Company]):
         )
         rows = rows_result.scalars().all()
         return list(rows), int(total)
+
+    async def update_status(self, company_id: UUID, status: str) -> Company:
+        """Update a company's lifecycle `status` and return the refreshed row.
+
+        Used by the self-serve auth flow to flip a freshly onboarded company
+        from `pending` -> `active` (or back to `paused`/`churned` from ops
+        tooling). Issues a Core `UPDATE` statement scoped to the row id, then
+        re-fetches via `get_by_id` so the returned ORM instance reflects
+        post-commit state. Raises 404 when no row matches `company_id` so
+        callers don't silently swallow a missing-row bug.
+
+        Note: we explicitly call `session.commit()` here because this path
+        bypasses `BaseRepository.update`'s ORM-instance mutation pattern.
+        """
+        await self.session.execute(
+            update(Company).where(Company.id == company_id).values(status=status)
+        )
+        await self.session.commit()
+        company = await self.get_by_id(company_id)
+        if company is None:
+            raise HTTPException(
+                status_code=fastapi_status.HTTP_404_NOT_FOUND,
+                detail="Company not found",
+            )
+        return company
 
     async def get_with_users(self, company_id: UUID) -> Company | None:
         """Fetch a company by id with its `users` relationship eager-loaded.
