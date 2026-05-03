@@ -16,11 +16,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import CurrentUser, get_current_user
 from app.core.database import get_async_session
+from app.core.rate_limit import signup_rate_limiter
 from app.database.models import Company, CompanyUser, Operator, Recruiter
 from app.repositories.companies import CompanyRepository
 from app.repositories.company_users import CompanyUserRepository
 from app.repositories.operators import OperatorRepository
 from app.repositories.recruiters import RecruiterRepository
+from app.schemas.enums import CompanyStatus, CompanyUserRole
 from app.schemas.generated.auth import (
     CompanySignupRequest,
     RecruiterSignupRequest,
@@ -325,10 +327,227 @@ async def company_signup(
     current_user: Annotated[CurrentUser, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ) -> ApiResponse:
-    """Create a self-serve company tenant linked to the authenticated user."""
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Not implemented",
+    """Create a self-serve company tenant linked to the authenticated user.
+
+    Identity is taken exclusively from the verified Supabase JWT — never from
+    the request body. Six logic branches:
+
+    1. Defensive email-claim check (the JWT may carry no email — anonymous /
+       phone-only sign-in shouldn't be able to claim a company seat).
+    2. Per-`sub` rate limit guard against retry storms / abuse.
+    3. Cross-role email uniqueness — a single email can be at most one of
+       operator, recruiter, or company-user across the platform.
+    4. Already-onboarded short-circuit — re-running signup after success
+       returns 409 rather than creating a second tenant.
+    5. Pre-provisioned seat link path — if an operator pre-seated this email,
+       backfill the `supabase_user_id` and return the seat instead of
+       creating a new company.
+    6. Standard self-serve path — duplicate-name guard, create company in
+       `pending_review`, create admin company-user, return 201.
+    """
+    # --- 1. Email claim must be present ------------------------------------
+    if current_user.email is None:
+        LOGGER.warning(
+            "Company signup rejected: missing email claim",
+            extra={"user_id": current_user.id},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email claim required for self-serve signup",
+        )
+
+    email = current_user.email
+
+    # --- 2. Rate limit (keyed by Supabase sub) -----------------------------
+    if not signup_rate_limiter.check(current_user.id):
+        LOGGER.warning(
+            "Company signup rate-limited",
+            extra={"user_id": current_user.id},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many signup attempts; try again later",
+            headers={"Retry-After": str(signup_rate_limiter.window_seconds)},
+        )
+
+    # --- 3. Cross-role email uniqueness ------------------------------------
+    operator_match = await OperatorRepository(session).get_by_email(email)
+    if operator_match is not None:
+        LOGGER.warning(
+            "Company signup blocked: email is operator",
+            extra={
+                "user_id": current_user.id,
+                "operator_id": str(operator_match.id),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already in use",
+            headers={"X-Error-Code": "email_in_use_operator"},
+        )
+
+    recruiter_match = await RecruiterRepository(session).get_by_email(email)
+    if recruiter_match is not None:
+        LOGGER.warning(
+            "Company signup blocked: email is recruiter",
+            extra={
+                "user_id": current_user.id,
+                "recruiter_id": str(recruiter_match.id),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already in use",
+            headers={"X-Error-Code": "email_in_use_recruiter"},
+        )
+
+    # --- 4. Already-onboarded short-circuit --------------------------------
+    company_user_repo = CompanyUserRepository(session)
+    already_onboarded = await company_user_repo.get_by_supabase_user_id(
+        current_user.id
+    )
+    if already_onboarded is not None:
+        LOGGER.warning(
+            "Company signup blocked: already onboarded",
+            extra={
+                "user_id": current_user.id,
+                "company_user_id": str(already_onboarded.id),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Already onboarded as company user",
+            headers={"X-Error-Code": "already_onboarded"},
+        )
+
+    # --- 5. Pre-provisioned seat link path ---------------------------------
+    company_repo = CompanyRepository(session)
+    existing_seat = await company_user_repo.get_by_email(email)
+    if existing_seat is not None and existing_seat.supabase_user_id is None:
+        linked = await company_user_repo.link_supabase_user_id(
+            existing_seat.id, current_user.id
+        )
+        # Treat the link helper's return as the post-commit row; fall through
+        # to defensive checks if it somehow returned None (row deleted
+        # mid-flight).
+        seat = linked if linked is not None else existing_seat
+        company = await company_repo.get_by_id(seat.company_id)
+        if company is None:
+            LOGGER.error(
+                "Pre-provisioned seat references missing company",
+                extra={
+                    "user_id": current_user.id,
+                    "company_user_id": str(seat.id),
+                    "company_id": str(seat.company_id),
+                },
+            )
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to complete signup",
+            )
+        LOGGER.info(
+            "Pre-provisioned seat linked",
+            extra={
+                "user_id": current_user.id,
+                "company_user_id": str(seat.id),
+                "company_id": str(seat.company_id),
+            },
+        )
+        return create_api_response(
+            data={
+                "role": "company_user",
+                "profile": _project_company_user_profile(seat, company),
+                "onboarding_state": {"company_status": company.status},
+            },
+            message="Seat linked",
+            request=request,
+        )
+
+    # --- 6. Standard self-serve path ---------------------------------------
+    duplicate = await company_repo.get_by_name_ci(payload.name)
+    if duplicate is not None:
+        LOGGER.warning(
+            "Company signup blocked: duplicate name",
+            extra={
+                "user_id": current_user.id,
+                "existing_company_id": str(duplicate.id),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Company name already exists",
+        )
+
+    try:
+        company = await company_repo.create(
+            name=payload.name,
+            stage=payload.stage.value if payload.stage is not None else None,
+            industry=payload.industry,
+            website=str(payload.website) if payload.website is not None else None,
+            logo_url=str(payload.logo_url) if payload.logo_url is not None else None,
+            company_size_range=(
+                payload.company_size_range.value
+                if payload.company_size_range is not None
+                else None
+            ),
+            founding_year=payload.founding_year,
+            hq_location=payload.hq_location,
+            description=payload.description,
+            status=CompanyStatus.PENDING_REVIEW.value,
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        LOGGER.exception(
+            "Failed to create company during self-serve signup",
+            extra={"user_id": current_user.id, "error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to complete signup",
+        ) from exc
+
+    full_name = current_user.user_metadata.get("full_name", "") or ""
+
+    try:
+        # TODO: wrap company + company_user creation in a single transaction
+        # so a failure here doesn't leave an orphan company. Today the
+        # repository commits after each insert.
+        company_user = await company_user_repo.create(
+            company_id=company.id,
+            email=email,
+            full_name=full_name,
+            role=CompanyUserRole.ADMIN.value,
+            supabase_user_id=current_user.id,
+        )
+    except Exception as exc:
+        LOGGER.error(
+            "company_user_create_failed_after_company",
+            extra={
+                "event": "company_user_create_failed_after_company",
+                "user_id": current_user.id,
+                "company_id": str(company.id),
+                "error": str(exc),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to complete signup",
+        ) from exc
+
+    LOGGER.info(
+        "Company self-serve signup",
+        extra={
+            "user_id": current_user.id,
+            "company_id": str(company.id),
+            "company_user_id": str(company_user.id),
+        },
+    )
+
+    return create_api_response(
+        data=_project_company_user_profile(company_user, company),
+        message="Company registered",
+        request=request,
     )
 
 

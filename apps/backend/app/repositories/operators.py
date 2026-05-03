@@ -16,3 +16,15 @@ class OperatorRepository(BaseRepository[Operator]):
             select(Operator).where(Operator.supabase_user_id == supabase_user_id)
         )
         return result.scalar_one_or_none()
+
+    async def get_by_email(self, email: str) -> Operator | None:
+        """Fetch operator by email.
+
+        Used by self-serve signup flows to enforce cross-role email uniqueness:
+        an email already provisioned as an operator cannot be reused for a
+        company user or recruiter signup.
+        """
+        result = await self.session.execute(
+            select(Operator).where(Operator.email == email)
+        )
+        return result.scalar_one_or_none()
