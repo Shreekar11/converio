@@ -15,6 +15,7 @@ format:
 	.venv/bin/black app/ tests/
 
 generate-schemas:
+	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/auth.json --output app/schemas/generated/auth.py --output-model-type pydantic_v2.BaseModel
 	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/candidates.json --output app/schemas/generated/candidates.py --output-model-type pydantic_v2.BaseModel
 	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/companies.json --output app/schemas/generated/companies.py --output-model-type pydantic_v2.BaseModel
 	.venv/bin/python -m datamodel_code_generator --input app/api/v1/specs/jobs.json --output app/schemas/generated/jobs.py --output-model-type pydantic_v2.BaseModel

@@ -17,7 +17,7 @@
         "operationId": "create_company",
         "tags": ["Companies"],
         "summary": "Create a client company",
-        "description": "Operator-only. Creates a new client company row in PG with status='active'. No workflow fires. Duplicate name (case-insensitive) returns 409.",
+        "description": "Operator-only. Creates a new client company row in PG with status='active'. No workflow fires. Duplicate name (case-insensitive) returns 409. Note: self-serve signups created via `/auth/company/signup` default to `pending_review`; operator-created companies through this endpoint default to `active` (operators may transition status explicitly via PATCH /companies/{company_id}/status).",
         "security": [
           { "BearerAuth": [] }
         ],
@@ -178,6 +178,72 @@
         }
       }
     },
+    "/companies/{company_id}/status": {
+      "patch": {
+        "operationId": "update_company_status",
+        "tags": ["Companies"],
+        "summary": "Update lifecycle status of a company",
+        "description": "Operator-only. Transitions a company between lifecycle statuses (e.g. approving a `pending_review` self-serve signup to `active`, or pausing/churning an existing client). Idempotent: setting status to its current value is a no-op.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "Company row id (Postgres UUID).",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "9f2a1c0e-4b6d-4f3a-8e2b-1c4d5e6f7a8b"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CompanyStatusUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Company status updated.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CompanyResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request body.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Authenticated user is not an active operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "Company not found for the supplied id.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Request body or path parameter failed schema validation.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
     "/companies/{company_id}/users": {
       "post": {
         "operationId": "provision_company_user",
@@ -319,8 +385,17 @@
       },
       "CompanyStatus": {
         "type": "string",
-        "enum": ["active", "paused", "churned"],
-        "description": "Lifecycle status of the client company in Converio."
+        "enum": ["pending_review", "active", "paused", "churned"],
+        "description": "Lifecycle status of the client company in Converio. `pending_review` is the default for self-serve signups awaiting operator approval."
+      },
+      "CompanyStatusUpdate": {
+        "type": "object",
+        "description": "Operator-supplied payload for transitioning a company to a new lifecycle status.",
+        "additionalProperties": false,
+        "required": ["status"],
+        "properties": {
+          "status": { "$ref": "#/components/schemas/CompanyStatus" }
+        }
       },
       "CompanyUserRole": {
         "type": "string",
