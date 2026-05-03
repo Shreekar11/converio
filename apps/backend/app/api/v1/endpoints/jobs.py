@@ -1,11 +1,16 @@
 """Job intake API endpoint (Phase E1).
 
-POST /api/v1/jobs/intake — managed job intake submission. Resolves the
-authenticated user to either an active `Operator` (operator-on-behalf-of)
-or a `CompanyUser` seated at the target company (hiring-manager portal),
-INSERTs a `Job` row with `status="intake"`, and fires `JobIntakeWorkflow`
+POST /api/v1/jobs/intake — managed job intake submission. Authenticates
+the caller as an active `CompanyUser` (seat row at a company whose
+`status == "active"`), INSERTs a `Job` row with `status="intake"` scoped
+to `company_user.company_id`, and fires `JobIntakeWorkflow`
 fire-and-forget on the Temporal `converio-queue` with
 `WorkflowIDReusePolicy.REJECT_DUPLICATE` (D3).
+
+Tenant scoping rule: `company_id` is sourced from the authenticated
+`CompanyUser` row, NEVER from the request body. The body schema retains
+a `company_id` field for backward compatibility with the published
+OpenAPI spec, but the value is ignored — derived auth-context wins.
 
 Request / response shapes are imported from `app.schemas.generated.jobs`
 (codegen output of `app/api/v1/specs/jobs.json`); the spec is the source
@@ -13,24 +18,21 @@ of truth.
 """
 from __future__ import annotations
 
-from typing import Annotated, Literal
-from uuid import UUID, uuid4
+from typing import Annotated
+from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import ValidationError
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from temporalio.common import WorkflowIDReusePolicy
 
-from app.core.auth import CurrentUser, get_current_user
+from app.core.auth import get_current_active_company_user
 from app.core.database import get_async_session
 from app.core.rate_limit import job_intake_rate_limiter
 from app.core.temporal_client import get_temporal_client
-from app.database.models import CompanyUser, Operator
-from app.repositories.companies import CompanyRepository
+from app.database.models import CompanyUser
 from app.repositories.jobs import JobRepository
-from app.repositories.operators import OperatorRepository
-from app.schemas.enums import JobStatus, OperatorStatus
+from app.schemas.enums import JobStatus
 from app.schemas.generated.jobs import (
     JobIntakeAcceptedResponse,
     JobIntakeRequest,
@@ -46,72 +48,6 @@ LOGGER = get_logger(__name__)
 # Temporal task queue shared by all product workflows.
 _TASK_QUEUE: str = "converio-queue"
 
-# Type alias for the actor kind discriminator used in structured logs.
-_ActorKind = Literal["operator", "company_user"]
-
-
-async def _resolve_actor(
-    session: AsyncSession,
-    current_user: CurrentUser,
-    target_company_id: UUID,
-) -> tuple[_ActorKind, Operator | CompanyUser]:
-    """Resolve `current_user` to an `Operator` OR a `CompanyUser` row.
-
-    Resolution order:
-        1. Active `Operator` row keyed by `supabase_user_id`.
-           Operators may submit on behalf of any company.
-        2. `CompanyUser` row keyed by `supabase_user_id` AND seated at
-           `target_company_id`. A user seated at a different company is
-           explicitly rejected (403) — silently allowing it would let any
-           seated hiring-manager submit intakes against arbitrary
-           companies, defeating tenant-style isolation.
-
-    Raises:
-        HTTPException 403 if neither resolution path matches.
-
-    Detail strings are intentionally generic (no echo of supplied
-    `company_id` or `user_id`) so probing endpoints cannot distinguish
-    "no operator row" / "wrong company" / "no seat" from the response.
-    """
-    # 1. Operator path — privileged, matches first.
-    operator = await OperatorRepository(session).get_by_supabase_id(current_user.id)
-    if operator is not None and operator.status == OperatorStatus.ACTIVE.value:
-        return "operator", operator
-
-    # 2. CompanyUser path — must be seated at the target company.
-    result = await session.execute(
-        select(CompanyUser).where(CompanyUser.supabase_user_id == current_user.id)
-    )
-    company_user = result.scalar_one_or_none()
-    if company_user is not None:
-        if company_user.company_id != target_company_id:
-            LOGGER.warning(
-                "Job intake forbidden: company mismatch",
-                extra={
-                    "user_id": current_user.id,
-                    "company_user_id": str(company_user.id),
-                    "seated_company_id": str(company_user.company_id),
-                    "requested_company_id": str(target_company_id),
-                },
-            )
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Not authorized for this company",
-            )
-        return "company_user", company_user
-
-    LOGGER.warning(
-        "Job intake forbidden: no actor row",
-        extra={
-            "user_id": current_user.id,
-            "requested_company_id": str(target_company_id),
-        },
-    )
-    raise HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN,
-        detail="Not authorized for this company",
-    )
-
 
 @router.post(
     "/intake",
@@ -120,8 +56,12 @@ async def _resolve_actor(
     summary="Submit a managed job intake and fire JobIntakeWorkflow",
     operation_id="submit_job_intake",
     responses={
-        status.HTTP_403_FORBIDDEN: {"description": "Caller not authorized for the target company."},
-        status.HTTP_404_NOT_FOUND: {"description": "Company not found."},
+        status.HTTP_403_FORBIDDEN: {
+            "description": (
+                "Caller is not a seated company user, or the linked company "
+                "is not active."
+            )
+        },
         status.HTTP_429_TOO_MANY_REQUESTS: {
             "description": "Rate limit exceeded for this company (10/hour).",
         },
@@ -130,7 +70,7 @@ async def _resolve_actor(
 async def submit_job_intake(
     request: Request,
     payload: JobIntakeRequest,
-    current_user: Annotated[CurrentUser, Depends(get_current_user)],
+    company_user: Annotated[CompanyUser, Depends(get_current_active_company_user)],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ) -> ApiResponse:
     """Accept a managed job intake and fire `JobIntakeWorkflow` fire-and-forget.
@@ -144,47 +84,33 @@ async def submit_job_intake(
     duplicate run. (A future PR can add a sweep job to retry orphaned
     intake rows; out of scope here per the plan.)
 
-    Auth: any authenticated Supabase user. The caller is resolved to
-    either an active `Operator` OR a `CompanyUser` seated at
-    `payload.company_id`. Anyone else gets a generic 403.
+    Auth: requires a `CompanyUser` row whose linked `Company.status` is
+    `active`. `pending_review` / `paused` / `churned` companies cannot
+    submit intakes — operators must promote the company to `active`
+    first. The dep `get_current_active_company_user` returns 403 with
+    `detail="Company not active"` (or `"Not a company user"` when the
+    Supabase user has no seat at all).
+
+    Tenant scoping: `company_id` is taken from `company_user.company_id`,
+    NOT from the request body. The body still carries a `company_id`
+    field for OpenAPI-spec compatibility; its value is ignored to prevent
+    a seated user from submitting intakes against an arbitrary company.
 
     Logging: `jd_text` and `intake_notes` are PII / company-confidential
     and are NEVER written to logs. Only the lengths are logged for
     operational signal.
     """
-    # 1. Resolve actor (403 on miss).
-    actor_kind, actor = await _resolve_actor(session, current_user, payload.company_id)
+    # 1. Tenant id is sourced from auth context, not the request body.
+    company_id = company_user.company_id
 
-    # 2. Verify the target company exists (404 on miss). Note: we resolve
-    #    actor first so a request from an unauthorized caller does not leak
-    #    company existence via the 404 vs 403 distinction.
-    company_repo = CompanyRepository(session)
-    company = await company_repo.get_by_id(payload.company_id)
-    if company is None:
-        LOGGER.info(
-            "Job intake: company not found",
-            extra={
-                "user_id": current_user.id,
-                "actor_kind": actor_kind,
-                "actor_id": str(actor.id),
-                "requested_company_id": str(payload.company_id),
-            },
-        )
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Company not found",
-        )
-
-    # 3. Rate limit (10/hour/company_id). Single-process; see
+    # 2. Rate limit (10/hour/company_id). Single-process; see
     #    `app.core.rate_limit` docstring for the production caveat.
-    if not job_intake_rate_limiter.check(str(payload.company_id)):
+    if not job_intake_rate_limiter.check(str(company_id)):
         LOGGER.warning(
             "Job intake rate limit exceeded",
             extra={
-                "user_id": current_user.id,
-                "actor_kind": actor_kind,
-                "actor_id": str(actor.id),
-                "company_id": str(payload.company_id),
+                "company_user_id": str(company_user.id),
+                "company_id": str(company_id),
             },
         )
         raise HTTPException(
@@ -193,14 +119,13 @@ async def submit_job_intake(
             headers={"Retry-After": str(job_intake_rate_limiter.window_seconds)},
         )
 
-    # 4. Build the workflow input ahead of any DB write so cross-field
+    # 3. Build the workflow input ahead of any DB write so cross-field
     #    constraints (e.g. compensation_max >= compensation_min) raise a
     #    clean 422 BEFORE we insert an orphan Job row. The generated
     #    `JobIntakeRequest` schema does not enforce that relationship; the
     #    workflow input does, and we want both checks at the HTTP boundary.
     job_id = uuid4()
     workflow_id = f"job-intake-{job_id}"
-    created_by = actor.id if actor_kind == "company_user" else None
     remote_onsite_value = (
         payload.remote_onsite.value if payload.remote_onsite is not None else None
     )
@@ -230,10 +155,8 @@ async def submit_job_intake(
         LOGGER.info(
             "Job intake validation failed",
             extra={
-                "user_id": current_user.id,
-                "actor_kind": actor_kind,
-                "actor_id": str(actor.id),
-                "company_id": str(payload.company_id),
+                "company_user_id": str(company_user.id),
+                "company_id": str(company_id),
                 "errors": [{"loc": e["loc"], "type": e["type"]} for e in safe_errors],
             },
         )
@@ -242,14 +165,14 @@ async def submit_job_intake(
             detail=safe_errors,
         ) from exc
 
-    # 5. INSERT the Job row. Classification fields are intentionally null —
+    # 4. INSERT the Job row. Classification fields are intentionally null —
     #    `classify_role_type` activity fills them inside the workflow.
     job_repo = JobRepository(session)
     try:
         await job_repo.create(
             id=job_id,
-            company_id=payload.company_id,
-            created_by=created_by,
+            company_id=company_id,
+            created_by=company_user.id,
             title=payload.title,
             jd_text=payload.jd_text,
             intake_notes=payload.intake_notes,
@@ -267,10 +190,8 @@ async def submit_job_intake(
         LOGGER.exception(
             "Failed to insert Job row",
             extra={
-                "user_id": current_user.id,
-                "actor_kind": actor_kind,
-                "actor_id": str(actor.id),
-                "company_id": str(payload.company_id),
+                "company_user_id": str(company_user.id),
+                "company_id": str(company_id),
                 "job_id": str(job_id),
                 "workflow_id": workflow_id,
                 "error": str(exc),
@@ -281,7 +202,7 @@ async def submit_job_intake(
             detail="Failed to create job",
         ) from exc
 
-    # 6. Fire JobIntakeWorkflow (fire-and-forget). REJECT_DUPLICATE per D3
+    # 5. Fire JobIntakeWorkflow (fire-and-forget). REJECT_DUPLICATE per D3
     #    — re-intake is a bug; reeval flows through HITL #2 in a separate PR.
     try:
         client = await get_temporal_client()
@@ -301,10 +222,8 @@ async def submit_job_intake(
         LOGGER.exception(
             "Failed to start JobIntakeWorkflow",
             extra={
-                "user_id": current_user.id,
-                "actor_kind": actor_kind,
-                "actor_id": str(actor.id),
-                "company_id": str(payload.company_id),
+                "company_user_id": str(company_user.id),
+                "company_id": str(company_id),
                 "job_id": str(job_id),
                 "workflow_id": workflow_id,
                 "error": str(exc),
@@ -319,10 +238,8 @@ async def submit_job_intake(
     LOGGER.info(
         "Job intake accepted",
         extra={
-            "user_id": current_user.id,
-            "actor_kind": actor_kind,
-            "actor_id": str(actor.id),
-            "company_id": str(payload.company_id),
+            "company_user_id": str(company_user.id),
+            "company_id": str(company_id),
             "job_id": str(job_id),
             "workflow_id": workflow_id,
             "title_len": len(payload.title),
