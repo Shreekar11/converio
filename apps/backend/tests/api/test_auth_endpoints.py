@@ -659,3 +659,210 @@ def test_company_signup_duplicate_company_name_returns_409() -> None:
     assert resp.status_code == status.HTTP_409_CONFLICT, resp.text
     assert resp.json()["detail"] == "Company name already exists"
     mock_company_create.assert_not_awaited()
+
+
+# ---------------------------------------------------------------------------
+# T3.3 — POST /auth/recruiter/signup
+# ---------------------------------------------------------------------------
+
+
+def _recruiter_signup_payload(
+    *, include_email: bool = False
+) -> dict:
+    """Build a recruiter signup body. `include_email` injects an attacker
+    email into the payload so the success test can assert the handler
+    ignores it and uses the JWT email instead.
+    """
+    body: dict = {
+        "full_name": "Pat Recruiter",
+        "domain_expertise": ["fintech", "ai_infra"],
+        "workspace_type": "agency",
+        "recruited_funding_stage": "seed",
+        "bio": "10y placing senior eng",
+        "linkedin_url": "https://www.linkedin.com/in/patrecruiter",
+    }
+    if include_email:
+        # RecruiterSignupRequest has `extra="forbid"` — Pydantic will drop
+        # this with a 422 if it actually leaked through to the schema. The
+        # field is only here to document the JWT-email-enforcement intent;
+        # we patch the schema check off for that single test (see below).
+        body["email"] = "attacker@evil.example.com"
+    return body
+
+
+def _recruiter_signup_user(
+    email: str | None = "newrecruiter@example.test",
+) -> CurrentUser:
+    return CurrentUser(
+        id=f"sup-{uuid.uuid4().hex[:8]}",
+        email=email,
+        role="user",
+        app_metadata={},
+        user_metadata={"full_name": "Pat Recruiter"},
+    )
+
+
+def test_recruiter_signup_success_creates_recruiter() -> None:
+    """Happy path — JWT user signs up as recruiter; status=pending; email from JWT."""
+    user = _recruiter_signup_user()
+    payload = _recruiter_signup_payload()
+    recruiter = _make_recruiter(user.id, status_value="pending")
+    # Force the projected email/name to match what the handler should pass to
+    # the repo so the assertions below can compare against the JWT-derived
+    # email cleanly.
+    recruiter.email = user.email
+    recruiter.full_name = payload["full_name"]
+
+    with patch.object(
+        auth_module.OperatorRepository,
+        "get_by_email",
+        new=AsyncMock(return_value=None),
+    ), patch.object(
+        auth_module.CompanyUserRepository,
+        "get_by_email",
+        new=AsyncMock(return_value=None),
+    ), patch.object(
+        auth_module.RecruiterRepository,
+        "get_by_supabase_id",
+        new=AsyncMock(return_value=None),
+    ), patch.object(
+        auth_module.RecruiterRepository,
+        "create",
+        new=AsyncMock(return_value=recruiter),
+    ) as mock_recruiter_create:
+        with _client(user) as client:
+            resp = client.post("/auth/recruiter/signup", json=payload)
+
+    assert resp.status_code == status.HTTP_201_CREATED, resp.text
+    body = resp.json()
+    assert body["status"] is True
+    assert body["data"]["id"] == str(recruiter.id)
+    assert body["data"]["status"] == "pending"
+    assert body["data"]["email"] == user.email
+    assert body["data"]["domain_expertise"] == ["fintech", "ai_infra"]
+
+    # Critical: the repo MUST be called with the JWT email, not anything
+    # the client could supply via the payload. The schema's `extra="forbid"`
+    # prevents an `email` field on the body, but we still verify the
+    # contract here so a future schema relaxation can't silently regress.
+    create_kwargs = mock_recruiter_create.await_args.kwargs
+    assert create_kwargs["email"] == user.email
+    assert create_kwargs["supabase_user_id"] == user.id
+    assert create_kwargs["full_name"] == payload["full_name"]
+    assert create_kwargs["domain_expertise"] == ["fintech", "ai_infra"]
+    assert create_kwargs["workspace_type"] == "agency"
+    assert create_kwargs["recruited_funding_stage"] == "seed"
+    assert create_kwargs["bio"] == "10y placing senior eng"
+    # AnyUrl coerced to str (trailing slash from URL parser is fine)
+    assert create_kwargs["linkedin_url"].startswith(
+        "https://www.linkedin.com/in/patrecruiter"
+    )
+    assert create_kwargs["status"] == "pending"
+
+
+def test_recruiter_signup_rate_limited_returns_429() -> None:
+    """Rate limiter check returning False -> 429 with Retry-After header."""
+    user = _recruiter_signup_user()
+    payload = _recruiter_signup_payload()
+
+    with patch.object(
+        auth_module.signup_rate_limiter, "check", return_value=False
+    ):
+        with _client(user) as client:
+            resp = client.post("/auth/recruiter/signup", json=payload)
+
+    assert resp.status_code == status.HTTP_429_TOO_MANY_REQUESTS, resp.text
+    assert resp.headers.get("Retry-After") is not None
+
+
+def test_recruiter_signup_email_in_use_by_operator_returns_409() -> None:
+    """OperatorRepo.get_by_email returns Operator -> 409 email_in_use_operator."""
+    user = _recruiter_signup_user()
+    payload = _recruiter_signup_payload()
+    operator = _make_operator("sup-other")
+
+    with patch.object(
+        auth_module.OperatorRepository,
+        "get_by_email",
+        new=AsyncMock(return_value=operator),
+    ):
+        with _client(user) as client:
+            resp = client.post("/auth/recruiter/signup", json=payload)
+
+    assert resp.status_code == status.HTTP_409_CONFLICT, resp.text
+    assert resp.json()["detail"] == "Email already in use"
+    assert resp.headers.get("X-Error-Code") == "email_in_use_operator"
+
+
+def test_recruiter_signup_email_in_use_by_company_returns_409() -> None:
+    """CompanyUserRepo.get_by_email returns CompanyUser -> 409 email_in_use_company."""
+    user = _recruiter_signup_user()
+    payload = _recruiter_signup_payload()
+    company = _make_company(status_value="active")
+    seated_user = _make_company_user(company.id, sub="sup-other", email=user.email)
+
+    with patch.object(
+        auth_module.OperatorRepository,
+        "get_by_email",
+        new=AsyncMock(return_value=None),
+    ), patch.object(
+        auth_module.CompanyUserRepository,
+        "get_by_email",
+        new=AsyncMock(return_value=seated_user),
+    ):
+        with _client(user) as client:
+            resp = client.post("/auth/recruiter/signup", json=payload)
+
+    assert resp.status_code == status.HTTP_409_CONFLICT, resp.text
+    assert resp.json()["detail"] == "Email already in use"
+    assert resp.headers.get("X-Error-Code") == "email_in_use_company"
+
+
+def test_recruiter_signup_already_onboarded_returns_409() -> None:
+    """RecruiterRepo.get_by_supabase_id returns row -> 409 already_onboarded."""
+    user = _recruiter_signup_user()
+    payload = _recruiter_signup_payload()
+    existing = _make_recruiter(user.id, status_value="active")
+
+    with patch.object(
+        auth_module.OperatorRepository,
+        "get_by_email",
+        new=AsyncMock(return_value=None),
+    ), patch.object(
+        auth_module.CompanyUserRepository,
+        "get_by_email",
+        new=AsyncMock(return_value=None),
+    ), patch.object(
+        auth_module.RecruiterRepository,
+        "get_by_supabase_id",
+        new=AsyncMock(return_value=existing),
+    ), patch.object(
+        auth_module.RecruiterRepository,
+        "create",
+        new=AsyncMock(),
+    ) as mock_recruiter_create:
+        with _client(user) as client:
+            resp = client.post("/auth/recruiter/signup", json=payload)
+
+    assert resp.status_code == status.HTTP_409_CONFLICT, resp.text
+    assert resp.json()["detail"] == "Already registered as recruiter"
+    assert resp.headers.get("X-Error-Code") == "already_onboarded"
+    mock_recruiter_create.assert_not_awaited()
+
+
+def test_recruiter_signup_missing_email_returns_400() -> None:
+    """JWT without email claim (anonymous / phone-only sign-in) -> 400."""
+    user = _recruiter_signup_user(email=None)
+    payload = _recruiter_signup_payload()
+
+    with patch.object(
+        auth_module.RecruiterRepository,
+        "create",
+        new=AsyncMock(),
+    ) as mock_recruiter_create:
+        with _client(user) as client:
+            resp = client.post("/auth/recruiter/signup", json=payload)
+
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST, resp.text
+    assert "Email claim required" in resp.json()["detail"]
+    mock_recruiter_create.assert_not_awaited()

@@ -22,7 +22,7 @@ from app.repositories.companies import CompanyRepository
 from app.repositories.company_users import CompanyUserRepository
 from app.repositories.operators import OperatorRepository
 from app.repositories.recruiters import RecruiterRepository
-from app.schemas.enums import CompanyStatus, CompanyUserRole
+from app.schemas.enums import CompanyStatus, CompanyUserRole, RecruiterStatus
 from app.schemas.generated.auth import (
     CompanySignupRequest,
     RecruiterSignupRequest,
@@ -569,8 +569,144 @@ async def recruiter_signup(
     current_user: Annotated[CurrentUser, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ) -> ApiResponse:
-    """Create a self-serve recruiter profile linked to the authenticated user."""
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Not implemented",
+    """Create a self-serve recruiter profile linked to the authenticated user.
+
+    Identity is taken exclusively from the verified Supabase JWT — never from
+    the request body. Six logic branches mirror `company_signup`:
+
+    1. Defensive email-claim check — anonymous / phone-only sign-in shouldn't
+       be able to claim a recruiter profile.
+    2. Per-`sub` rate limit guard against retry storms / abuse.
+    3. Cross-role email uniqueness vs operator and company-user (the recruiter
+       table itself is checked via `get_by_supabase_id` in the next step).
+    4. Already-onboarded short-circuit — re-running signup after success
+       returns 409 instead of creating a duplicate recruiter row.
+    5. Create the recruiter in `pending` status; an operator activates it
+       from the operator console after manual review.
+    6. Return the projected recruiter profile envelope.
+    """
+    # --- 1. Email claim must be present ------------------------------------
+    if current_user.email is None:
+        LOGGER.warning(
+            "Recruiter signup rejected: missing email claim",
+            extra={"user_id": current_user.id},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email claim required for self-serve signup",
+        )
+
+    email = current_user.email
+
+    # --- 2. Rate limit (keyed by Supabase sub) -----------------------------
+    if not signup_rate_limiter.check(current_user.id):
+        LOGGER.warning(
+            "Recruiter signup rate-limited",
+            extra={"user_id": current_user.id},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many signup attempts; try again later",
+            headers={"Retry-After": str(signup_rate_limiter.window_seconds)},
+        )
+
+    # --- 3. Cross-role email uniqueness ------------------------------------
+    operator_match = await OperatorRepository(session).get_by_email(email)
+    if operator_match is not None:
+        LOGGER.warning(
+            "Recruiter signup blocked: email is operator",
+            extra={
+                "user_id": current_user.id,
+                "operator_id": str(operator_match.id),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already in use",
+            headers={"X-Error-Code": "email_in_use_operator"},
+        )
+
+    company_user_match = await CompanyUserRepository(session).get_by_email(email)
+    if company_user_match is not None:
+        LOGGER.warning(
+            "Recruiter signup blocked: email is company user",
+            extra={
+                "user_id": current_user.id,
+                "company_user_id": str(company_user_match.id),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already in use",
+            headers={"X-Error-Code": "email_in_use_company"},
+        )
+
+    # --- 4. Already-onboarded short-circuit --------------------------------
+    recruiter_repo = RecruiterRepository(session)
+    already_onboarded = await recruiter_repo.get_by_supabase_id(current_user.id)
+    if already_onboarded is not None:
+        LOGGER.warning(
+            "Recruiter signup blocked: already onboarded",
+            extra={
+                "user_id": current_user.id,
+                "recruiter_id": str(already_onboarded.id),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Already registered as recruiter",
+            headers={"X-Error-Code": "already_onboarded"},
+        )
+
+    # --- 5. Create recruiter (status = pending) ----------------------------
+    # `domain_expertise` is `list[DomainExpertiseItem]` — a RootModel wrapping
+    # a non-empty string. Unwrap each `.root` so the repository receives a
+    # plain `list[str]` matching its typed signature and the underlying
+    # `Recruiter.domain_expertise` ARRAY column.
+    domain_expertise = [item.root for item in payload.domain_expertise]
+
+    try:
+        recruiter = await recruiter_repo.create(
+            supabase_user_id=current_user.id,
+            email=email,  # always from JWT, never from payload body
+            full_name=payload.full_name,
+            domain_expertise=domain_expertise,
+            workspace_type=(
+                payload.workspace_type.value
+                if payload.workspace_type is not None
+                else None
+            ),
+            recruited_funding_stage=(
+                payload.recruited_funding_stage.value
+                if payload.recruited_funding_stage is not None
+                else None
+            ),
+            bio=payload.bio,
+            linkedin_url=(
+                str(payload.linkedin_url) if payload.linkedin_url is not None else None
+            ),
+            status=RecruiterStatus.PENDING.value,
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        LOGGER.exception(
+            "Failed to create recruiter during self-serve signup",
+            extra={"user_id": current_user.id, "error": str(exc)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to complete signup",
+        ) from exc
+
+    # --- 6. Audit log + envelope --------------------------------------------
+    LOGGER.info(
+        "Recruiter self-serve signup",
+        extra={"recruiter_id": str(recruiter.id)},
+    )
+
+    return create_api_response(
+        data=_project_recruiter(recruiter),
+        message="Recruiter registered",
+        request=request,
     )
