@@ -92,4 +92,14 @@ job_intake_rate_limiter = SlidingWindowRateLimiter(
 )
 
 
-__all__ = ["SlidingWindowRateLimiter", "job_intake_rate_limiter"]
+# Keyed by Supabase `sub` (user ID). Prevents repeated signup attempts
+# from the same identity. Applied to /auth/company/signup and
+# /auth/recruiter/signup endpoints.
+signup_rate_limiter = SlidingWindowRateLimiter(max_requests=5, window_seconds=3600)
+
+
+__all__ = [
+    "SlidingWindowRateLimiter",
+    "job_intake_rate_limiter",
+    "signup_rate_limiter",
+]
