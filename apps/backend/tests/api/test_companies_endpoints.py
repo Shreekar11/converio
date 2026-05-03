@@ -296,5 +296,259 @@ def test_get_company_invalid_uuid_returns_422() -> None:
     assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
+# ---------------------------------------------------------------------------
+# T4.1 — PATCH /companies/{id}/status
+# ---------------------------------------------------------------------------
+
+
+def _make_company_with_status(status_value: str, name: str = "Acme") -> Company:
+    """Build a Company test row with an explicit lifecycle status.
+
+    The default `_make_company` helper hard-codes `status="active"` which
+    is the wrong starting state for most transition tests below, so we use
+    this thin variant to keep the tests intent-revealing.
+    """
+    company = _make_company(name=name)
+    company.status = status_value
+    return company
+
+
+def test_update_company_status_pending_to_active_success() -> None:
+    company = _make_company_with_status("pending_review")
+    updated = _make_company_with_status("active", name=company.name)
+    updated.id = company.id
+
+    with (
+        patch.object(
+            companies_module.CompanyRepository,
+            "get_by_id",
+            new=AsyncMock(return_value=company),
+        ),
+        patch.object(
+            companies_module.CompanyRepository,
+            "update_status",
+            new=AsyncMock(return_value=updated),
+        ) as mock_update,
+    ):
+        with _client() as client:
+            resp = client.patch(
+                f"/companies/{company.id}/status",
+                json={"status": "active"},
+            )
+
+    assert resp.status_code == status.HTTP_200_OK, resp.text
+    body = resp.json()
+    assert body["status"] is True
+    assert body["data"]["status"] == "active"
+    assert body["data"]["id"] == str(company.id)
+    mock_update.assert_awaited_once_with(company.id, "active")
+
+
+def test_update_company_status_active_to_paused_success() -> None:
+    company = _make_company_with_status("active")
+    updated = _make_company_with_status("paused", name=company.name)
+    updated.id = company.id
+
+    with (
+        patch.object(
+            companies_module.CompanyRepository,
+            "get_by_id",
+            new=AsyncMock(return_value=company),
+        ),
+        patch.object(
+            companies_module.CompanyRepository,
+            "update_status",
+            new=AsyncMock(return_value=updated),
+        ) as mock_update,
+    ):
+        with _client() as client:
+            resp = client.patch(
+                f"/companies/{company.id}/status",
+                json={"status": "paused"},
+            )
+
+    assert resp.status_code == status.HTTP_200_OK, resp.text
+    assert resp.json()["data"]["status"] == "paused"
+    mock_update.assert_awaited_once_with(company.id, "paused")
+
+
+def test_update_company_status_paused_to_active_success() -> None:
+    company = _make_company_with_status("paused")
+    updated = _make_company_with_status("active", name=company.name)
+    updated.id = company.id
+
+    with (
+        patch.object(
+            companies_module.CompanyRepository,
+            "get_by_id",
+            new=AsyncMock(return_value=company),
+        ),
+        patch.object(
+            companies_module.CompanyRepository,
+            "update_status",
+            new=AsyncMock(return_value=updated),
+        ) as mock_update,
+    ):
+        with _client() as client:
+            resp = client.patch(
+                f"/companies/{company.id}/status",
+                json={"status": "active"},
+            )
+
+    assert resp.status_code == status.HTTP_200_OK, resp.text
+    assert resp.json()["data"]["status"] == "active"
+    mock_update.assert_awaited_once_with(company.id, "active")
+
+
+def test_update_company_status_any_to_churned_success() -> None:
+    """`active -> churned` is the canonical off-boarding path."""
+    company = _make_company_with_status("active")
+    updated = _make_company_with_status("churned", name=company.name)
+    updated.id = company.id
+
+    with (
+        patch.object(
+            companies_module.CompanyRepository,
+            "get_by_id",
+            new=AsyncMock(return_value=company),
+        ),
+        patch.object(
+            companies_module.CompanyRepository,
+            "update_status",
+            new=AsyncMock(return_value=updated),
+        ) as mock_update,
+    ):
+        with _client() as client:
+            resp = client.patch(
+                f"/companies/{company.id}/status",
+                json={"status": "churned"},
+            )
+
+    assert resp.status_code == status.HTTP_200_OK, resp.text
+    assert resp.json()["data"]["status"] == "churned"
+    mock_update.assert_awaited_once_with(company.id, "churned")
+
+
+def test_update_company_status_invalid_transition_returns_422() -> None:
+    """`pending_review -> paused` is not a permitted transition."""
+    company = _make_company_with_status("pending_review")
+
+    with (
+        patch.object(
+            companies_module.CompanyRepository,
+            "get_by_id",
+            new=AsyncMock(return_value=company),
+        ),
+        patch.object(
+            companies_module.CompanyRepository,
+            "update_status",
+            new=AsyncMock(),
+        ) as mock_update,
+    ):
+        with _client() as client:
+            resp = client.patch(
+                f"/companies/{company.id}/status",
+                json={"status": "paused"},
+            )
+
+    assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert resp.json()["detail"] == "Invalid status transition"
+    mock_update.assert_not_awaited()
+
+
+def test_update_company_status_churned_to_active_returns_422() -> None:
+    """`churned` is terminal — re-activation is rejected."""
+    company = _make_company_with_status("churned")
+
+    with (
+        patch.object(
+            companies_module.CompanyRepository,
+            "get_by_id",
+            new=AsyncMock(return_value=company),
+        ),
+        patch.object(
+            companies_module.CompanyRepository,
+            "update_status",
+            new=AsyncMock(),
+        ) as mock_update,
+    ):
+        with _client() as client:
+            resp = client.patch(
+                f"/companies/{company.id}/status",
+                json={"status": "active"},
+            )
+
+    assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert resp.json()["detail"] == "Invalid status transition"
+    mock_update.assert_not_awaited()
+
+
+def test_update_company_status_requires_operator_auth() -> None:
+    """Non-operator callers get 403 before any DB IO."""
+    app = FastAPI()
+    app.include_router(companies_module.router, prefix="/companies")
+
+    async def _raise_forbidden() -> Operator:  # noqa: RUF029
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Operator privileges required",
+        )
+
+    async def _override_session():
+        yield AsyncMock()
+
+    app.dependency_overrides[get_current_operator] = _raise_forbidden
+    app.dependency_overrides[get_async_session] = _override_session
+
+    with (
+        patch.object(
+            companies_module.CompanyRepository,
+            "get_by_id",
+            new=AsyncMock(),
+        ) as mock_get,
+        patch.object(
+            companies_module.CompanyRepository,
+            "update_status",
+            new=AsyncMock(),
+        ) as mock_update,
+    ):
+        with TestClient(app) as client:
+            resp = client.patch(
+                f"/companies/{uuid.uuid4()}/status",
+                json={"status": "active"},
+            )
+
+    assert resp.status_code == status.HTTP_403_FORBIDDEN
+    assert resp.json()["detail"] == "Operator privileges required"
+    mock_get.assert_not_awaited()
+    mock_update.assert_not_awaited()
+
+
+def test_update_company_status_company_not_found_returns_404() -> None:
+    target_id = uuid.uuid4()
+
+    with (
+        patch.object(
+            companies_module.CompanyRepository,
+            "get_by_id",
+            new=AsyncMock(return_value=None),
+        ),
+        patch.object(
+            companies_module.CompanyRepository,
+            "update_status",
+            new=AsyncMock(),
+        ) as mock_update,
+    ):
+        with _client() as client:
+            resp = client.patch(
+                f"/companies/{target_id}/status",
+                json={"status": "active"},
+            )
+
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+    assert resp.json()["detail"] == "Company not found"
+    mock_update.assert_not_awaited()
+
+
 # Silence "unused" warnings for helpers conditionally referenced in patches.
 _ = MagicMock

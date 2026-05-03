@@ -30,6 +30,7 @@ from app.schemas.generated.companies import (
     CompanyCreate,
     CompanyDetailResponse,
     CompanyResponse,
+    CompanyStatusUpdate,
     CompanyUserCreate,
     CompanyUserResponse,
     CompanyUsersListResponse,
@@ -39,6 +40,32 @@ from app.utils.responses import ApiResponse, create_api_response
 
 router = APIRouter()
 LOGGER = get_logger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Status transition policy
+# ---------------------------------------------------------------------------
+#
+# Module-level constant so the policy is auditable in one place and unit
+# tests can import it without spinning up the FastAPI app. Every legal
+# operator-driven status mutation is encoded here; anything not listed is
+# rejected with HTTP 422 by `update_company_status` below.
+#
+#   pending_review -> active   (operator approves a freshly self-served signup)
+#   pending_review -> churned  (operator rejects a freshly self-served signup)
+#   active         -> paused   (temporarily disable an onboarded company)
+#   active         -> churned  (permanent off-boarding from active state)
+#   paused         -> active   (re-enable a previously paused company)
+#   paused         -> churned  (permanent off-boarding from paused state)
+#
+# `churned` is a terminal state by design — re-onboarding requires creating
+# a new company record so audit trails remain intact.
+
+VALID_STATUS_TRANSITIONS: dict[str, set[str]] = {
+    "pending_review": {"active", "churned"},
+    "active": {"paused", "churned"},
+    "paused": {"active", "churned"},
+}
 
 
 # ---------------------------------------------------------------------------
@@ -493,5 +520,108 @@ async def list_company_users(
     return create_api_response(
         data=payload.model_dump(mode="json"),
         message="Company users fetched",
+        request=request,
+    )
+
+
+# ---------------------------------------------------------------------------
+# T4.1 — PATCH /companies/{company_id}/status (operator approval flow)
+# ---------------------------------------------------------------------------
+
+
+@router.patch(
+    "/{company_id}/status",
+    response_model=ApiResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Update company status (operator approval flow)",
+    operation_id="update_company_status",
+)
+async def update_company_status(
+    request: Request,
+    company_id: UUID,
+    payload: CompanyStatusUpdate,
+    operator: Annotated[Operator, Depends(get_current_operator)],
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+) -> ApiResponse:
+    """Mutate a company's lifecycle `status` along an allowed transition.
+
+    Drives the self-serve auth approval flow: a company freshly created in
+    `pending_review` is promoted to `active` (or rejected to `churned`) by
+    an operator; an already-active company can be `paused`/`churned`, and
+    a paused company can be re-activated or churned. Any other transition
+    is rejected with HTTP 422 — the contract is centralised in
+    `VALID_STATUS_TRANSITIONS` at the top of this module.
+
+    Operator-only. Audit log emits `from_status` + `to_status` (no PII)
+    keyed by operator id and company id.
+    """
+    repo = CompanyRepository(session)
+
+    company = await repo.get_by_id(company_id)
+    if company is None:
+        LOGGER.info(
+            "Update company status: company not found",
+            extra={
+                "operator_id": str(operator.id),
+                "company_id": str(company_id),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Company not found",
+        )
+
+    current_status = company.status
+    target_status = payload.status.value
+
+    if (
+        current_status not in VALID_STATUS_TRANSITIONS
+        or target_status not in VALID_STATUS_TRANSITIONS.get(current_status, set())
+    ):
+        LOGGER.warning(
+            "Rejected invalid status transition",
+            extra={
+                "operator_id": str(operator.id),
+                "company_id": str(company_id),
+                "from_status": current_status,
+                "to_status": target_status,
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Invalid status transition",
+        )
+
+    try:
+        updated_company = await repo.update_status(company_id, target_status)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        LOGGER.exception(
+            "Failed to update company status",
+            extra={
+                "operator_id": str(operator.id),
+                "company_id": str(company_id),
+                "error": str(exc),
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update company status",
+        ) from exc
+
+    LOGGER.info(
+        "Company status updated",
+        extra={
+            "operator_id": str(operator.id),
+            "company_id": str(company_id),
+            "from_status": current_status,
+            "to_status": target_status,
+        },
+    )
+
+    return create_api_response(
+        data=_project_company(updated_company).model_dump(mode="json"),
+        message="Company status updated",
         request=request,
     )
