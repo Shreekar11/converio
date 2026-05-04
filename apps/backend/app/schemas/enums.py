@@ -87,6 +87,7 @@ class RemoteOnsite(StrEnum):
 
 
 class CompanyStatus(StrEnum):
+    PENDING_REVIEW = "pending_review"
     ACTIVE = "active"
     PAUSED = "paused"
     CHURNED = "churned"

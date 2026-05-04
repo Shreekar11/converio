@@ -1,0 +1,17 @@
+[
+  {
+    "email": "ops1@converio.test",
+    "full_name": "Avery Lin",
+    "status": "active"
+  },
+  {
+    "email": "ops2@converio.test",
+    "full_name": "Marcus Hale",
+    "status": "active"
+  },
+  {
+    "email": "ops3@converio.test",
+    "full_name": "Priyanka Shetty",
+    "status": "active"
+  }
+]

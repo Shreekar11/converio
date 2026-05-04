@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Lattice Labs",
+    "stage": "seed",
+    "industry": "developer_tools",
+    "website": "https://lattice-labs.test",
+    "company_size_range": "1-10",
+    "founding_year": 2024,
+    "hq_location": "San Francisco, CA",
+    "description": "Pre-product seed company building deterministic build caches for monorepos. Founders out of stealth, hiring founding engineers."
+  },
+  {
+    "name": "Hyperloop Compute",
+    "stage": "series_a",
+    "industry": "ai_infrastructure",
+    "website": "https://hyperloop-compute.test",
+    "company_size_range": "11-50",
+    "founding_year": 2023,
+    "hq_location": "New York, NY",
+    "description": "GPU orchestration platform for inference workloads. Series A from tier-1 lead, scaling SRE and inference-runtime teams."
+  },
+  {
+    "name": "Cobalt Health",
+    "stage": "series_a",
+    "industry": "healthtech",
+    "website": "https://cobalt-health.test",
+    "company_size_range": "11-50",
+    "founding_year": 2022,
+    "hq_location": "Boston, MA",
+    "description": "Clinical workflow automation for ambulatory specialty practices. Hiring backend and ML applied scientists post Series A."
+  },
+  {
+    "name": "Nimbus Ledger",
+    "stage": "series_b",
+    "industry": "fintech",
+    "website": "https://nimbus-ledger.test",
+    "company_size_range": "51-200",
+    "founding_year": 2020,
+    "hq_location": "Austin, TX",
+    "description": "B2B payments + ledgering API serving mid-market SaaS. Building out platform engineering and a founding sales-engineering function."
+  },
+  {
+    "name": "Quanta Robotics",
+    "stage": "series_b",
+    "industry": "robotics",
+    "website": "https://quanta-robotics.test",
+    "company_size_range": "51-200",
+    "founding_year": 2019,
+    "hq_location": "Pittsburgh, PA",
+    "description": "Warehouse automation hardware + perception stack. Series B-funded, hiring senior perception, controls, and field-deployment engineers."
+  },
+  {
+    "name": "Verdant Forge",
+    "stage": "series_c",
+    "industry": "climate_tech",
+    "website": "https://verdant-forge.test",
+    "company_size_range": "201-1000",
+    "founding_year": 2017,
+    "hq_location": "Seattle, WA",
+    "description": "Industrial decarbonization platform — emissions accounting and procurement workflows for Fortune 500 supply chains."
+  },
+  {
+    "name": "Helio Markets",
+    "stage": "growth",
+    "industry": "fintech",
+    "website": "https://helio-markets.test",
+    "company_size_range": "201-1000",
+    "founding_year": 2015,
+    "hq_location": "Chicago, IL",
+    "description": "Late-stage trading-infrastructure platform for prop firms. Replacing core matching engine; hiring staff-level systems engineers and security leads."
+  },
+  {
+    "name": "Brightline Logistics",
+    "stage": "growth",
+    "industry": "supply_chain",
+    "website": "https://brightline-logistics.test",
+    "company_size_range": "1001+",
+    "founding_year": 2014,
+    "hq_location": "Atlanta, GA",
+    "description": "Multimodal freight orchestration for enterprise shippers. Growth-stage, building out data-platform and applied-ML organizations."
+  }
+]
