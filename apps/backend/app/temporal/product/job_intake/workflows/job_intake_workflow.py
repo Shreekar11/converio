@@ -133,15 +133,25 @@ class JobIntakeWorkflow:
         )
         self._rubric_version = persisted["rubric_version"]
 
-        # Phase 4 (stub) — Agent 0 RecruiterAssignmentWorkflow.
-        # TODO(agent-0): replace with `await workflow.execute_child_workflow(
-        #     "RecruiterAssignmentWorkflow",
-        #     {"job_id": inp.job_id, "classification": classification},
-        #     id=f"recruiter-assignment-{inp.job_id}",
-        #     task_queue="converio-queue",
-        # )` once that workflow ships. Until then the parent exits with
-        # status=recruiter_assignment so the persistence contract stays stable
-        # for the Agent 0 PR to plug into without changes here.
+        # Phase 4: Spawn Agent 0 — RecruiterAssignmentWorkflow as blocking child.
+        # The child workflow pauses on operator_approval Signal (HITL #1) before
+        # notifying recruiters. Root workflow waits for full completion.
+        with workflow.unsafe.imports_passed_through():
+            from app.schemas.product.recruiter_assignment import RecruiterAssignmentInput
+
+        self._current_phase = "recruiter_assignment"
+        assignment_input = RecruiterAssignmentInput(
+            job_id=inp.job_id,
+            classification=classification,
+            rubric=rubric,
+        ).model_dump(mode="json")
+
+        await workflow.execute_child_workflow(
+            "RecruiterAssignmentWorkflow",
+            assignment_input,
+            id=f"recruiter-assignment-{inp.job_id}",
+            task_queue="converio-queue",
+        )
 
         self._current_phase = "completed"
 
