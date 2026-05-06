@@ -149,6 +149,21 @@ class CompanyUserRole(StrEnum):
 
 
 # ---------------------------------------------------------------------------
+# Workflow status enums
+# ---------------------------------------------------------------------------
+
+
+class RecruiterAssignmentStatus(StrEnum):
+    """Lifecycle status for the RecruiterAssignmentWorkflow."""
+
+    PROPOSED = "proposed"
+    AWAITING_OPERATOR = "awaiting_operator"
+    ASSIGNED = "assigned"
+    REJECTED_BY_OPERATOR = "rejected_by_operator"
+    FAILED = "failed"
+
+
+# ---------------------------------------------------------------------------
 # HITL + workflow
 # ---------------------------------------------------------------------------
 
@@ -194,6 +209,7 @@ __all__ = [
     "AssignmentStatus",
     "SubmissionStatus",
     "CompanyUserRole",
+    "RecruiterAssignmentStatus",
     "HitlSignalType",
     "HitlActorType",
     "HitlAction",
