@@ -1,0 +1,326 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Converio - Recruiter Assignment API",
+    "version": "0.1.0",
+    "description": "Operator-only endpoints for the Recruiter Assignment Agent (Agent 0) HITL review surface. Operators fetch the current proposal, approve/reject it (which signals the running RecruiterAssignmentWorkflow), and poll workflow phase. Source of truth for the recruiter-assignment API contract; backend Pydantic models and frontend TS clients are generated from this file."
+  },
+  "servers": [
+    { "url": "/api/v1" }
+  ],
+  "tags": [
+    { "name": "Recruiter Assignment", "description": "Operator HITL review of recruiter assignment proposals." }
+  ],
+  "paths": {
+    "/jobs/{job_id}/recruiter-assignment/proposal": {
+      "get": {
+        "operationId": "get_recruiter_assignment_proposal",
+        "tags": ["Recruiter Assignment"],
+        "summary": "Fetch the current recruiter assignment proposal for operator review",
+        "description": "Returns the latest non-superseded proposal for `job_id`. Used by the operator console to render the HITL review screen. Operator-only; non-operators receive 403 before any DB IO.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "parameters": [
+          { "$ref": "#/components/parameters/JobIdPath" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Proposal retrieved.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OperatorProposalEnvelope" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Caller is not an active Converio operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "No outstanding (non-superseded) proposal exists for this job.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error - database unavailable.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/jobs/{job_id}/recruiter-assignment/approve": {
+      "post": {
+        "operationId": "submit_recruiter_assignment_decision",
+        "tags": ["Recruiter Assignment"],
+        "summary": "Send operator approval or rejection signal to RecruiterAssignmentWorkflow",
+        "description": "Forward the operator's approve / reject decision to the running RecruiterAssignmentWorkflow as an `operator_approval` Temporal signal. The endpoint enriches the signal payload with `operator_id` (sourced from the auth context, NOT the request body) so the workflow's audit trail records who decided. Returns 202 immediately - the workflow consumes the signal asynchronously. Operator-only.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "parameters": [
+          { "$ref": "#/components/parameters/JobIdPath" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OperatorApprovalRequest" }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Signal dispatched to Temporal. Workflow will consume asynchronously.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OperatorDecisionAcceptedResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Caller is not an active Converio operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "No outstanding (non-superseded) proposal exists for this job.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Decision payload failed schema validation (e.g. `decision` not in {approve, reject}, or approve with empty recruiter sets).",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "502": {
+            "description": "Failed to dispatch the workflow signal to Temporal. Internal error details are not exposed.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/jobs/{job_id}/recruiter-assignment/status": {
+      "get": {
+        "operationId": "get_recruiter_assignment_status",
+        "tags": ["Recruiter Assignment"],
+        "summary": "Get recruiter assignment workflow status",
+        "description": "Proxy to the running RecruiterAssignmentWorkflow's `current_phase` query handler. Used for live progress indicators in the operator console. Operator-only.",
+        "security": [
+          { "BearerAuth": [] }
+        ],
+        "parameters": [
+          { "$ref": "#/components/parameters/JobIdPath" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow phase retrieved.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RecruiterAssignmentStatusResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Caller is not an active Converio operator.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "No proposal (and therefore no known workflow) exists for this job.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "502": {
+            "description": "Failed to query the Temporal workflow. Internal error details are not exposed.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "JobIdPath": {
+        "name": "job_id",
+        "in": "path",
+        "required": true,
+        "description": "UUID of the Job whose recruiter-assignment proposal is being reviewed.",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "schemas": {
+      "OperatorApprovalRequest": {
+        "type": "object",
+        "description": "Operator's decision on a proposal. On `approve`, at least one of `confirmed_recruiter_ids` or `override_set` must be non-empty (operator must commit to a set). On `reject`, recruiter IDs are not required; `notes` carry the feedback channel back into the agent's re-loop prompt.",
+        "required": ["decision"],
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": ["approve", "reject"],
+            "description": "Operator's verdict on the proposed set."
+          },
+          "confirmed_recruiter_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "default": [],
+            "description": "Operator-confirmed subset of the proposed set; empty on reject."
+          },
+          "override_set": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "default": [],
+            "description": "Optional operator override - recruiters outside the proposed set."
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free-form operator feedback; on reject this feeds back into the agent's re-loop prompt."
+          }
+        }
+      },
+      "OperatorProposalResponse": {
+        "type": "object",
+        "description": "Persisted recruiter-assignment proposal awaiting operator HITL review. The full agent decision context (candidates, fit scores, narratives, audit trail) is carried in `payload`; the operator UI renders that JSON directly.",
+        "required": ["proposal_id", "job_id", "workflow_id", "quality_flag", "payload", "created_at"],
+        "properties": {
+          "proposal_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Primary key of the operator_proposals row."
+          },
+          "job_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID of the Job under review."
+          },
+          "workflow_id": {
+            "type": "string",
+            "description": "Temporal workflow id for the running RecruiterAssignmentWorkflow.",
+            "example": "recruiter-assignment-7f3a8c0e-9d4b-4e1c-8a2f-3b5d6e7f8a9b"
+          },
+          "quality_flag": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Aggregate confidence bucket emitted by the agent."
+          },
+          "payload": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Full OperatorProposal JSON (proposed_recruiter_ids, candidates, fit_scores, narratives, audit_trail, totals). See app.schemas.product.recruiter_assignment.OperatorProposal for the canonical shape."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when the proposal row was persisted."
+          }
+        }
+      },
+      "OperatorProposalEnvelope": {
+        "type": "object",
+        "description": "Standard ApiResponse envelope wrapping an OperatorProposalResponse.",
+        "required": ["status", "message", "data"],
+        "properties": {
+          "status": { "type": "boolean", "example": true },
+          "message": { "type": "string", "example": "Proposal retrieved" },
+          "data": { "$ref": "#/components/schemas/OperatorProposalResponse" },
+          "correlation_id": { "type": "string", "nullable": true }
+        }
+      },
+      "OperatorDecisionAcceptedResponse": {
+        "type": "object",
+        "description": "Standard ApiResponse envelope wrapping the dispatch acknowledgement for an operator decision.",
+        "required": ["status", "message", "data"],
+        "properties": {
+          "status": { "type": "boolean", "example": true },
+          "message": { "type": "string", "example": "Signal 'approve' sent to workflow" },
+          "data": {
+            "type": "object",
+            "required": ["job_id", "decision", "workflow_id"],
+            "properties": {
+              "job_id": { "type": "string", "format": "uuid" },
+              "decision": { "type": "string", "enum": ["approve", "reject"] },
+              "workflow_id": { "type": "string" }
+            }
+          },
+          "correlation_id": { "type": "string", "nullable": true }
+        }
+      },
+      "RecruiterAssignmentStatusResponse": {
+        "type": "object",
+        "description": "Standard ApiResponse envelope wrapping the workflow phase string.",
+        "required": ["status", "message", "data"],
+        "properties": {
+          "status": { "type": "boolean", "example": true },
+          "message": { "type": "string", "example": "Workflow status retrieved" },
+          "data": {
+            "type": "object",
+            "required": ["job_id", "workflow_id", "phase"],
+            "properties": {
+              "job_id": { "type": "string", "format": "uuid" },
+              "workflow_id": { "type": "string" },
+              "phase": {
+                "type": "string",
+                "description": "Current phase of the RecruiterAssignmentWorkflow.",
+                "enum": [
+                  "initialized",
+                  "searching",
+                  "persist_proposal",
+                  "awaiting_operator",
+                  "rejected",
+                  "assigning",
+                  "notifying",
+                  "transitioning_status",
+                  "completed"
+                ]
+              }
+            }
+          },
+          "correlation_id": { "type": "string", "nullable": true }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "FastAPI error response. `detail` is either a string (HTTPException) or a list of validation error objects.",
+        "required": ["detail"],
+        "properties": {
+          "detail": {
+            "oneOf": [
+              { "type": "string", "example": "No proposal found for this job" },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Supabase-issued JWT supplied as `Authorization: Bearer <token>`. Must resolve to an active Operator row."
+      }
+    }
+  }
+}
