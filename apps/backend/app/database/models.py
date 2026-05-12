@@ -200,6 +200,9 @@ class Recruiter(Base):
     past_placements: Mapped[list["RecruiterPlacement"]] = relationship(
         "RecruiterPlacement", back_populates="recruiter", cascade="all, delete-orphan"
     )
+    notifications: Mapped[list["Notification"]] = relationship(
+        "Notification", back_populates="recruiter", cascade="all, delete-orphan"
+    )
 
     __table_args__ = ({"comment": "Independent contractors vetted by Converio"},)
 
@@ -362,6 +365,12 @@ class Job(Base):
     )
     workflow_runs: Mapped[list["WorkflowRun"]] = relationship(
         "WorkflowRun", back_populates="job"
+    )
+    operator_proposals: Mapped[list["OperatorProposal"]] = relationship(
+        "OperatorProposal", back_populates="job", cascade="all, delete-orphan"
+    )
+    notifications: Mapped[list["Notification"]] = relationship(
+        "Notification", back_populates="job", cascade="all, delete-orphan"
     )
 
     __table_args__ = ({"comment": "Managed role intake — root Temporal JobIntakeWorkflow entity"},)
@@ -715,6 +724,86 @@ class RecruiterPlacement(Base):
     )
 
 
+class OperatorProposal(Base):
+    """Persisted recruiter proposal awaiting operator HITL review.
+
+    One row per proposal attempt per job. Multiple rows possible if operator
+    rejects and the agent re-proposes. superseded_at is set on older rows when
+    a new proposal is persisted for the same job.
+    """
+
+    __tablename__ = "operator_proposals"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    job_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("jobs.id", ondelete="CASCADE"), nullable=False
+    )
+    workflow_id: Mapped[str] = mapped_column(String, nullable=False)  # Temporal workflow ID
+    payload: Mapped[dict] = mapped_column(
+        JSONB, nullable=False
+    )  # full OperatorProposal JSON
+    quality_flag: Mapped[str] = mapped_column(
+        String(10), nullable=False, default="high"
+    )  # high | medium | low
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default="NOW()", nullable=False
+    )
+    superseded_at: Mapped[datetime | None] = mapped_column(
+        TIMESTAMP(timezone=True), nullable=True
+    )
+
+    # Relationships
+    job: Mapped["Job"] = relationship("Job", back_populates="operator_proposals")
+
+    __table_args__ = (
+        {"comment": "Recruiter assignment proposals awaiting Converio operator HITL review"},
+    )
+
+
+class Notification(Base):
+    """Outbound notification stub (PoW). Replaces real Slack/email for now.
+
+    notify_assigned_recruiters activity inserts one row per recruiter.
+    Real channel dispatch (Slack/SMTP) is post-PoW work.
+    """
+
+    __tablename__ = "notifications"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    recruiter_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("recruiters.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    job_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("jobs.id", ondelete="CASCADE"), nullable=False
+    )
+    channel: Mapped[str] = mapped_column(
+        String(20), nullable=False, default="stub"
+    )  # stub | slack | email
+    payload: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(20), nullable=False, default="sent"
+    )  # sent | failed | pending
+    dispatched_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default="NOW()", nullable=False
+    )
+
+    # Relationships
+    recruiter: Mapped["Recruiter"] = relationship(
+        "Recruiter", back_populates="notifications"
+    )
+    job: Mapped["Job"] = relationship("Job", back_populates="notifications")
+
+    __table_args__ = (
+        {"comment": "Outbound notifications stub — recruiter assignment alerts (PoW)"},
+    )
+
+
 __all__ = [
     "Base",
     "Company",
@@ -731,4 +820,6 @@ __all__ = [
     "WorkflowRun",
     "RecruiterClient",
     "RecruiterPlacement",
+    "OperatorProposal",
+    "Notification",
 ]

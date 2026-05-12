@@ -196,3 +196,71 @@ jobs.status = recruiter_assignment + rubrics row v1 in PostgreSQL
 - **Workflow ID convention**: `job-intake-<job_id>`. `WorkflowIDReusePolicy.REJECT_DUPLICATE` — re-intake is treated as a bug; rubric reeval flows through HITL #2 (separate PR).
 - **Logging**: `jd_text` and `intake_notes` are never logged. Log lines carry `job_id`, `workflow_id`, `company_id`, `actor_kind`, `actor_id` only.
 - **Out of scope this PR**: Agents 0/3/4/5/6, both HITL Signal handlers, frontend portals, ATS push, Slack notifications. See `docs/plans/job_intake_plan.md` for the full out-of-scope list.
+
+---
+
+## Agent 0 — Recruiter Assignment
+
+Tier 2 (LLM-augmented workflow + operator HITL). Solves the first matching problem in Converio Match: Recruiter ↔ Role. After `JobIntakeWorkflow` completes classification + rubric, it spawns `RecruiterAssignmentWorkflow` as a blocking child workflow. The agent runs an adaptive LLM-directed search loop over the recruiter knowledge graph, proposes a 3–5 recruiter shortlist to a Converio operator (HITL Pause #1), and on approval persists assignments + notifies recruiters.
+
+### What it does
+
+- **Adaptive search loop**: an `llm_decide_next_tool` activity picks tools from `RECRUITER_ASSIGNMENT_TOOLS` (search pool, widen domain, relax stage, query capacity, check recent placements, summarize track record, score fit, rank and select) — building evidence until it calls the terminal `propose_assignment_set` tool.
+- **Operator HITL gate**: proposal is persisted to `operator_proposals`; the workflow then parks on a `wait_condition` for the `operator_approval` Signal. Approve → assign + notify + transition job status. First reject → re-loop once with notes (Decision 16.1). Second reject → terminal `REJECTED_BY_OPERATOR`.
+- **Budget guardrails**: hard tool-call/token/cost ceilings drive a best-effort fallback proposal if the loop runs long.
+
+### Key files
+
+- Workflow: `app/temporal/product/recruiter_assignment/workflows/recruiter_assignment_workflow.py`
+- Activities (15): `app/temporal/product/recruiter_assignment/activities/`
+- Augmented-LLM primitives: `app/temporal/core/{budget,execute_tool,llm_decision,prompt_assembly,tool_registry}.py`
+- Schemas: `app/schemas/product/recruiter_assignment.py`
+- Operator API: `app/api/routes/recruiter_assignment.py` (see `POST /jobs/{id}/recruiter-assignment/approve`)
+
+### How to trigger
+
+`JobIntakeWorkflow` spawns `RecruiterAssignmentWorkflow` automatically as a blocking child after Phase 3 (`persist_job_record`). The child uses workflow ID `recruiter-assignment-{job_id}` on `converio-queue`.
+
+To unblock the HITL pause, the operator API sends an `operator_approval` Signal:
+
+```bash
+# Approve (or override) the proposed shortlist
+curl -X POST http://localhost:8000/api/v1/jobs/$JOB_ID/recruiter-assignment/approve \
+  -H "Authorization: Bearer $OPERATOR_JWT" \
+  -d '{"decision":"approve","confirmed_recruiter_ids":["..."],"operator_id":"..."}'
+
+# Or reject with notes (re-enters search loop once)
+curl -X POST http://localhost:8000/api/v1/jobs/$JOB_ID/recruiter-assignment/approve \
+  -H "Authorization: Bearer $OPERATOR_JWT" \
+  -d '{"decision":"reject","notes":"need stronger fintech focus","operator_id":"..."}'
+```
+
+### Architecture
+
+```
+JobIntakeWorkflow (parent)
+    ↓ execute_child_workflow
+RecruiterAssignmentWorkflow (id=recruiter-assignment-<job_id>)
+    Search loop (LLM-directed):
+        core.llm_decide_next_tool → search_recruiter_pool / widen_domain_search /
+            relax_stage_match / query_recruiter_capacity / check_recent_placements /
+            summarize_recruiter_track_record / score_recruiter_fit /
+            rank_and_select_recruiters → propose_assignment_set (terminal)
+    persist_proposal (operator_proposals row)
+    ── HITL Pause #1: await operator_approval Signal ──
+    Approve: assign_recruiters_to_role + notify_assigned_recruiters +
+             transition_job_status(recruiter_assignment → sourcing) + log_hitl_event
+    Reject (1st): re-enter search loop with rejection notes
+    Reject (2nd): log + terminal REJECTED_BY_OPERATOR
+    ↓
+jobs.status = sourcing + assignments rows in PostgreSQL +
+(:Recruiter)-[:ASSIGNED_TO]->(:Job) edges in Neo4j
+```
+
+### Operational notes
+
+- **Workflow ID convention**: `recruiter-assignment-<job_id>`. One assignment workflow per job.
+- **Retry policies**: LLM-backed activities (`core.llm_decide_next_tool`, `score_recruiter_fit`, `summarize_recruiter_track_record`) use 3 attempts with exponential backoff to 30s. DB / deterministic activities use 3 attempts to 10s.
+- **Budget**: enforced via `app/temporal/core/budget.py`. Hard exhaustion synthesizes a best-effort proposal rather than failing the workflow.
+- **Replay determinism**: all non-Temporal imports are guarded by `workflow.unsafe.imports_passed_through()`. Helpers are pure / side-effect-free.
+- **Logging**: never logs operator notes verbatim. Carries `job_id`, `workflow_id`, `operator_id`, phase, and budget counters only.
