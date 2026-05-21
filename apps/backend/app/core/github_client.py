@@ -19,7 +19,15 @@ class GitHubRateLimited(Exception):
 
     def __init__(self, retry_after: int = 60) -> None:
         self.retry_after = retry_after
+        self.retry_after_seconds = retry_after
         super().__init__(f"GitHub rate limited — retry after {retry_after}s")
+
+
+# Public alias used by scorecard activities (matches plan §16 Phase 2 contract).
+# Same exception class — kept under both names so existing call-sites
+# (candidate_indexing.fetch_github_signals) and the new scorecard fetchers
+# can `except` either name without breaking.
+GitHubRateLimitError = GitHubRateLimited
 
 
 @dataclass
@@ -90,6 +98,131 @@ class GitHubClient:
             )
         except Exception:
             return 0
+
+    # ------------------------------------------------------------------
+    # Scorecard evidence-fetcher helpers
+    #
+    # These methods are read-only and intentionally narrow: each scorecard
+    # activity composes one or more of them rather than each activity
+    # opening its own HTTP session. All helpers funnel through `_get`, so
+    # 404 → `GitHubNotFound` and 403/429 → `GitHubRateLimitError` is uniform.
+    # ------------------------------------------------------------------
+
+    async def get_user(self, username: str) -> dict:
+        """Fetch the public user profile. Raises GitHubNotFound on 404."""
+        return await self._get(f"/users/{username}")  # type: ignore[return-value]
+
+    async def list_user_repos(
+        self,
+        username: str,
+        *,
+        per_page: int = 100,
+        max_pages: int = 3,
+        sort: str = "updated",
+        repo_type: str = "owner",
+    ) -> list[dict]:
+        """List a user's public repos. Paginated; bounded to keep activity
+        runtime predictable and avoid blowing the rate budget. Repos beyond
+        `per_page * max_pages` are ignored — acceptable for evidence-fetch
+        which only needs the recent / most-relevant repos."""
+        out: list[dict] = []
+        for page in range(1, max_pages + 1):
+            batch = await self._get(
+                f"/users/{username}/repos",
+                params={
+                    "sort": sort,
+                    "per_page": per_page,
+                    "type": repo_type,
+                    "page": page,
+                },
+            )
+            if not isinstance(batch, list) or not batch:
+                break
+            out.extend(batch)
+            if len(batch) < per_page:
+                break
+        return out
+
+    async def get_readme(self, owner: str, repo: str) -> str | None:
+        """Fetch decoded README text. Returns None if no README exists
+        (404 silently swallowed — many repos legitimately lack a README).
+        Rate-limit errors propagate."""
+        try:
+            payload = await self._get(f"/repos/{owner}/{repo}/readme")
+        except GitHubNotFound:
+            return None
+        if not isinstance(payload, dict):
+            return None
+        import base64
+
+        content_b64 = payload.get("content")
+        encoding = payload.get("encoding")
+        if not content_b64 or encoding != "base64":
+            return None
+        try:
+            raw = base64.b64decode(content_b64)
+            return raw.decode("utf-8", errors="replace")
+        except Exception:
+            return None
+
+    async def get_repo_languages(self, owner: str, repo: str) -> dict[str, int]:
+        """Fetch byte-count breakdown per language for a repo."""
+        try:
+            payload = await self._get(f"/repos/{owner}/{repo}/languages")
+        except GitHubNotFound:
+            return {}
+        if not isinstance(payload, dict):
+            return {}
+        return {str(k): int(v) for k, v in payload.items() if isinstance(v, int)}
+
+    async def list_user_events(
+        self,
+        username: str,
+        *,
+        per_page: int = 100,
+        max_pages: int = 3,
+    ) -> list[dict]:
+        """List a user's public events (push, PR, review, etc.). GitHub
+        caps this at ~300 events / 90 days; we paginate up to that cap.
+        Used by both `fetch_commit_history` and `fetch_pr_review_history`."""
+        out: list[dict] = []
+        for page in range(1, max_pages + 1):
+            batch = await self._get(
+                f"/users/{username}/events/public",
+                params={"per_page": per_page, "page": page},
+            )
+            if not isinstance(batch, list) or not batch:
+                break
+            out.extend(batch)
+            if len(batch) < per_page:
+                break
+        return out
+
+    async def list_user_orgs(self, username: str) -> list[dict]:
+        """List a user's public organizations."""
+        payload = await self._get(f"/users/{username}/orgs", params={"per_page": 100})
+        return payload if isinstance(payload, list) else []
+
+    async def list_user_starred(
+        self,
+        username: str,
+        *,
+        per_page: int = 100,
+        max_pages: int = 2,
+    ) -> list[dict]:
+        """List repos a user has starred (bounded pagination)."""
+        out: list[dict] = []
+        for page in range(1, max_pages + 1):
+            batch = await self._get(
+                f"/users/{username}/starred",
+                params={"per_page": per_page, "page": page},
+            )
+            if not isinstance(batch, list) or not batch:
+                break
+            out.extend(batch)
+            if len(batch) < per_page:
+                break
+        return out
 
     async def _get(self, path: str, params: dict | None = None) -> dict | list:
         resp = await self._client.get(path, params=params)
