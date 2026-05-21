@@ -27,6 +27,19 @@ from app.utils.logging import get_logger
 LOGGER = get_logger(__name__)
 
 
+class NotImplementedYet(NotImplementedError):
+    """Raised when a reserved/forward-declared tool is invoked before its
+    backing activity exists.
+
+    Used by v2 placeholder tools (e.g. `fetch_blog_posts`,
+    `fetch_huggingface_contributions`) that are registered today so the LLM
+    prompt contract is stable, but whose activities will not ship until a
+    later release. The workflow's tool dispatcher catches this and surfaces a
+    deterministic structured-error result back to the LLM rather than
+    crashing the workflow.
+    """
+
+
 class CostClass(StrEnum):
     """Approximate per-call cost class used by the LLM for budget reasoning.
 
@@ -604,6 +617,7 @@ RECRUITER_ASSIGNMENT_TOOLS: tuple[ToolSpec, ...] = tuple(_TOOL_REGISTRY.values()
 
 __all__ = [
     "CostClass",
+    "NotImplementedYet",
     "ToolSpec",
     "register_tool",
     "get_tool",

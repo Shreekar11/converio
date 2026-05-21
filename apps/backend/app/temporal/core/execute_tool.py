@@ -77,6 +77,7 @@ def resolve_tool_call(tool_name: str, args: dict) -> tuple[str, dict]:
 # so the agent loop can decide whether to retry or fall back.
 
 TOOL_ACTIVITY_TIMEOUTS: dict[str, timedelta] = {
+    # Recruiter Assignment Agent (Agent 0)
     "recruiter_assignment.search_recruiter_pool": timedelta(seconds=30),
     "recruiter_assignment.widen_domain_search": timedelta(seconds=30),
     "recruiter_assignment.relax_stage_match": timedelta(seconds=30),
@@ -87,6 +88,21 @@ TOOL_ACTIVITY_TIMEOUTS: dict[str, timedelta] = {
     "recruiter_assignment.rank_and_select_recruiters": timedelta(seconds=5),
     "recruiter_assignment.format_recruiter_recommendations": timedelta(seconds=5),
     "recruiter_assignment.propose_assignment_set": timedelta(seconds=5),
+    # Scorecard Generator Agent (Agent 4) — MVP (GitHub-only) tools.
+    # GitHub fetchers get 30s because the GitHub REST API p95 is well under
+    # a second per request, but each fetcher may issue 5-10 requests with
+    # retries on transient 5xx. select_evidence_source is a small (Flash)
+    # structured call; rescore_dimension is a larger (Pro) structured call.
+    # mark_scorecard_done is a terminal control flip and needs almost no
+    # time at all.
+    "scorecard.fetch_repo_readmes": timedelta(seconds=30),
+    "scorecard.fetch_commit_history": timedelta(seconds=30),
+    "scorecard.fetch_pr_review_history": timedelta(seconds=30),
+    "scorecard.fetch_repo_languages": timedelta(seconds=30),
+    "scorecard.fetch_user_orgs_and_stars": timedelta(seconds=30),
+    "scorecard.select_evidence_source": timedelta(seconds=60),
+    "scorecard.rescore_dimension": timedelta(seconds=90),
+    "scorecard.mark_scorecard_done": timedelta(seconds=5),
 }
 
 _DEFAULT_TIMEOUT = timedelta(seconds=30)
@@ -110,7 +126,18 @@ def get_tool_timeout(activity_name: str) -> timedelta:
 # moves on to operator HITL review. The workflow checks `is_terminal_tool`
 # after each LLM decision to know whether to break the loop.
 
-_TERMINAL_TOOLS: frozenset[str] = frozenset({"propose_assignment_set"})
+_TERMINAL_TOOLS: frozenset[str] = frozenset(
+    {
+        # Recruiter Assignment Agent terminal tool.
+        "propose_assignment_set",
+        # Scorecard Generator Agent terminal tool. When the LLM emits
+        # `mark_scorecard_done` the workflow stops calling
+        # select_evidence_source / rescore_dimension and advances to the
+        # deterministic compute_overall_match_score → resolve_citations →
+        # persist_scorecard tail.
+        "mark_scorecard_done",
+    }
+)
 
 
 def is_terminal_tool(tool_name: str) -> bool:
