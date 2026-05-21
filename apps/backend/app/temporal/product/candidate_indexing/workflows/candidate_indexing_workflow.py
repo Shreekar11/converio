@@ -9,6 +9,11 @@ Pipeline phases:
     6. persist_candidate_record    — write to Postgres (yields candidate_id)
     7. index_candidate_to_graph    — write to Neo4j with real candidate_id
     8. score_profile_completeness  — compute completeness + finalize status
+    9. (optional) spawn ScorecardGeneratorWorkflow as a fire-and-forget
+       child when `rubric_id` + `job_id` were supplied on input.
+       See plan §16 Phase 7 / §18.1 for the trigger-location rationale —
+       spawning here (not from JobIntakeWorkflow) keeps fan-in pressure
+       off the root workflow's event loop.
 
 Step 6 and step 7 run sequentially (not parallel) so the Neo4j node is created
 with the real candidate_id returned by the Postgres write — avoiding a "PENDING"
@@ -20,7 +25,7 @@ for live observability via Temporal queries.
 from datetime import timedelta
 
 from temporalio import workflow
-from temporalio.common import RetryPolicy
+from temporalio.common import RetryPolicy, WorkflowIDReusePolicy
 
 with workflow.unsafe.imports_passed_through():
     from app.schemas.product.candidate import CandidateIndexingInput, IndexingResult
@@ -187,12 +192,146 @@ class CandidateIndexingWorkflow:
         )
 
         self._completeness_score = completeness_result["completeness_score"]
+        indexing_status = completeness_result["status"]
+
+        # Phase 9 — Trigger downstream scorecard generation.
+        # Spawn ScorecardGeneratorWorkflow as a DETACHED child (fire-and-forget)
+        # so this workflow returns immediately without blocking on the
+        # scorecard's reflective loop (plan §16 Phase 7, §18.1).
+        #
+        # Skip the spawn when:
+        #   1. indexing produced `failed` status (no candidate worth scoring),
+        #   2. rubric_id was not supplied on input (no job context),
+        #   3. job_id was not supplied on input (cannot pin scorecard to a job).
+        #
+        # The DB upsert in `scorecard.persist_scorecard` is the authoritative
+        # dedup point; the rubric-id-suffixed child workflow ID below merely
+        # guards against same-rubric replay producing duplicate workflow runs.
+        if (
+            indexing_status != "failed"
+            and inp.rubric_id is not None
+            and inp.job_id is not None
+        ):
+            await self._spawn_scorecard_child(
+                job_id=str(inp.job_id),
+                candidate_id=candidate_id,
+                rubric_id=str(inp.rubric_id),
+                submission_id=(
+                    str(inp.submission_id) if inp.submission_id else None
+                ),
+            )
+        else:
+            # Graceful skip path — log enough context for ops to diagnose
+            # why a scorecard never appeared for a successfully-indexed
+            # candidate without polluting the happy-path with a warning.
+            workflow.logger.info(
+                "Skipping ScorecardGeneratorWorkflow spawn",
+                extra={
+                    "candidate_id": candidate_id,
+                    "indexing_status": indexing_status,
+                    "job_id": str(inp.job_id) if inp.job_id else None,
+                    "rubric_id": str(inp.rubric_id) if inp.rubric_id else None,
+                    "reason": (
+                        "indexing_failed" if indexing_status == "failed"
+                        else "missing_job_id" if inp.job_id is None
+                        else "missing_rubric_id"
+                    ),
+                },
+            )
+
         self._phase = "completed"
 
         return IndexingResult(
             candidate_id=candidate_id,
-            status=completeness_result["status"],
+            status=indexing_status,
             completeness_score=completeness_result["completeness_score"],
             was_duplicate=dedup_result["is_duplicate"],
             source=inp.source,
         ).model_dump(mode="json")
+
+    async def _spawn_scorecard_child(
+        self,
+        *,
+        job_id: str,
+        candidate_id: str,
+        rubric_id: str,
+        submission_id: str | None,
+    ) -> None:
+        """Spawn the scorecard child workflow as fire-and-forget.
+
+        Uses `workflow.start_child_workflow` (NOT `execute_child_workflow`)
+        so the parent (`CandidateIndexingWorkflow`) returns immediately —
+        the scorecard's budgeted reflective loop runs independently and is
+        observable via Temporal's UI on its own workflow ID.
+
+        Workflow ID format: `scorecard-{job_id}-{candidate_id}-{rubric_prefix}`.
+        The rubric prefix is intentional: rubric updates (HITL #2 re-eval)
+        bump the rubric_id, which yields a fresh workflow ID and a fresh
+        Scorecard row at the persistence layer. With
+        `REJECT_DUPLICATE`, a same-rubric replay (e.g. CandidateIndexing
+        re-runs after a non-deterministic worker restart) is safely
+        deduplicated by Temporal itself.
+
+        Failure isolation: we catch and log any spawn-time error so
+        indexing's own success is never blocked by scorecard wiring
+        problems. The scorecard can always be retried out-of-band
+        via the operator API once the underlying issue is resolved.
+        """
+        # Rubric-id prefix keeps the workflow ID readable in the Temporal
+        # UI while still differentiating across rubric versions. 8 chars
+        # of a UUID are sufficient — Temporal IDs are scoped per
+        # namespace and the (job_id, candidate_id) pair already
+        # uniquifies the run.
+        rubric_prefix = rubric_id.replace("-", "")[:8]
+        child_workflow_id = f"scorecard-{job_id}-{candidate_id}-{rubric_prefix}"
+
+        with workflow.unsafe.imports_passed_through():
+            from app.schemas.product.scorecard import ScorecardWorkflowInput
+
+        scorecard_input = ScorecardWorkflowInput(
+            job_id=job_id,  # type: ignore[arg-type]
+            candidate_id=candidate_id,  # type: ignore[arg-type]
+            rubric_id=rubric_id,  # type: ignore[arg-type]
+            submission_id=submission_id,  # type: ignore[arg-type]
+        ).model_dump(mode="json")
+
+        try:
+            # `start_child_workflow` returns a handle once the child is
+            # *scheduled* — we deliberately do NOT await the handle's
+            # result (that would block on full execution).
+            await workflow.start_child_workflow(
+                "ScorecardGeneratorWorkflow",
+                scorecard_input,
+                id=child_workflow_id,
+                task_queue="converio-queue",
+                id_reuse_policy=WorkflowIDReusePolicy.REJECT_DUPLICATE,
+            )
+            workflow.logger.info(
+                "ScorecardGeneratorWorkflow spawned",
+                extra={
+                    "child_workflow_id": child_workflow_id,
+                    "job_id": job_id,
+                    "candidate_id": candidate_id,
+                    "rubric_id": rubric_id,
+                    "submission_id": submission_id,
+                },
+            )
+        except Exception as exc:  # noqa: BLE001 — defensive boundary
+            # Two expected failure modes:
+            #   * WorkflowAlreadyStartedError — same (job, candidate, rubric)
+            #     replay; safe to swallow because the existing run is the
+            #     source of truth.
+            #   * Transient Temporal-frontend errors — out of scope to retry
+            #     here; downstream operator endpoint can re-spawn.
+            # We log at WARNING (not ERROR) because indexing itself succeeded.
+            workflow.logger.warning(
+                "Failed to spawn ScorecardGeneratorWorkflow; indexing still succeeded",
+                extra={
+                    "child_workflow_id": child_workflow_id,
+                    "job_id": job_id,
+                    "candidate_id": candidate_id,
+                    "rubric_id": rubric_id,
+                    "error_type": type(exc).__name__,
+                    "error": str(exc)[:400],
+                },
+            )
