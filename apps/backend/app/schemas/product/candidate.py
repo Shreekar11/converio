@@ -6,6 +6,7 @@ Activity inputs/outputs and workflow IO use these models exclusively.
 from __future__ import annotations
 
 from typing import Literal
+from uuid import UUID
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -77,13 +78,31 @@ class ResumeFileRef(BaseModel):
 
 
 class CandidateIndexingInput(BaseModel):
-    """Input to CandidateIndexingWorkflow."""
+    """Input to CandidateIndexingWorkflow.
+
+    `rubric_id` is the version-pinned rubric the downstream
+    `ScorecardGeneratorWorkflow` should score against. It is optional
+    because not every indexing trigger has a known job context (e.g.,
+    a recruiter uploads a resume from the candidate portal without
+    associating it to a job). When `rubric_id` is `None`, the
+    indexing workflow finishes successfully but skips the scorecard
+    child-workflow spawn at the end of `run()` — the operator can
+    spawn scoring later via a dedicated endpoint.
+
+    `job_id` and `submission_id` are similarly optional: they are
+    passed through to the scorecard child when the spawn happens.
+    Indexing itself does not depend on them.
+    """
 
     input_kind: Literal["resume_file", "profile"] = "resume_file"
     resume_file: ResumeFileRef | None = None
     profile: CandidateProfile | None = None
     source: str  # "seed" | "recruiter_upload" | "sourcing_agent"
     source_recruiter_id: str | None = None  # UUID string; null for seed/sourcing
+    # Scorecard-spawn inputs — optional for backwards compat (Phase 7).
+    job_id: UUID | None = None
+    rubric_id: UUID | None = None
+    submission_id: UUID | None = None
 
     @model_validator(mode="after")
     def validate_input_kind(self) -> "CandidateIndexingInput":

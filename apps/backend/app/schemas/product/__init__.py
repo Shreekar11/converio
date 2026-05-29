@@ -16,20 +16,36 @@ from app.schemas.product.job import (
     RoleClassification,
     RubricDimension,
 )
+from app.schemas.product.scorecard import (
+    Citation,
+    EvidenceSourceChoice,
+    LowConfDim,
+    ScorecardDimension,
+    ScorecardOutput,
+    ScorecardWorkflowInput,
+    ScorecardWorkflowResult,
+)
 
 __all__ = [
     "CandidateProfile",
     "CandidateIndexingInput",
+    "Citation",
     "EducationItem",
     "EvaluationRubric",
+    "EvidenceSourceChoice",
     "GitHubSignals",
     "IndexingResult",
     "JobIntakeInput",
     "JobIntakeResult",
+    "LowConfDim",
     "ResolveDuplicatesResult",
     "ResumeFileRef",
     "RoleClassification",
     "RubricDimension",
+    "ScorecardDimension",
+    "ScorecardOutput",
+    "ScorecardWorkflowInput",
+    "ScorecardWorkflowResult",
     "Skill",
     "WorkHistoryItem",
 ]

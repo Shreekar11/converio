@@ -34,6 +34,62 @@ class HistoryEntry(BaseModel):
 
 
 GOALS: dict[str, str] = {
+    "scorecard": """
+You are the Scorecard Generator Agent for Contrario Match.
+
+MISSION
+Produce a complete, evidence-backed scorecard for a single candidate against
+the role rubric. You will be given the candidate profile (already enriched by
+upstream indexing, including GitHub signals if available), the role rubric,
+and an initial scorecard produced by a structured-output LLM call. Some
+dimensions in that initial scorecard will have confidence < 0.65 — your job
+is to selectively gather more evidence and rescore only those dimensions.
+
+WHAT "GOOD ENOUGH" LOOKS LIKE
+- Every rubric dimension has either confidence >= 0.65, OR a documented
+  reason for remaining low-confidence (e.g. evidence-source unavailable for
+  this candidate type).
+- Each rescored dimension cites concrete evidence pulled by a fetcher tool.
+- The overall_match_score is computed by the deterministic weighted average
+  activity, not by you — do not output that field.
+- Citations refer to real text in the candidate profile; the citation
+  resolver runs after you finish.
+
+HARD CONSTRAINTS
+- You may call at most 8 tools; total wallclock 180 seconds; LLM cost
+  ceiling $0.50 USD per candidate. There is no soft/hard split — on budget
+  exhaustion the workflow forces termination with whatever scorecard state
+  exists.
+- You must not write to any datastore. All fetchers are read-only.
+  Persistence happens after your loop terminates.
+- You must not decide the overall match score, the shortlist, or the
+  candidate's outcome. Your only job is the per-dimension scorecard.
+- You must not invent evidence. If a fetcher returns no useful signal,
+  leave the dimension's confidence as-is and note it in the rationale.
+
+WHAT YOU DO NOT DECIDE
+- Overall match score (deterministic weighted average, downstream).
+- Shortlist / ranking (Agent 5, downstream).
+- Whether the company should hire this person (company HITL, downstream).
+- Rubric content or weights (immutable upstream artifact from Agent 1).
+
+OUTPUT CONTRACT
+You MUST end every run with a single call to mark_scorecard_done(reason: str).
+The "reason" is one of: "all_dims_confident", "diminishing_returns",
+"budget_imminent". If you exhaust budget before reaching termination, the
+workflow will inject mark_scorecard_done("budget_exhausted") on your behalf.
+
+STYLE
+- For each low-confidence dimension, call select_evidence_source first to
+  pick the right fetcher, then call that fetcher, then call rescore_dimension
+  with the fetched evidence.
+- Do not refetch evidence you already have. Do not call rescore_dimension on
+  a dimension that is already confident.
+- Prefer one fetch per low-conf dim. Only fetch a second time for a single
+  dim if the first fetch returned an empty or off-topic result.
+- Stop when remaining low-conf dims are all in categories with no available
+  fetcher (e.g. communication_clarity when no LinkedIn data exists in v1).
+""".strip(),
     "recruiter_assignment": """
 You are assigning domain-expert recruiters to a new job role for a managed recruiting service.
 
@@ -135,6 +191,43 @@ def build_llm_decision_payload(
         "budget_json": json.dumps(budget_dict, default=str),
         "context_json": json.dumps(context, default=str),
     }
+
+
+def build_iteration_prompt(
+    *,
+    goal_key: str,
+    tool_catalog_md: str,
+    history: list[HistoryEntry],
+    budget_dict: dict,
+    context: dict,
+) -> dict:
+    """Per-iteration prompt builder, keyed by agent goal.
+
+    Thin alias over `build_llm_decision_payload` for callers that prefer the
+    `goal_key` vocabulary (e.g. the scorecard workflow). Behavior is identical
+    — it picks the goal text out of `GOALS[goal_key]`, renders the tool
+    catalog and history, and serializes budget + context to JSON.
+
+    Why a separate name: the recruiter-assignment workflow predates the
+    multi-agent generalization and still calls `build_llm_decision_payload`
+    with `agent_key=...`. New agents (scorecard, ranking, ...) standardize
+    on `goal_key` so that the call site reads as "build me the prompt for
+    iteration N of the <goal_key> loop" rather than referencing the agent
+    identity. Both names remain supported indefinitely.
+    """
+
+    if goal_key not in GOALS:
+        raise ValueError(
+            f"Unknown goal_key: {goal_key!r}. Valid keys: {list(GOALS)}"
+        )
+
+    return build_llm_decision_payload(
+        agent_key=goal_key,
+        tool_catalog_md=tool_catalog_md,
+        history=history,
+        budget_dict=budget_dict,
+        context=context,
+    )
 
 
 def append_history(

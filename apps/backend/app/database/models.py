@@ -546,8 +546,20 @@ class Scorecard(Base):
     dimensions_rescored: Mapped[list | None] = mapped_column(
         ARRAY(String), nullable=True
     )  # names of dimensions that went through self-correction
+    tool_call_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0
+    )  # number of evidence-fetch tool calls made by Agent 4
+    total_cost_usd: Mapped[Decimal] = mapped_column(
+        Numeric(10, 4), nullable=False, default=Decimal("0")
+    )  # LLM + tool cost accumulated for this scorecard
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default="NOW()", nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
+        server_default="NOW()",
+        onupdate=datetime.utcnow,
+        nullable=False,
     )
 
     # Relationships
